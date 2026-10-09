@@ -1,0 +1,125 @@
+Dakota version 6.24 released May 15 2026.
+Repository revision 1ab1c9924 (2026-05-11) built May 11 2026 11:08:44.
+Running MPI Dakota executable in serial mode.
+Start time: Mon Sep 28 13:09:02 2026
+
+------------------
+Begin Dakota input
+------------------
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE30_sfc3_d2_sweep3.dat'
+
+method
+  list_parameter_study
+    # Tight sweep straddling the collapse cliff found in d2_sweep2
+    # (D2=0.3 collapses, D2=0.35 is well-behaved, frac=14.59%, obj=0.133).
+    # Adding D2=0.33 to probe just below 0.35, plus 0.37/0.40 above it.
+    # D1=0.02, D3=3.0 fixed (the d2d3_check run showed D3=4.0 pushes
+    # fracture later, not earlier -- wrong direction).
+    list_of_points = 0.33  0.35  0.37  0.40
+
+variables
+  continuous_design = 1
+    descriptors 'DamageParameter2'
+  continuous_state = 7
+    descriptors      'DamageParameter1'  'DamageParameter3'  'ThresholdDamage'  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'
+    initial_state     0.02                3.0                 0.97               1.027e10               1.35e10                 22.0                   2.0e8
+
+interface
+  analysis_drivers = 'driver_HE30_voce_hypoelastic_d2_sweep3.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+  asynchronous evaluation_concurrency = 2
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians
+
+----------------
+End Dakota input
+----------------
+
+Using Dakota parser: standard
+Writing new restart file 'dakota_HE30_voce_hypoelastic_d2_sweep3.rst'.
+
+>>>>> Executing environment.
+
+>>>>> Running list_parameter_study iterator.
+
+List parameter study for 4 samples
+
+
+---------------------
+Begin Evaluation    1
+---------------------
+Parameters for evaluation 1:
+                      3.3000000000e-01 DamageParameter2
+                      2.0000000000e-02 DamageParameter1
+                      3.0000000000e+00 DamageParameter3
+                      9.7000000000e-01 ThresholdDamage
+                      1.0270000000e+10 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+
+(Asynchronous job 1 added to queue)
+
+---------------------
+Begin Evaluation    2
+---------------------
+Parameters for evaluation 2:
+                      3.5000000000e-01 DamageParameter2
+                      2.0000000000e-02 DamageParameter1
+                      3.0000000000e+00 DamageParameter3
+                      9.7000000000e-01 ThresholdDamage
+                      1.0270000000e+10 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+
+(Asynchronous job 2 added to queue)
+
+---------------------
+Begin Evaluation    3
+---------------------
+Parameters for evaluation 3:
+                      3.7000000000e-01 DamageParameter2
+                      2.0000000000e-02 DamageParameter1
+                      3.0000000000e+00 DamageParameter3
+                      9.7000000000e-01 ThresholdDamage
+                      1.0270000000e+10 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+
+(Asynchronous job 3 added to queue)
+
+---------------------
+Begin Evaluation    4
+---------------------
+Parameters for evaluation 4:
+                      4.0000000000e-01 DamageParameter2
+                      2.0000000000e-02 DamageParameter1
+                      3.0000000000e+00 DamageParameter3
+                      9.7000000000e-01 ThresholdDamage
+                      1.0270000000e+10 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+
+(Asynchronous job 4 added to queue)
+
+Blocking synchronize of 4 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 1
+nonblocking fork: driver_HE30_voce_hypoelastic_d2_sweep3.sh params.in.1 results.out.1
+Initiating evaluation 2
+nonblocking fork: driver_HE30_voce_hypoelastic_d2_sweep3.sh params.in.2 results.out.2
+Second pass: scheduling 2 remaining local asynchronous jobs
+Waiting on completed jobs
+
+Dakota caught signal 15

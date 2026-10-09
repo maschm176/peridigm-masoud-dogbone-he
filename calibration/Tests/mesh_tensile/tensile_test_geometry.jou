@@ -1,0 +1,42 @@
+reset
+
+#  if you have the SEACAS tools from Trilinos built:
+#
+#  decomp -p 2 mesh.g
+#
+
+#{GRIP_WIDTH=6.0}
+#{GRIP_RADIUS=1.0}
+#{GAUGE_WIDTH=1.0}
+#{GAUGE_LENGTH=4.0}
+#{THICKNESS=1.0}
+#{ANGLE=45}
+#{LENGTH=GAUGE_LENGTH + (GRIP_WIDTH-GAUGE_WIDTH-2*GRIP_RADIUS*(1-sind(ANGLE)))*tand(ANGLE) + 2*GRIP_RADIUS*cosd(ANGLE)}
+
+#{NUM_ELEM_THROUGH_THICKNESS=6}
+#{ELEMENT_SIZE=THICKNESS/NUM_ELEM_THROUGH_THICKNESS}
+#{HORIZON=2*ELEMENT_SIZE}
+
+create brick x {GAUGE_WIDTH} y {GAUGE_LENGTH} z {THICKNESS}
+create brick x {GAUGE_WIDTH} y {HORIZON} z {THICKNESS}
+volume 2 move x 0.0 y {(GAUGE_LENGTH+HORIZON)/2} z 0.0
+create brick x {GAUGE_WIDTH} y {HORIZON} z {THICKNESS}
+volume 3 move x 0.0 y {-(GAUGE_LENGTH+HORIZON)/2} z 0.0
+
+block 1 volume 3
+block 2 volume 1
+block 3 volume 2
+
+volume all size {ELEMENT_SIZE}
+volume ALL scheme Tetmesh
+mesh volume all
+
+nodeset 1 volume 3 # bottom block
+nodeset 2 volume 2 # top block
+nodeset 3 curve 30 # bottom x axis
+nodeset 4 curve 33 # bottom z axis
+nodeset 5 curve 20 # top x axis
+nodeset 6 curve 23 # top z axis
+
+export genesis "mesh.g" overwrite
+

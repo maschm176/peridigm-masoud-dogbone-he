@@ -1,0 +1,7 @@
+%eval_id interface DamageParameter1 DamageParameter2 DamageParameter3 InitialYieldStress SaturatedYieldStress ExponentialConstant LinearConstant ThresholdDamage obj_fn_1       
+1        NO_ID      0.1355         0.03           0.55           9770000000     1.35e+10       22             200000000      0.95           0.08388817086  
+2        NO_ID      0.1935         0.03           0.55           9770000000     1.35e+10       22             200000000      0.95           0.1857929447   
+3        NO_ID      0.1355         0.428          0.55           9770000000     1.35e+10       22             200000000      0.95           0.4439170525   
+4        NO_ID      0.1355         0.03           1.05           9770000000     1.35e+10       22             200000000      0.95           0.0733753982   
+5        NO_ID      0.0775         0.03           0.55           9770000000     1.35e+10       22             200000000      0.95           0.185382724    
+6        NO_ID      0.1355         0.03           0.05           9770000000     1.35e+10       22             200000000      0.95           0.09425495727  

@@ -1,0 +1,27 @@
+environment
+
+method
+  list_parameter_study
+    # Single evaluation: "Isotropic Hardening Correspondence" material
+    # (Silling 2007 original correspondence kinematics) + Critical Stretch
+    # damage, rigid-grip BC. Not an optimization -- a one-off diagnostic to
+    # check whether switching away from Green-Lagrange/finite-deformation
+    # kinematics changes the post-fracture ringing. Dummy single design
+    # variable since Dakota requires at least one; all real parameters are
+    # hardcoded directly in the YAML template.
+    list_of_points = 1.0
+
+variables
+  continuous_design = 1
+    descriptors 'Dummy'
+
+interface
+  analysis_drivers = 'driver_HE0_isotropichardening_criticalstretch_rigidgrip_forward_solve.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

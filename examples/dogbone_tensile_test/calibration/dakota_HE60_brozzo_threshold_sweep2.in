@@ -1,0 +1,33 @@
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE60_brozzo_threshold_sweep2.dat'
+
+method
+  list_parameter_study
+    # Finer follow-up to the first HE_60 threshold sweep: 0.3->11.05% frac,
+    # 0.2->8.09% frac, 0.1->5.49% frac (real target 7.68%) -- the optimum
+    # sits between 0.1 and 0.2, closer to 0.2. Linear interpolation on the
+    # 0.1-0.2 slope (26 points of fracture strain per unit threshold)
+    # suggests ~0.184. Bracketing 0.19/0.18/0.17 to pin it down.
+    list_of_points = 0.19  0.18  0.17
+
+variables
+  continuous_design = 1
+    descriptors 'ThresholdDamage'
+  continuous_state = 6
+    descriptors      'DamageParameter1'  'DamageParameter2'  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'
+    initial_state     3.5                 0.99                9.77e9                1.35e10                 22.0                   2.0e8
+
+interface
+  # Serial (no concurrency) from the start -- see the concurrency lesson
+  # learned during HE_30's joint polish (CLAUDE.md).
+  analysis_drivers = 'driver_HE60_brozzo_threshold_sweep2.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

@@ -1,0 +1,35 @@
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE30_stage2.dat'
+
+method
+  coliny_pattern_search
+    max_function_evaluations = 12
+
+variables
+  # Voce params below are FILL-IN-AFTER-STAGE-1 placeholders (currently just
+  # the HE_0 optimum) -- before running this stage, replace initial_state
+  # with the Stage 1 result:
+  #   python3 extract_best_params.py dakota_HE30_stage1_voce.out \
+  #     InitialYieldStress SaturatedYieldStress ExponentialConstant LinearConstant
+  continuous_design = 1
+    descriptors                    'CriticalStretch'
+    initial_point                   0.167
+    lower_bounds                    0.10
+    upper_bounds                    0.30
+  continuous_state = 4
+    descriptors                    'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'
+    initial_state                   9.27e9                 1.35e10                 22.0                   2.0e8
+
+interface
+  analysis_drivers = 'driver_HE30_stage2_criticalstretch.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+  asynchronous evaluation_concurrency = 2
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

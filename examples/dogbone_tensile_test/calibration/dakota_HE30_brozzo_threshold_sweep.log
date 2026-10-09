@@ -1,0 +1,459 @@
+
+
+Executing:
+Executing:
+   /usr/local/trilinos/bin/nem_slice -e -S  -l inertial -c -o tensile_test.g.nem -m mesh=4 tensile_test.g
+
+   /usr/local/trilinos/bin/nem_slice -e -S  -l inertial -c -o tensile_test.g.nem -m mesh=4 tensile_test.g
+
+Beginning nem_slice execution.
+Input Mesh File = 'tensile_test.g
+Beginning nem_slice execution.
+Input Mesh File = 'tensile_test.g
+Using 32-bit integer mode for decomposition...
+Using 32-bit integer mode for decomposition...
+	total size of reverse connectivity array: 101,000 entries (800,600 bytes).
+	memory allocated...(0.0005943339999999742 seconds)
+	max of 10 elements per node
+	total size of reverse connectivity array: 101,000 entries (800,600 bytes).
+Time to find surrounding elements: 0.0010733749999999875s
+	memory allocated...(0.0006632079999999707 seconds)
+	max of 10 elements per node
+Time to find surrounding elements: 0.001156584000000016s
+The entire load balance took 0.668142792 seconds.
+The entire load balance took 0.669193417 seconds.
+nem_slice version 4.19
+Performing an elemental load balance with the following parameters...
+Machine Description
+	architecture: mesh
+	dimension(s): 4
+	total number of processors: 4
+Load Balance Parameters
+	type: inertial
+	refinement: none
+Weighting Parameters
+	no weighting
+Miscellaneous Options
+	SPHERES are being treated as concentrated mass - connectivity exists
+	WARNING: side id error checks turned off
+ExodusII mesh information
+	title: cubit(tensile_test.g): 08/23/2013: 16:17:23
+	geometry dimension: 3
+	number of nodes: 16,524	number of elements: 12,625
+	number of element blocks: 3
+	number of node sets: 6	number of side sets: 0
+Time to read mesh parameters: 0.004937582999999968s
+Time to read mesh: 0.0035209170000000123s
+Time to generate graph: 0.001197875000000015s
+===================Call Chaco===========================
+Parameter file `User_Params' not found; using default parameters.
+
+
+           Input and Parameter Values
+
+# vertices = 12625, # edges = 0
+Global method: Inertial
+Local method: None
+Partitioning target: 1-dimensional mesh of size 4
+Partitioning mode: Bisection
+Random seed: 1
+Active Parameters:
+  CHECK_INPUT = True
+  OUTPUT_METRICS = 2
+  MAKE_VWGTS = False
+  REFINE_MAP = False
+  REFINE_PARTITION = 0
+  INTERNAL_VERTICES = False
+  DEBUG_PARAMS = 2
+
+
+
+Starting to partition ...
+
+========================================================
+Time in Chaco: 0.004618707999999971s
+Time to generate load balance: 0.0052098329999999415s
+Time for elemental categorization: 0.003768541999999986s
+Nodal categorization: 0.00022558299999997367s
+Find procs for border nodes: 3.495799999997384e-05s
+Order elem cmaps: 0.00010758300000002219s
+Make cmaps consistent: 0.00012454200000000526s
+Time to generate load-balance maps: 0.004705375000000012s
+Outputting load balance to file tensile_test.g.nem
+QA Record:
+	nem_slice
+	4.19
+	2026/10/02
+	04:05:13
+Time to write Nemesis file: 0.09827454099999999s
+nem_slice version 4.19
+Performing an elemental load balance with the following parameters...
+Machine Description
+	architecture: mesh
+	dimension(s): 4
+	total number of processors: 4
+Load Balance Parameters
+	type: inertial
+	refinement: none
+Weighting Parameters
+	no weighting
+Miscellaneous Options
+	SPHERES are being treated as concentrated mass - connectivity exists
+	WARNING: side id error checks turned off
+ExodusII mesh information
+	title: cubit(tensile_test.g): 08/23/2013: 16:17:23
+	geometry dimension: 3
+	number of nodes: 16,524	number of elements: 12,625
+	number of element blocks: 3
+	number of node sets: 6	number of side sets: 0
+Time to read mesh parameters: 0.004015541000000011s
+Time to read mesh: 0.004081165999999969s
+Time to generate graph: 0.0011131669999999705s
+===================Call Chaco===========================
+Parameter file `User_Params' not found; using default parameters.
+
+
+           Input and Parameter Values
+
+# vertices = 12625, # edges = 0
+Global method: Inertial
+Local method: None
+Partitioning target: 1-dimensional mesh of size 4
+Partitioning mode: Bisection
+Random seed: 1
+Active Parameters:
+  CHECK_INPUT = True
+  OUTPUT_METRICS = 2
+  MAKE_VWGTS = False
+  REFINE_MAP = False
+  REFINE_PARTITION = 0
+  INTERNAL_VERTICES = False
+  DEBUG_PARAMS = 2
+
+
+
+Starting to partition ...
+
+========================================================
+Time in Chaco: 0.007629166999999992s
+Time to generate load balance: 0.00827370799999999s
+Time for elemental categorization: 0.001718667000000007s
+Nodal categorization: 0.00021137500000001364s
+Find procs for border nodes: 3.24170000000068e-05s
+Order elem cmaps: 0.00010741700000005405s
+Make cmaps consistent: 0.00012779200000001545s
+Time to generate load-balance maps: 0.002597624999999937s
+Outputting load balance to file tensile_test.g.nem
+QA Record:
+	nem_slice
+	4.19
+	2026/10/02
+	04:05:13
+Time to write Nemesis file: 0.096585417s
+...nem_slice successful execution
+...nem_slice successful execution
+
+Executing:
+   /usr/local/trilinos/bin/nem_spread  tensile_test.g.pex
+
+
+Executing:
+   /usr/local/trilinos/bin/nem_spread  tensile_test.g.pex
+
+nem_spread version 7.01 (2021/03/19)
+Using 4 byte integers and 8 byte floating point values.
+Reading the command file, tensile_test.g.pex
+
+Exodus file (tensile_test.g)
+	Title of file: 'cubit(tensile_test.g): 08/23/2013: 16:17:23'
+	Dimensionality of problem =              3
+	Number of nodes           =         16,524
+	Number of elements        =         12,625
+	Number of element blocks  =              3
+	Number of node sets       =              6
+	Number of side sets       =              0
+
+
+Start to read in and distribute the load balance info
+EXODUS II load-balance file: tensile_test.g.nem
+
+Finished distributing load balance info
+
+Load load balance information time: 0.023731624999999992 (sec.)
+
+Load exoII restart param info to each proc.
+
+Load restart parameters time: 0.0016651249999999895 (sec.)
+
+Load exoII mesh info to each proc.
+
+	Time to read element block IDs:            0.0007
+	Time to read node set IDs:                 0.0001
+	Time to extract element block information: 0.0006
+	Time to read nodal coordinates:            0.0011
+	Time to read element blocks:               0.0021
+	Time to read node sets:                    0.0026
+0..3
+Load mesh time: 0.05593400000000001 (sec.)
+
+Write of parallel exodus complete
+The average run time was: 0.168904s
+nem_spread version 7.01 (2021/03/19)
+Using 4 byte integers and 8 byte floating point values.
+Reading the command file, tensile_test.g.pex
+
+Exodus file (tensile_test.g)
+	Title of file: 'cubit(tensile_test.g): 08/23/2013: 16:17:23'
+	Dimensionality of problem =              3
+	Number of nodes           =         16,524
+	Number of elements        =         12,625
+	Number of element blocks  =              3
+	Number of node sets       =              6
+	Number of side sets       =              0
+
+
+Start to read in and distribute the load balance info
+EXODUS II load-balance file: tensile_test.g.nem
+
+Finished distributing load balance info
+
+Load load balance information time: 0.01919775 (sec.)
+
+Load exoII restart param info to each proc.
+
+Load restart parameters time: 0.001122790999999998 (sec.)
+
+Load exoII mesh info to each proc.
+
+	Time to read element block IDs:            0.0026
+	Time to read node set IDs:                 0.0001
+	Time to extract element block information: 0.0006
+	Time to read nodal coordinates:            0.0010
+	Time to read element blocks:               0.0021
+	Time to read node sets:                    0.0023
+0..3
+Load mesh time: 0.058731459 (sec.)
+
+Write of parallel exodus complete
+The average run time was: 0.171496s
+...nem_spread successful execution
+DECOMP Successful Execution
+...nem_spread successful execution
+DECOMP Successful Execution
+
+-- Peridigm
+-- version 1.5.0 (Dev)
+
+MPI initialized on 4 processors.
+
+
+-- Peridigm
+-- version 1.5.0 (Dev)
+
+MPI initialized on 4 processors.
+
+Time step (seconds):
+  Stable time step    1.43213e-07
+  User time step      not provided
+  Safety factor       0.7
+  Time step           1.00249e-07
+
+Total number of time steps 18354
+
+Time step (seconds):
+  Stable time step    1.43213e-07
+  User time step      not provided
+  Safety factor       0.7
+  Time step           1.00249e-07
+
+Total number of time steps 18354
+
+Explicit time integration [0% Complete=====================] Explicit time integration [0% Complete=====================] Explicit time integration [1% Complete=====================] Explicit time integration [2% Complete=====================] Explicit time integration [3% Complete=====================] Explicit time integration [4% Complete=====================] Explicit time integration [=5% Complete====================] Explicit time integration [=6% Complete====================] Explicit time integration [=7% Complete=========Explicit time integration [0% Complete=====================] Explicit time integration [0% Complete=====================] Explicit time integration [1% Complete=====================] Explicit time integration [2% Complete=====================] Explicit time integration [3% Complete=====================] Explicit time integration [4% Complete=====================] Explicit time integration [=5% Complete====================] Explicit time integration [=6% Complete====================] Explicit time integration [=7% Complete====================] Explicit time integration [=8% Complete====================] Explicit time integration [=9% Complete====================] Explicit time integration [==10% Complete==================] Explicit time integration [==11% Complete==================] Explicit time integration [==12% Complete==================] Explicit time integration [==13% Complete==================] Explicit time integration [==14% Complete==================] Explicit time integration [===15% Complete=================] ===========] Explicit time integration [=8% Complete====================] Explicit time integration [=9% Complete====================] Explicit time integration [==10% Complete==================] Explicit time integration [==11% Complete==================] Explicit time integration [==12% Complete==================] Explicit time integration [==13% Complete==================] Explicit time integration [==14% Complete==================] Explicit time integration [===15% Complete=================] Explicit time integration [===16% Complete=================] Explicit time integration [===17% Complete=================] Explicit time integration [===18% Complete=================] Explicit time integration [===19% Complete=================] Explicit time integration [====20% Complete================] Explicit time integration [====21% Complete================] Explicit time integration [====22% Complete================] Explicit time integration [====23% Complete================] Explicit time integratExplicit time integration [===16% Complete=================] Explicit time integration [===17% Complete=================] Explicit time integration [===18% Complete=================] Explicit time integration [===19% Complete=================] Explicit time integration [====20% Complete================] Explicit time integration [====21% Complete================] Explicit time integration [====22% Complete================] Explicit time integration [====23% Complete================] Explicit time integration [====24% Complete================] Explicit time integration [=====25% Complete===============] Explicit time integration [=====26% Complete===============] Explicit time integration [=====27% Complete===============] Explicit time integration [=====28% Complete===============] Explicit time integration [=====29% Complete===============] Explicit time integration [======30% Complete==============] Explicit time integration [======31% Complete==============] Explicit time integration [======32% Complete==============] ion [====24% Complete================] Explicit time integration [=====25% Complete===============] Explicit time integration [=====26% Complete===============] Explicit time integration [=====27% Complete===============] Explicit time integration [=====28% Complete===============] Explicit time integration [=====29% Complete===============] Explicit time integration [======30% Complete==============] Explicit time integration [======31% Complete==============] Explicit time integration [======32% Complete==============] Explicit time integration [======33% Complete==============] Explicit time integration [======34% Complete==============] Explicit time integration [=======35% Complete=============] Explicit time integration [=======36% Complete=============] Explicit time integration [=======37% Complete=============] Explicit time integration [=======38% Complete=============] Explicit time integration [=======39% Complete=============] Explicit time integration [========40% Complete============] Explicit time integration [======33% Complete==============] Explicit time integration [======34% Complete==============] Explicit time integration [=======35% Complete=============] Explicit time integration [=======36% Complete=============] Explicit time integration [=======37% Complete=============] Explicit time integration [=======38% Complete=============] Explicit time integration [=======39% Complete=============] Explicit time integration [========40% Complete============] Explicit time integration [========41% Complete============] Explicit time integration [========42% Complete============] Explicit time integration [========43% Complete============] Explicit time integration [========44% Complete============] Explicit time integration [=========45% Complete===========] Explicit time integration [=========46% Complete===========] Explicit time integration [=========47% Complete===========] Explicit time integration [=========48% Complete===========] Explicit time integration [=========49% CompExplicit time integration [========41% Complete============] Explicit time integration [========42% Complete============] Explicit time integration [========43% Complete============] Explicit time integration [========44% Complete============] Explicit time integration [=========45% Complete===========] Explicit time integration [=========46% Complete===========] Explicit time integration [=========47% Complete===========] Explicit time integration [=========48% Complete===========] Explicit time integration [=========49% Complete===========] Explicit time integration [==========50% Complete==========] Explicit time integration [==========51% Complete==========] Explicit time integration [==========52% Complete==========] Explicit time integration [==========53% Complete==========] Explicit time integration [==========54% Complete==========] Explicit time integration [===========55% Complete=========] Explicit time integration [===========56% Complete=========] Explicit time integration [===========57% Complete=========] lete===========] Explicit time integration [==========50% Complete==========] Explicit time integration [==========51% Complete==========] Explicit time integration [==========52% Complete==========] Explicit time integration [==========53% Complete==========] Explicit time integration [==========54% Complete==========] Explicit time integration [===========55% Complete=========] Explicit time integration [===========56% Complete=========] Explicit time integration [===========57% Complete=========] Explicit time integration [===========58% Complete=========] Explicit time integration [===========59% Complete=========] Explicit time integration [============60% Complete========] Explicit time integration [============61% Complete========] Explicit time integration [============62% Complete========] Explicit time integration [============63% Complete========] Explicit time integration [============64% Complete========] Explicit time integration [=============65% Complete=======] Explicit time inteExplicit time integration [===========58% Complete=========] Explicit time integration [===========59% Complete=========] Explicit time integration [============60% Complete========] Explicit time integration [============61% Complete========] Explicit time integration [============62% Complete========] Explicit time integration [============63% Complete========] Explicit time integration [============64% Complete========] Explicit time integration [=============65% Complete=======] Explicit time integration [=============66% Complete=======] Explicit time integration [=============67% Complete=======] Explicit time integration [=============68% Complete=======] Explicit time integration [=============69% Complete=======] Explicit time integration [==============70% Complete======] Explicit time integration [==============71% Complete======] Explicit time integration [==============72% Complete======] Explicit time integration [==============73% Complete======] Explicit time integration [==============74% Complete======] gration [=============66% Complete=======] Explicit time integration [=============67% Complete=======] Explicit time integration [=============68% Complete=======] Explicit time integration [=============69% Complete=======] Explicit time integration [==============70% Complete======] Explicit time integration [==============71% Complete======] Explicit time integration [==============72% Complete======] Explicit time integration [==============73% Complete======] Explicit time integration [==============74% Complete======] Explicit time integration [===============75% Complete=====] Explicit time integration [===============76% Complete=====] Explicit time integration [===============77% Complete=====] Explicit time integration [===============78% Complete=====] Explicit time integration [===============79% Complete=====] Explicit time integration [================80% Complete====] Explicit time integration [================81% Complete====] Explicit time integration [================82% Complete====] Explicit time integration [===============75% Complete=====] Explicit time integration [===============76% Complete=====] Explicit time integration [===============77% Complete=====] Explicit time integration [===============78% Complete=====] Explicit time integration [===============79% Complete=====] Explicit time integration [================80% Complete====] Explicit time integration [================81% Complete====] Explicit time integration [================82% Complete====] Explicit time integration [================83% Complete====] Explicit time integration [================84% Complete====] Explicit time integration [=================85% Complete===] Explicit time integration [=================86% Complete===] Explicit time integration [=================87% Complete===] Explicit time integration [=================88% Complete===] Explicit time integration [=================89% Complete===] Explicit time integration [==================90% Complete==] Explicit time integration [=============Explicit time integration [================83% Complete====] Explicit time integration [================84% Complete====] Explicit time integration [=================85% Complete===] Explicit time integration [=================86% Complete===] Explicit time integration [=================87% Complete===] Explicit time integration [=================88% Complete===] Explicit time integration [=================89% Complete===] Explicit time integration [==================90% Complete==] Explicit time integration [==================91% Complete==] Explicit time integration [==================92% Complete==] Explicit time integration [==================93% Complete==] Explicit time integration [==================94% Complete==] Explicit time integration [===================95% Complete=] Explicit time integration [===================96% Complete=] Explicit time integration [===================97% Complete=] Explicit time integration [===================98% Complete=] Explicit time integration [===================99% Complete=] Explicit time integration [===================100% Complete] 
+
+Memory Usage (Heap Alloc MB):
+                                         Min            Max            Ave
+  Zoltan Search Tree                 7.11208        7.24545        7.16246
+  Post Execute                       363.181        384.898        376.134
+
+Wallclock Time (seconds):
+                                        Min            Max            Ave
+  Total                             4.4e+03        4.4e+03        4.4e+03
+  Rebalance                           0.011          0.013          0.012
+  Output                                 13             14             13
+  Internal Force                    4.1e+03        4.3e+03        4.2e+03
+  Gather/Scatter                    1.4e+02        2.8e+02        2.1e+02
+  Apply Kinematic B.C.                  1.5             12            6.8
+  Apply Initial Conditions          0.00073        0.00093        0.00081
+  Apply Body Forces                    0.05           0.07          0.057
+
+
+Executing:
+   /usr/local/trilinos/bin/nem_slice -e -S  -l inertial -c -o tensile_test.g.nem -m mesh=4 tensile_test.g
+
+Beginning nem_slice execution.
+Input Mesh File = 'tensile_test.g
+Using 32-bit integer mode for decomposition...
+	total size of reverse connectivity array: 101,000 entries (800,600 bytes).
+	memory allocated...(0.0012537919999999758 seconds)
+	max of 10 elements per node
+Time to find surrounding elements: 0.0024872080000000185s
+The entire load balance took 0.7315155830000001 seconds.
+nem_slice version 4.19
+Performing an elemental load balance with the following parameters...
+Machine Description
+	architecture: mesh
+	dimension(s): 4
+	total number of processors: 4
+Load Balance Parameters
+	type: inertial
+	refinement: none
+Weighting Parameters
+	no weighting
+Miscellaneous Options
+	SPHERES are being treated as concentrated mass - connectivity exists
+	WARNING: side id error checks turned off
+ExodusII mesh information
+	title: cubit(tensile_test.g): 08/23/2013: 16:17:23
+	geometry dimension: 3
+	number of nodes: 16,524	number of elements: 12,625
+	number of element blocks: 3
+	number of node sets: 6	number of side sets: 0
+Time to read mesh parameters: 0.0037557500000000577s
+Time to read mesh: 0.0034607500000000124s
+Time to generate graph: 0.002580291999999984s
+===================Call Chaco===========================
+Parameter file `User_Params' not found; using default parameters.
+
+
+           Input and Parameter Values
+
+# vertices = 12625, # edges = 0
+Global method: Inertial
+Local method: None
+Partitioning target: 1-dimensional mesh of size 4
+Partitioning mode: Bisection
+Random seed: 1
+Active Parameters:
+  CHECK_INPUT = True
+  OUTPUT_METRICS = 2
+  MAKE_VWGTS = False
+  REFINE_MAP = False
+  REFINE_PARTITION = 0
+  INTERNAL_VERTICES = False
+  DEBUG_PARAMS = 2
+
+
+
+Starting to partition ...
+
+========================================================
+Time in Chaco: 0.005380916000000013s
+Time to generate load balance: 0.006647999999999987s
+Time for elemental categorization: 0.004274374999999941s
+Nodal categorization: 0.00029450000000008636s
+Find procs for border nodes: 4.4249999999967926e-05s
+Order elem cmaps: 0.00013058300000001744s
+Make cmaps consistent: 0.0001547080000000589s
+Time to generate load-balance maps: 0.0057210420000000095s
+Outputting load balance to file tensile_test.g.nem
+QA Record:
+	nem_slice
+	4.19
+	2026/10/02
+	05:19:25
+Time to write Nemesis file: 0.12948925s
+...nem_slice successful execution
+
+Executing:
+   /usr/local/trilinos/bin/nem_spread  tensile_test.g.pex
+
+nem_spread version 7.01 (2021/03/19)
+Using 4 byte integers and 8 byte floating point values.
+Reading the command file, tensile_test.g.pex
+
+Exodus file (tensile_test.g)
+	Title of file: 'cubit(tensile_test.g): 08/23/2013: 16:17:23'
+	Dimensionality of problem =              3
+	Number of nodes           =         16,524
+	Number of elements        =         12,625
+	Number of element blocks  =              3
+	Number of node sets       =              6
+	Number of side sets       =              0
+
+
+Start to read in and distribute the load balance info
+EXODUS II load-balance file: tensile_test.g.nem
+
+Finished distributing load balance info
+
+Load load balance information time: 0.024478333000000005 (sec.)
+
+Load exoII restart param info to each proc.
+
+Load restart parameters time: 0.0011901660000000203 (sec.)
+
+Load exoII mesh info to each proc.
+
+	Time to read element block IDs:            0.0014
+	Time to read node set IDs:                 0.0003
+	Time to extract element block information: 0.0011
+	Time to read nodal coordinates:            0.0021
+	Time to read element blocks:               0.0022
+	Time to read node sets:                    0.0025
+0..3
+Load mesh time: 0.065857833 (sec.)
+
+Write of parallel exodus complete
+The average run time was: 0.197534s
+...nem_spread successful execution
+DECOMP Successful Execution
+
+-- Peridigm
+-- version 1.5.0 (Dev)
+
+MPI initialized on 4 processors.
+
+Time step (seconds):
+  Stable time step    1.43213e-07
+  User time step      not provided
+  Safety factor       0.7
+  Time step           1.00249e-07
+
+Total number of time steps 18354
+
+=====91% Complete==] Explicit time integration [==================92% Complete==] Explicit time integration [==================93% Complete==] Explicit time integration [==================94% Complete==] Explicit time integration [===================95% Complete=] Explicit time integration [===================96% Complete=] Explicit time integration [===================97% Complete=] Explicit time integration [===================98% Complete=] Explicit time integration [===================99% Complete=] Explicit time integration [===================100% Complete] 
+
+Memory Usage (Heap Alloc MB):
+                                         Min            Max            Ave
+  Zoltan Search Tree                 7.11208        7.24545        7.16251
+  Post Execute                       363.181        384.897        376.134
+
+Wallclock Time (seconds):
+                                        Min            Max            Ave
+  Total                             4.5e+03        4.5e+03        4.5e+03
+  Rebalance                          0.0095          0.019          0.013
+  Output                                 13             13             13
+  Internal Force                    4.2e+03        4.3e+03        4.2e+03
+  Gather/Scatter                    1.5e+02        2.7e+02        2.1e+02
+  Apply Kinematic B.C.                  1.5             12            6.8
+  Apply Initial Conditions          9.7e-05        0.00019        0.00014
+  Apply Body Forces                   0.046          0.054          0.052
+
+Explicit time integration [0% Complete=====================] Explicit time integration [0% Complete=====================] Explicit time integration [1% Complete=====================] Explicit time integration [2% Complete=====================] Explicit time integration [3% Complete=====================] Explicit time integration [4% Complete=====================] Explicit time integration [=5% Complete====================] Explicit time integration [=6% Complete====================] Explicit time integration [=7% Complete====================] Explicit time integration [=8% Complete====================] Explicit time integration [=9% Complete====================] Explicit time integration [==10% Complete==================] Explicit time integration [==11% Complete==================] Explicit time integration [==12% Complete==================] Explicit time integration [==13% Complete==================] Explicit time integration [==14% Complete==================] Explicit time integration [===15% Complete=================] Explicit time integration [===16% Complete=================] Explicit time integration [===17% Complete=================] Explicit time integration [===18% Complete=================] Explicit time integration [===19% Complete=================] Explicit time integration [====20% Complete================] Explicit time integration [====21% Complete================] Explicit time integration [====22% Complete================] Explicit time integration [====23% Complete================] Explicit time integration [====24% Complete================] Explicit time integration [=====25% Complete===============] Explicit time integration [=====26% Complete===============] Explicit time integration [=====27% Complete===============] Explicit time integration [=====28% Complete===============] Explicit time integration [=====29% Complete===============] Explicit time integration [======30% Complete==============] Explicit time integration [======31% Complete==============] Explicit time integration [======32% Complete==============] Explicit time integration [======33% Complete==============] Explicit time integration [======34% Complete==============] Explicit time integration [=======35% Complete=============] Explicit time integration [=======36% Complete=============] Explicit time integration [=======37% Complete=============] Explicit time integration [=======38% Complete=============] Explicit time integration [=======39% Complete=============] Explicit time integration [========40% Complete============] Explicit time integration [========41% Complete============] Explicit time integration [========42% Complete============] Explicit time integration [========43% Complete============] Explicit time integration [========44% Complete============] Explicit time integration [=========45% Complete===========] Explicit time integration [=========46% Complete===========] Explicit time integration [=========47% Complete===========] Explicit time integration [=========48% Complete===========] Explicit time integration [=========49% Complete===========] Explicit time integration [==========50% Complete==========] Explicit time integration [==========51% Complete==========] Explicit time integration [==========52% Complete==========] Explicit time integration [==========53% Complete==========] Explicit time integration [==========54% Complete==========] Explicit time integration [===========55% Complete=========] Explicit time integration [===========56% Complete=========] Explicit time integration [===========57% Complete=========] Explicit time integration [===========58% Complete=========] Explicit time integration [===========59% Complete=========] Explicit time integration [============60% Complete========] Explicit time integration [============61% Complete========] Explicit time integration [============62% Complete========] Explicit time integration [============63% Complete========] Explicit time integration [============64% Complete========] Explicit time integration [=============65% Complete=======] Explicit time integration [=============66% Complete=======] Explicit time integration [=============67% Complete=======] Explicit time integration [=============68% Complete=======] Explicit time integration [=============69% Complete=======] Explicit time integration [==============70% Complete======] Explicit time integration [==============71% Complete======] Explicit time integration [==============72% Complete======] Explicit time integration [==============73% Complete======] Explicit time integration [==============74% Complete======] Explicit time integration [===============75% Complete=====] Explicit time integration [===============76% Complete=====] Explicit time integration [===============77% Complete=====] Explicit time integration [===============78% Complete=====] Explicit time integration [===============79% Complete=====] Explicit time integration [================80% Complete====] Explicit time integration [================81% Complete====] Explicit time integration [================82% Complete====] Explicit time integration [================83% Complete====] Explicit time integration [================84% Complete====] Explicit time integration [=================85% Complete===] Explicit time integration [=================86% Complete===] Explicit time integration [=================87% Complete===] Explicit time integration [=================88% Complete===] Explicit time integration [=================89% Complete===] Explicit time integration [==================90% Complete==] Explicit time integration [==================91% Complete==] Explicit time integration [==================92% Complete==] Explicit time integration [==================93% Complete==] Explicit time integration [==================94% Complete==] Explicit time integration [===================95% Complete=] Explicit time integration [===================96% Complete=] Explicit time integration [===================97% Complete=] Explicit time integration [===================98% Complete=] Explicit time integration [===================99% Complete=] Explicit time integration [===================100% Complete] 
+
+Memory Usage (Heap Alloc MB):
+                                         Min            Max            Ave
+  Zoltan Search Tree                 7.11208        7.24545        7.16247
+  Post Execute                       363.181        384.898        376.134
+
+Wallclock Time (seconds):
+                                        Min            Max            Ave
+  Total                             3.1e+03        3.1e+03        3.1e+03
+  Rebalance                          0.0059         0.0067         0.0063
+  Output                                7.6            7.8            7.7
+  Internal Force                    2.9e+03          3e+03        2.9e+03
+  Gather/Scatter                         24        1.9e+02        1.3e+02
+  Apply Kinematic B.C.                 0.79            7.6              4
+  Apply Initial Conditions          6.4e-05        0.00013         0.0001
+  Apply Body Forces                   0.031          0.052          0.038
+

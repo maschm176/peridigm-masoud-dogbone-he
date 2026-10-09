@@ -51,6 +51,7 @@
 #include "Peridigm_BlockBase.hpp"
 #include "Peridigm_Material.hpp"
 #include "Peridigm_DamageModel.hpp"
+#include "Peridigm_DampingModel.hpp"
 
 namespace PeridigmNS {
 
@@ -109,6 +110,21 @@ namespace PeridigmNS {
       return blockParams.get<std::string>("Damage Model", "None");
     }
 
+    //! Get the damping model
+    Teuchos::RCP<const PeridigmNS::DampingModel> getDampingModel(){
+      return dampingModel;
+    }
+
+    //! Set the damping model
+    void setDampingModel(Teuchos::RCP<PeridigmNS::DampingModel> dampingModel_){
+      dampingModel = dampingModel_;
+    }
+
+    //! Get the damping model name
+    std::string getDampingModelName(){
+      return blockParams.get<std::string>("Damping Model", "None");
+    }
+
     //! Initialize the material model
     void initializeMaterialModel(double timeStep = 1.0);
 
@@ -122,6 +138,9 @@ namespace PeridigmNS {
 
     //! The damage model
     Teuchos::RCP<PeridigmNS::DamageModel> damageModel;
+
+    //! The damping model
+    Teuchos::RCP<PeridigmNS::DampingModel> dampingModel;
   };
 
   class DataManagerSynchronizer {

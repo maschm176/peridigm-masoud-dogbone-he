@@ -1,0 +1,183 @@
+Peridigm:
+
+#     Dogbone specimen calibration template: standard Isotropic Hardening
+#     HYPOELASTIC Correspondence + Voce hardening + Brozzo damage (same as
+#     voce_hypoelastic_brozzo_input_template.yaml), PLUS a new optional
+#     "Bond-Level Micro-Damping" model (see
+#     src/damage/Peridigm_BondLevelMicroDampingModel.cpp/.hpp) added to test
+#     whether artificial energy dissipation fixes the long-standing
+#     post-fracture stress-strain oscillation.
+#
+#     Why: four separate attempts to fix the oscillation by changing how
+#     damage gets applied to bonds or which material kinematics are used
+#     (Contact, Hard Cutoff, Fracture Plane Cutoff, Bond Associated
+#     Correspondence -- see CLAUDE.md) all failed or made it worse. The
+#     common thread: none of them give the simulation any way to ABSORB the
+#     kinetic energy released once bonds start failing. This model adds
+#     exactly that, in the most physically targeted way available: for every
+#     bonded pair (i,j), a force proportional to their RELATIVE velocity,
+#         f_i -= c * (v_i - v_j) * Volume_j
+#     added directly into Force_Density after the material's own force
+#     computation. Because it depends only on RELATIVE velocity, it is
+#     exactly zero under rigid-body translation/rotation (every bonded pair
+#     moves together), so it should not resist the overall prescribed
+#     grip motion or distort the already-calibrated pre-fracture fit -- it
+#     only removes energy from genuine internal/relative motion, i.e. the
+#     post-fracture ringing itself. The contribution from each bond is also
+#     scaled by (1 - Bond_Damage), so damping fades out at the same rate
+#     bond stiffness does, rather than adding artificial coupling across
+#     bonds the damage model has already broken.
+#
+#     Choosing a starting "Damping Coefficient": this is a new, previously
+#     untuned parameter with no prior value to warm-start from. A rough
+#     order-of-magnitude bound comes from two independent directions that
+#     agree:
+#       (1) Critical-damping analogy for an isolated bonded pair: treating
+#           the correspondence material's local stiffness as
+#           k ~ E*Vol_j/horizon^2 (E from Bulk/Shear Modulus, ~1.95e12
+#           dyn/cm^2), with Vol_j ~1e-4 cm^3 (element size implied by the
+#           stable time step / wave speed) and nodal mass m ~ rho*Vol_i
+#           ~7.8e-4 g, critical damping comes out to c_crit ~2.3e7 (CGS:
+#           g/(cm^6*s), consistent with the unit balance of
+#           c*(cm/s)*(cm^3) = force/volume = dyn/cm^3).
+#       (2) Explicit-integration stability for the damping term alone
+#           (decay-rate*dt < ~2): c_max ~ m/(dt*Vol_j) ~7.8e7, same order.
+#     Starting value below, 1.0e6, sits comfortably below both estimates
+#     (~1-4%) -- conservative enough to avoid destabilizing the solver on
+#     the first try, while large enough to plausibly produce a visible
+#     effect; to be tuned empirically (same practice as every other free
+#     parameter in this project, e.g. Brozzo's d1/d2) once this is confirmed
+#     stable and its qualitative effect on the oscillation is checked.
+#
+#     Units are CGS, matching the mesh, same as every other template here.
+
+  Discretization:
+      Type: "Exodus"
+      Input Mesh File: "tensile_test.g"
+
+  Materials:
+      My Material:
+          Material Model: "Isotropic Hardening Hypoelastic Correspondence"
+          Density: 7.8
+          Bulk Modulus: 1.30e12
+          Shear Modulus: 7.8e11
+          Hardening Rule: "Saturation type exponential"
+          Initial Yield Stress: {InitialYieldStress}
+          Saturated Yield Stress: {SaturatedYieldStress}
+          Exponential Constant: {ExponentialConstant}
+          Linear Constant: {LinearConstant}
+          Actual Horizon: 0.189
+
+  Damage Models:
+      My Damage Model:
+          Damage Model: "Brozzo"
+          Damage Parameter 1: {DamageParameter1}
+          Damage Parameter 2: {DamageParameter2}
+          Threshold Damage: {ThresholdDamage}
+
+  Damping Models:
+      My Damping Model:
+          Damping Model: "Bond-Level Micro-Damping"
+          Damping Coefficient: {DampingCoefficient}
+
+  Blocks:
+      My Block:
+          Block Names: "block_1 block_2 block_3"
+          Material: "My Material"
+          Damage Model: "My Damage Model"
+          Damping Model: "My Damping Model"
+          Horizon: 0.236
+
+  Boundary Conditions:
+      Prescribed Displacement Bottom:
+          Type: "Prescribed Displacement"
+          Node Set: "nodelist_1"
+          Coordinate: "y"
+          Value: "y*45.0*t"
+      Prescribed Displacement Top:
+          Type: "Prescribed Displacement"
+          Node Set: "nodelist_2"
+          Coordinate: "y"
+          Value: "y*45.0*t"
+      Prescribed Displacement Fix Bottom Rigid Body Motion In X:
+          Type: "Prescribed Displacement"
+          Node Set: "nodelist_3"
+          Coordinate: "x"
+          Value: "0.0"
+      Prescribed Displacement Fix Bottom Rigid Body Motion In Z:
+          Type: "Prescribed Displacement"
+          Node Set: "nodelist_4"
+          Coordinate: "z"
+          Value: "0.0"
+      Prescribed Displacement Fix Top Rigid Body Motion In X:
+          Type: "Prescribed Displacement"
+          Node Set: "nodelist_5"
+          Coordinate: "x"
+          Value: "0.0"
+      Prescribed Displacement Fix Top Rigid Body Motion In Z:
+          Type: "Prescribed Displacement"
+          Node Set: "nodelist_6"
+          Coordinate: "z"
+          Value: "0.0"
+
+  Solver:
+      Verbose: false
+      Initial Time: 0.0
+      Final Time: 1.84e-3
+      Verlet:
+          Safety Factor: 0.7
+
+  Compute Class Parameters:
+      Strain Gage Top Initial Position:
+          Compute Class: "Nearest_Point_Data"
+          X: 0.0317
+          Y: 1.238
+          Z: 0.0
+          Variable: "Model_Coordinates"
+          Output Label: "Gage_Top_Initial_Position"
+      Strain Gage Bottom Initial Position:
+          Compute Class: "Nearest_Point_Data"
+          X: 0.0317
+          Y: -1.238
+          Z: 0.0
+          Variable: "Model_Coordinates"
+          Output Label: "Gage_Bottom_Initial_Position"
+      Strain Gage Top Displacement:
+          Compute Class: "Nearest_Point_Data"
+          X: 0.0317
+          Y: 1.238
+          Z: 0.0
+          Variable: "Displacement"
+          Output Label: "Gage_Top_Displacement"
+      Strain Gage Bottom Displacement:
+          Compute Class: "Nearest_Point_Data"
+          X: 0.0317
+          Y: -1.238
+          Z: 0.0
+          Variable: "Displacement"
+          Output Label: "Gage_Bottom_Displacement"
+      Top Reaction Force:
+          Compute Class: "Block_Data"
+          Calculation Type: "Sum"
+          Block: "block_3"
+          Variable: "Force"
+          Output Label: "Top_Reaction_Force"
+      Bottom Reaction Force:
+          Compute Class: "Block_Data"
+          Calculation Type: "Sum"
+          Block: "block_1"
+          Variable: "Force"
+          Output Label: "Bottom_Reaction_Force"
+
+  Output:
+      Output File Type: "ExodusII"
+      Output Filename: "output"
+      Output Frequency: 20
+      Output Variables:
+          Displacement: true
+          Force: true
+          Gage_Top_Displacement: true
+          Gage_Bottom_Displacement: true
+          Top_Reaction_Force: true
+          Bottom_Reaction_Force: true
+          Damage: true

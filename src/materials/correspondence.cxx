@@ -563,7 +563,9 @@ template<typename ScalarT>
 int invertAndCond(const ScalarT* Min,
                   ScalarT *Mout,
                   const int size,
-                  const double thresVal)
+                  const double thresVal,
+                  ScalarT* minSingularValue,
+                  ScalarT* maxSingularValue)
 {
   //    double conditioning;
   double v[size*size];
@@ -580,6 +582,17 @@ int invertAndCond(const ScalarT* Min,
     Mout[i]=0.0;
   }
   dsvd(u, size, size, w, v);
+
+  if(minSingularValue != 0 || maxSingularValue != 0){
+    double wMin = w[0];
+    double wMax = w[0];
+    for(k=1 ; k < size ; k++){
+      if(w[k] < wMin) wMin = w[k];
+      if(w[k] > wMax) wMax = w[k];
+    }
+    if(minSingularValue != 0) *minSingularValue = wMin;
+    if(maxSingularValue != 0) *maxSingularValue = wMax;
+  }
 
   for(i=0 ; i < size ; i++ ){
     for(j=0 ; j < size ; j++ ){
@@ -613,7 +626,9 @@ int computeGradientWeights
     const double* flyingPointFlag,
     const double* bondDamage,
     const int* neighborhoodList,
-    int numPoints
+    int numPoints,
+    ScalarT* shapeTensorMinSingularValue,
+    ScalarT* shapeTensorMaxSingularValue
 )
 {
   //Using RK Implicit Gradient (Same as PD Gradient Operator) to construct
@@ -729,7 +744,14 @@ int computeGradientWeights
 
       // calculate the inverse of the moment matrix (this must be a full rank matrix)
       //inversionReturnCode = computeSymmetrixMatrixInverse(M, Qdim, Minv);
-      inversionReturnCode = invertAndCond(M, Minv, Qdim, thresVal);
+      {
+        ScalarT minSV, maxSV;
+        ScalarT* minSVPtr = (shapeTensorMinSingularValue != 0) ? &minSV : 0;
+        ScalarT* maxSVPtr = (shapeTensorMaxSingularValue != 0) ? &maxSV : 0;
+        inversionReturnCode = invertAndCond(M, Minv, Qdim, thresVal, minSVPtr, maxSVPtr);
+        if(shapeTensorMinSingularValue != 0) shapeTensorMinSingularValue[iID] = minSV;
+        if(shapeTensorMaxSingularValue != 0) shapeTensorMaxSingularValue[iID] = maxSV;
+      }
 
       if(inversionReturnCode > 0)
         returnCode = inversionReturnCode;
@@ -794,11 +816,14 @@ int computeGradientWeights
     }
     else{
       // adjust the neighborhood pointer for the next point
-      numNeighbors = *neighborListPtr; 
+      numNeighbors = *neighborListPtr;
       neighborListPtr += numNeighbors+1;
 
-      phi1 += numNeighbors; phi2 += numNeighbors; phi3 += numNeighbors; 
-      bondDamagePtr += numNeighbors; 
+      phi1 += numNeighbors; phi2 += numNeighbors; phi3 += numNeighbors;
+      bondDamagePtr += numNeighbors;
+
+      if(shapeTensorMinSingularValue != 0) shapeTensorMinSingularValue[iID] = 0.0;
+      if(shapeTensorMaxSingularValue != 0) shapeTensorMaxSingularValue[iID] = 0.0;
     }
   }
 
@@ -4520,7 +4545,9 @@ template int computeGradientWeights<double>
     const double* flyingPointFlag,
     const double* bondDamage,
     const int* neighborhoodList,
-    int numPoints
+    int numPoints,
+    double* shapeTensorMinSingularValue,
+    double* shapeTensorMaxSingularValue
 );
 
 template int Invert3by3Matrix<double>
@@ -4542,7 +4569,9 @@ template int invertAndCond<double>
     const double* Min,
     double *Mout,
     const int size,
-    const double thresVal
+    const double thresVal,
+    double* minSingularValue,
+    double* maxSingularValue
 );
 
 template int computeShapeTensorInverseAndApproximateDeformationGradient<double>

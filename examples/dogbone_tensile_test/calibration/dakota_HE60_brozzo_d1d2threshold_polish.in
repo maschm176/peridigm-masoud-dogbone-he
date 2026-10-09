@@ -1,0 +1,40 @@
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE60_brozzo_d1d2threshold_polish.dat'
+
+method
+  coliny_pattern_search
+    max_function_evaluations = 15
+
+variables
+  # Joint d1/d2/ThresholdDamage polish for HE_60, warm-started at the best
+  # point found by the two-stage threshold sweep: d1=3.5, d2=0.99,
+  # ThresholdDamage=0.19 (obj=0.0540, fracture_strain=7.80% vs real target
+  # 7.68%). d1/d2 bounds mirror every prior joint polish in this project
+  # (d1 upper capped at 5.0, the HE_0/HE_30 safe ceiling under a different
+  # threshold -- not yet remeasured for HE_60's much lower threshold
+  # regime). ThresholdDamage bounds centered on 0.19, wide enough to explore
+  # both directions given the sweep showed a clean single-peaked trend
+  # between 0.1 and 0.3.
+  continuous_design = 3
+    descriptors                    'DamageParameter1'  'DamageParameter2'  'ThresholdDamage'
+    initial_point                   3.5                 0.99                0.19
+    lower_bounds                    2.0                 0.75                0.05
+    upper_bounds                    5.0                 1.15                0.35
+  continuous_state = 4
+    descriptors                    'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'
+    initial_state                   9.77e9                1.35e10                 22.0                   2.0e8
+
+interface
+  # Serial (no concurrency) from the start -- see the concurrency lesson
+  # learned during HE_30's joint polish (CLAUDE.md).
+  analysis_drivers = 'driver_HE60_brozzo_d1d2threshold_polish.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

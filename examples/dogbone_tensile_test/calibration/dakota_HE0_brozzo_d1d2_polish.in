@@ -1,0 +1,38 @@
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE0_brozzo_d1d2_polish.dat'
+
+method
+  coliny_pattern_search
+    max_function_evaluations = 10
+
+variables
+  # Joint d1/d2 polish, warm-started at the best result from the
+  # independent d1 sweep (d1=3.5, d2=0.95 fixed at the paper's own value,
+  # obj=0.0715). Bounds bracket the two best d1 sweep points (3.0/3.5) with
+  # a little headroom, and a modest window around d2's original value,
+  # since d1 and d2 are coupled in the same rate-law expression
+  # (D_dot = d1*(ratio)^d2*eqps_dot) -- tuning them jointly can find a
+  # combination neither 1-D sweep could see. ThresholdDamage=0.85 fixed
+  # (already shown not to matter until D actually approaches it).
+  continuous_design = 2
+    descriptors                    'DamageParameter1'  'DamageParameter2'
+    initial_point                   3.5                 0.95
+    lower_bounds                    3.0                 0.75
+    upper_bounds                    4.5                 1.15
+  continuous_state = 5
+    descriptors                    'ThresholdDamage'  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'
+    initial_state                   0.85               9.77e9                1.35e10                 22.0                   2.0e8
+
+interface
+  analysis_drivers = 'driver_HE0_brozzo_d1d2_polish.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+  asynchronous evaluation_concurrency = 2
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

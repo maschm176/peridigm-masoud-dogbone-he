@@ -1,0 +1,124 @@
+Peridigm:
+
+#     Dogbone specimen (examples/tensile_test/tensile_test.g), parameterized
+#     for DAKOTA calibration of plasticity parameters (bond-based Elastic
+#     Plastic Hardening). Units are CGS, matching the mesh (see
+#     examples/tensile_test/tensile_test.jou -- #{Units("cgs")}):
+#       mass g, length cm, time s, force dyne, pressure dyne/cm^2
+#     Gage tracking / reaction-force compute classes reused verbatim from
+#     examples/tensile_test/tensile_test.yaml (already validated for this
+#     mesh).
+
+  Discretization:
+      Type: "Exodus"
+      Input Mesh File: "tensile_test.g"
+
+  Materials:
+      My Material:
+          Material Model: "Elastic Plastic Hardening"
+          Density: 7.8
+          Bulk Modulus: 1.30e12
+          Shear Modulus: 7.8e11
+          Yield Stress: 2.5e9
+          Hardening Modulus: 1.0e10
+
+  Blocks:
+      My Block:
+          Block Names: "block_1 block_2 block_3"
+          Material: "My Material"
+          Horizon: 0.16
+
+  Boundary Conditions:
+      Prescribed Displacement Bottom:
+          Type: "Prescribed Displacement"
+          Node Set: "nodelist_1"
+          Coordinate: "y"
+          Value: "y*0.18*t"
+      Prescribed Displacement Top:
+          Type: "Prescribed Displacement"
+          Node Set: "nodelist_2"
+          Coordinate: "y"
+          Value: "y*0.18*t"
+      Prescribed Displacement Fix Bottom Rigid Body Motion In X:
+          Type: "Prescribed Displacement"
+          Node Set: "nodelist_3"
+          Coordinate: "x"
+          Value: "0.0"
+      Prescribed Displacement Fix Bottom Rigid Body Motion In Z:
+          Type: "Prescribed Displacement"
+          Node Set: "nodelist_4"
+          Coordinate: "z"
+          Value: "0.0"
+      Prescribed Displacement Fix Top Rigid Body Motion In X:
+          Type: "Prescribed Displacement"
+          Node Set: "nodelist_5"
+          Coordinate: "x"
+          Value: "0.0"
+      Prescribed Displacement Fix Top Rigid Body Motion In Z:
+          Type: "Prescribed Displacement"
+          Node Set: "nodelist_6"
+          Coordinate: "z"
+          Value: "0.0"
+
+  Solver:
+      Verbose: false
+      Initial Time: 0.0
+      Final Time: 1.0
+      QuasiStatic:
+          Number of Load Steps: 10
+          Absolute Tolerance: 1.0e5
+          Maximum Solver Iterations: 30
+
+  Compute Class Parameters:
+      Strain Gage Top Initial Position:
+          Compute Class: "Nearest_Point_Data"
+          X: 0.0317
+          Y: 1.238
+          Z: 0.0
+          Variable: "Model_Coordinates"
+          Output Label: "Gage_Top_Initial_Position"
+      Strain Gage Bottom Initial Position:
+          Compute Class: "Nearest_Point_Data"
+          X: 0.0317
+          Y: -1.238
+          Z: 0.0
+          Variable: "Model_Coordinates"
+          Output Label: "Gage_Bottom_Initial_Position"
+      Strain Gage Top Displacement:
+          Compute Class: "Nearest_Point_Data"
+          X: 0.0317
+          Y: 1.238
+          Z: 0.0
+          Variable: "Displacement"
+          Output Label: "Gage_Top_Displacement"
+      Strain Gage Bottom Displacement:
+          Compute Class: "Nearest_Point_Data"
+          X: 0.0317
+          Y: -1.238
+          Z: 0.0
+          Variable: "Displacement"
+          Output Label: "Gage_Bottom_Displacement"
+      Top Reaction Force:
+          Compute Class: "Block_Data"
+          Calculation Type: "Sum"
+          Block: "block_3"
+          Variable: "Force"
+          Output Label: "Top_Reaction_Force"
+      Bottom Reaction Force:
+          Compute Class: "Block_Data"
+          Calculation Type: "Sum"
+          Block: "block_1"
+          Variable: "Force"
+          Output Label: "Bottom_Reaction_Force"
+
+  Output:
+      Output File Type: "ExodusII"
+      Output Filename: "output"
+      Output Frequency: 5
+      Output Variables:
+          Displacement: true
+          Force: true
+          Gage_Top_Displacement: true
+          Gage_Bottom_Displacement: true
+          Top_Reaction_Force: true
+          Bottom_Reaction_Force: true

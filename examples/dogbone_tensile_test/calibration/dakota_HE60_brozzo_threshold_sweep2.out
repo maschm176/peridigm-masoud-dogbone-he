@@ -1,0 +1,133 @@
+Dakota version 6.24 released May 15 2026.
+Repository revision 1ab1c9924 (2026-05-11) built May 11 2026 11:08:44.
+Running MPI Dakota executable in serial mode.
+Start time: Mon Oct  5 02:26:05 2026
+
+------------------
+Begin Dakota input
+------------------
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE60_brozzo_threshold_sweep2.dat'
+
+method
+  list_parameter_study
+    # Finer follow-up to the first HE_60 threshold sweep: 0.3->11.05% frac,
+    # 0.2->8.09% frac, 0.1->5.49% frac (real target 7.68%) -- the optimum
+    # sits between 0.1 and 0.2, closer to 0.2. Linear interpolation on the
+    # 0.1-0.2 slope (26 points of fracture strain per unit threshold)
+    # suggests ~0.184. Bracketing 0.19/0.18/0.17 to pin it down.
+    list_of_points = 0.19  0.18  0.17
+
+variables
+  continuous_design = 1
+    descriptors 'ThresholdDamage'
+  continuous_state = 6
+    descriptors      'DamageParameter1'  'DamageParameter2'  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'
+    initial_state     3.5                 0.99                9.77e9                1.35e10                 22.0                   2.0e8
+
+interface
+  # Serial (no concurrency) from the start -- see the concurrency lesson
+  # learned during HE_30's joint polish (CLAUDE.md).
+  analysis_drivers = 'driver_HE60_brozzo_threshold_sweep2.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians
+
+----------------
+End Dakota input
+----------------
+
+Using Dakota parser: standard
+Writing new restart file 'dakota.rst'.
+
+>>>>> Executing environment.
+
+>>>>> Running list_parameter_study iterator.
+
+List parameter study for 3 samples
+
+
+---------------------
+Begin Evaluation    1
+---------------------
+Parameters for evaluation 1:
+                      1.9000000000e-01 ThresholdDamage
+                      3.5000000000e+00 DamageParameter1
+                      9.9000000000e-01 DamageParameter2
+                      9.7700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+
+blocking fork: driver_HE60_brozzo_threshold_sweep2.sh params.in.1 results.out.1
+
+Active response data for evaluation 1:
+Active set vector = { 1 }
+                      5.3990589634e-02 obj_fn_1
+
+
+
+---------------------
+Begin Evaluation    2
+---------------------
+Parameters for evaluation 2:
+                      1.8000000000e-01 ThresholdDamage
+                      3.5000000000e+00 DamageParameter1
+                      9.9000000000e-01 DamageParameter2
+                      9.7700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+
+blocking fork: driver_HE60_brozzo_threshold_sweep2.sh params.in.2 results.out.2
+
+Active response data for evaluation 2:
+Active set vector = { 1 }
+                      6.1871857070e-02 obj_fn_1
+
+
+
+---------------------
+Begin Evaluation    3
+---------------------
+Parameters for evaluation 3:
+                      1.7000000000e-01 ThresholdDamage
+                      3.5000000000e+00 DamageParameter1
+                      9.9000000000e-01 DamageParameter2
+                      9.7700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+
+blocking fork: driver_HE60_brozzo_threshold_sweep2.sh params.in.3 results.out.3
+
+Active response data for evaluation 3:
+Active set vector = { 1 }
+                      9.7450820098e-02 obj_fn_1
+
+
+<<<<< Function evaluation summary: 3 total (3 new, 0 duplicate)
+<<<<< Best parameters          =
+                      1.9000000000e-01 ThresholdDamage
+                      3.5000000000e+00 DamageParameter1
+                      9.9000000000e-01 DamageParameter2
+                      9.7700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+<<<<< Best objective function  =
+                      5.3990589634e-02
+<<<<< Best evaluation ID: 1
+
+<<<<< Iterator list_parameter_study completed.
+<<<<< Environment execution completed.
+DAKOTA execution time in seconds:
+  Total CPU        =   0.048981 [parent =   0.049033, child =   -5.2e-05]
+  Total wall clock =    9196.12

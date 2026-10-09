@@ -1,0 +1,32 @@
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE0_brozzo_d1_sweep.dat'
+
+method
+  list_parameter_study
+    # Coarse log-spaced d1 sweep, d2=0.95 and ThresholdDamage=0.85 fixed
+    # (paper's own d2, and the lowest threshold we already ruled out
+    # mattering on its own). Paper's own d1=0.76 produced zero fracture;
+    # stepping up by roughly 2x, 4x, 8x, 16x to find where damage starts
+    # actually accumulating enough to fracture the specimen.
+    list_of_points = 1.5  3.0  6.0  12.0
+
+variables
+  continuous_design = 1
+    descriptors 'DamageParameter1'
+  continuous_state = 6
+    descriptors      'DamageParameter2'  'ThresholdDamage'  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'
+    initial_state     0.95                0.85               9.77e9                1.35e10                 22.0                   2.0e8
+
+interface
+  analysis_drivers = 'driver_HE0_brozzo_d1_sweep.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+  asynchronous evaluation_concurrency = 2
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

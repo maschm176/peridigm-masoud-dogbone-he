@@ -81,6 +81,7 @@ namespace PeridigmNS {
     virtual std::vector<int> FieldIdsForSynchronizationAfterInitialize() const {
       std::vector<int> fieldIds;
       fieldIds.push_back(m_weightedVolumeFieldId);
+      fieldIds.push_back(m_jacobianDeterminantFieldId);
       return fieldIds;
     }
 
@@ -92,6 +93,8 @@ namespace PeridigmNS {
       fieldIds.push_back(m_deformationGradientZFieldId);
       fieldIds.push_back(m_deformationGradientDotXFieldId);
       fieldIds.push_back(m_deformationGradientDotYFieldId);
+      fieldIds.push_back(m_jacobianDeterminantFieldId);
+      fieldIds.push_back(m_undamagedWeightedVolumeFieldId);
       fieldIds.push_back(m_deformationGradientDotZFieldId);
       return fieldIds;
     }
@@ -227,6 +230,8 @@ namespace PeridigmNS {
     int m_bondLevelDeformationGradientInvZYFieldId;
     int m_bondLevelDeformationGradientInvZZFieldId;
     int m_bondLevelJacobianDeterminantFieldId;
+    int m_jacobianDeterminantFieldId;
+    int m_undamagedWeightedVolumeFieldId;
     int m_stressIntegralFieldId;
   };
 }

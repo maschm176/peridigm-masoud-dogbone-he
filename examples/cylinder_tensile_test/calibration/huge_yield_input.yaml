@@ -1,0 +1,62 @@
+Peridigm:
+
+#     Coarse cylindrical tensile test, parameterized for DAKOTA calibration
+#     of plasticity parameters (bond-based Elastic Plastic Hardening).
+
+  Discretization:
+      Type: "Text File"
+      Input Mesh File: "cylinder_tensile_test.txt"
+
+  Materials:
+      My Material:
+          Material Model: "Elastic Plastic Hardening"
+          Density: 7800.0
+          Bulk Modulus: 130.0e9
+          Shear Modulus: 78.0e9
+          Yield Stress: 1.0e13
+          Hardening Modulus: 1.0e9
+
+  Blocks:
+      My Block:
+          Block Names: "block_1"
+          Material: "My Material"
+          Horizon: 0.0104
+
+  Boundary Conditions:
+      Node Set Bottom: "bottom_nodeset.txt"
+      Node Set Top: "top_nodeset.txt"
+      Fix Bottom X:
+          Type: "Prescribed Displacement"
+          Node Set: "Node Set Bottom"
+          Coordinate: "x"
+          Value: "0.0"
+      Fix Bottom Y:
+          Type: "Prescribed Displacement"
+          Node Set: "Node Set Bottom"
+          Coordinate: "y"
+          Value: "0.0"
+      Fix Bottom Z:
+          Type: "Prescribed Displacement"
+          Node Set: "Node Set Bottom"
+          Coordinate: "z"
+          Value: "0.0"
+      Pull Top Z:
+          Type: "Prescribed Displacement"
+          Node Set: "Node Set Top"
+          Coordinate: "z"
+          Value: "0.3*t"
+
+  Solver:
+      Verbose: false
+      Initial Time: 0.0
+      Final Time: 1.0e-3
+      Verlet:
+          Safety Factor: 0.7
+
+  Output:
+      Output File Type: "ExodusII"
+      Output Filename: "output"
+      Output Frequency: 20
+      Output Variables:
+          Displacement: true
+          Force: true

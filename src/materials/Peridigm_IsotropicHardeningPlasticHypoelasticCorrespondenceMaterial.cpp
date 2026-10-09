@@ -57,6 +57,7 @@ PeridigmNS::IsotropicHardeningPlasticHypoelasticCorrespondenceMaterial::Isotropi
   : HypoelasticCorrespondenceMaterial(params),
     m_yieldStress(0.0),
     m_hardeningStrainConstant(0.0), m_hardeningExponent(0.0),
+    m_initialYieldStress(0.0), m_saturatedYieldStress(0.0), m_exponentialConstant(0.0), m_linearConstant(0.0),
     m_unrotatedRateOfDeformationFieldId(-1),
     m_unrotatedCauchyStressFieldId(-1),
     m_vonMisesStressFieldId(-1), 
@@ -81,14 +82,30 @@ PeridigmNS::IsotropicHardeningPlasticHypoelasticCorrespondenceMaterial::Isotropi
     m_bondLevelUnrotatedCauchyStressZXFieldId(-1),
     m_bondLevelUnrotatedCauchyStressZYFieldId(-1),
     m_bondLevelUnrotatedCauchyStressZZFieldId(-1),
-    m_bondLevelVonMisesStressFieldId(-1), 
+    m_bondLevelVonMisesStressFieldId(-1),
     m_bondLevelEquivalentPlasticStrainFieldId(-1),
-    m_bondLevelStressTriaxialityFieldId(-1)
+    m_bondLevelStressTriaxialityFieldId(-1),
+    m_bondLevelMaxPrincipalStressFieldId(-1)
 {
 
-  m_yieldStress = params.get<double>("Yield Stress");
-  m_hardeningStrainConstant = params.get<double>("Hardening Characteristic Strain");
-  m_hardeningExponent = params.get<double>("Hardening Exponent");
+  m_hardeningRule = params.isParameter("Hardening Rule") ? params.get<string>("Hardening Rule") : "Power-law";
+  if(m_hardeningRule == "Power-law"){
+    m_yieldStress = params.get<double>("Yield Stress");
+    m_hardeningStrainConstant = params.get<double>("Hardening Characteristic Strain");
+    m_hardeningExponent = params.get<double>("Hardening Exponent");
+  }
+  else if(m_hardeningRule == "Saturation type exponential"){
+    m_initialYieldStress = params.get<double>("Initial Yield Stress");
+    m_saturatedYieldStress = params.get<double>("Saturated Yield Stress");
+    m_exponentialConstant = params.get<double>("Exponential Constant");
+    m_linearConstant = params.get<double>("Linear Constant");
+  }
+  else {
+    string invalidHardeningRule("\n**** Unrecognized hardening rule type: ");
+    invalidHardeningRule += m_hardeningRule;
+    invalidHardeningRule += ", must be \"Power-law\", or \"Saturation type exponential.\n";
+    TEUCHOS_TEST_FOR_EXCEPT_MSG(true, invalidHardeningRule);
+  }
 
   PeridigmNS::FieldManager& fieldManager = PeridigmNS::FieldManager::self();
   m_unrotatedRateOfDeformationFieldId = fieldManager.getFieldId(PeridigmField::ELEMENT, PeridigmField::FULL_TENSOR, PeridigmField::CONSTANT, "Unrotated_Rate_Of_Deformation");
@@ -126,6 +143,7 @@ PeridigmNS::IsotropicHardeningPlasticHypoelasticCorrespondenceMaterial::Isotropi
   m_bondLevelVonMisesStressFieldId               = fieldManager.getFieldId(PeridigmField::BOND, PeridigmField::SCALAR, PeridigmField::CONSTANT, "Bond_Von_Mises_Stress");
   m_bondLevelEquivalentPlasticStrainFieldId      = fieldManager.getFieldId(PeridigmField::BOND, PeridigmField::SCALAR, PeridigmField::TWO_STEP, "Bond_Equivalent_Plastic_Strain");
   m_bondLevelStressTriaxialityFieldId            = fieldManager.getFieldId(PeridigmField::BOND, PeridigmField::SCALAR, PeridigmField::CONSTANT, "Bond_Stress_Triaxiality");
+  m_bondLevelMaxPrincipalStressFieldId           = fieldManager.getFieldId(PeridigmField::BOND, PeridigmField::SCALAR, PeridigmField::CONSTANT, "Bond_Max_Principal_Stress");
 
   m_fieldIds.push_back(m_bondLevelUnrotatedRateOfDeformationXXFieldId);
   m_fieldIds.push_back(m_bondLevelUnrotatedRateOfDeformationXYFieldId);
@@ -148,6 +166,7 @@ PeridigmNS::IsotropicHardeningPlasticHypoelasticCorrespondenceMaterial::Isotropi
   m_fieldIds.push_back(m_bondLevelVonMisesStressFieldId);
   m_fieldIds.push_back(m_bondLevelEquivalentPlasticStrainFieldId);
   m_fieldIds.push_back(m_bondLevelStressTriaxialityFieldId);
+  m_fieldIds.push_back(m_bondLevelMaxPrincipalStressFieldId);
 }
 
 PeridigmNS::IsotropicHardeningPlasticHypoelasticCorrespondenceMaterial::~IsotropicHardeningPlasticHypoelasticCorrespondenceMaterial()
@@ -177,6 +196,7 @@ PeridigmNS::IsotropicHardeningPlasticHypoelasticCorrespondenceMaterial::initiali
   dataManager.getData(m_bondLevelEquivalentPlasticStrainFieldId, PeridigmField::STEP_NP1)->PutScalar(0.0);
   dataManager.getData(m_bondLevelEquivalentPlasticStrainFieldId, PeridigmField::STEP_N)->PutScalar(0.0);
   dataManager.getData(m_bondLevelStressTriaxialityFieldId, PeridigmField::STEP_NONE)->PutScalar(0.0);
+  dataManager.getData(m_bondLevelMaxPrincipalStressFieldId, PeridigmField::STEP_NONE)->PutScalar(0.0);
 }
 
 void
@@ -206,21 +226,40 @@ PeridigmNS::IsotropicHardeningPlasticHypoelasticCorrespondenceMaterial::computeC
   dataManager.getData(m_stressTriaxialityFieldId, PeridigmField::STEP_NONE)->ExtractView(&stressTriaxiality);
   dataManager.getData(m_flyingPointFlagFieldId, PeridigmField::STEP_N)->ExtractView(&flyingPointFlag);
 
-  CORRESPONDENCE::updateElasticIsotropicPowerlawHardeningPlasticCauchyStress(unrotatedRateOfDeformation, 
-                                                                             unrotatedCauchyStressN, 
-                                                                             unrotatedCauchyStressNP1,
-                                                                             vonMisesStress,
-                                                                             equivalentPlasticStrainN, 
-                                                                             equivalentPlasticStrainNP1, 
-                                                                             stressTriaxiality,
-                                                                             flyingPointFlag,
-                                                                             numOwnedPoints,
-                                                                             m_bulkModulus,
-                                                                             m_shearModulus,
-                                                                             m_yieldStress, 
-                                                                             m_hardeningStrainConstant,
-                                                                             m_hardeningExponent,
-                                                                             dt);
+  if(m_hardeningRule == "Power-law"){
+    CORRESPONDENCE::updateElasticIsotropicPowerlawHardeningPlasticCauchyStress(unrotatedRateOfDeformation,
+                                                                               unrotatedCauchyStressN,
+                                                                               unrotatedCauchyStressNP1,
+                                                                               vonMisesStress,
+                                                                               equivalentPlasticStrainN,
+                                                                               equivalentPlasticStrainNP1,
+                                                                               stressTriaxiality,
+                                                                               flyingPointFlag,
+                                                                               numOwnedPoints,
+                                                                               m_bulkModulus,
+                                                                               m_shearModulus,
+                                                                               m_yieldStress,
+                                                                               m_hardeningStrainConstant,
+                                                                               m_hardeningExponent,
+                                                                               dt);
+  }
+  else if(m_hardeningRule == "Saturation type exponential"){
+    CORRESPONDENCE::updateElasticIsotropicSaturationExponentialHardeningPlasticCauchyStress(unrotatedRateOfDeformation,
+                                                                                            unrotatedCauchyStressN,
+                                                                                            unrotatedCauchyStressNP1,
+                                                                                            vonMisesStress,
+                                                                                            equivalentPlasticStrainN,
+                                                                                            equivalentPlasticStrainNP1,
+                                                                                            stressTriaxiality,
+                                                                                            numOwnedPoints,
+                                                                                            m_bulkModulus,
+                                                                                            m_shearModulus,
+                                                                                            m_initialYieldStress,
+                                                                                            m_saturatedYieldStress,
+                                                                                            m_exponentialConstant,
+                                                                                            m_linearConstant,
+                                                                                            dt);
+  }
 
   // Compute the bond-level stress values
   double *bondLevelUnrotatedCauchyStressXXN, *bondLevelUnrotatedCauchyStressXYN, *bondLevelUnrotatedCauchyStressXZN;
@@ -268,44 +307,92 @@ PeridigmNS::IsotropicHardeningPlasticHypoelasticCorrespondenceMaterial::computeC
   dataManager.getData(m_bondLevelEquivalentPlasticStrainFieldId, PeridigmField::STEP_N)->ExtractView(&bondLevelEquivalentPlasticStrainN);
   dataManager.getData(m_bondLevelStressTriaxialityFieldId, PeridigmField::STEP_NONE)->ExtractView(&bondLevelStressTriaxiality);
 
-  CORRESPONDENCE::updateBondLevelElasticIsotropicPowerlawHardeningPlasticCauchyStress(bondLevelUnrotatedRateOfDeformationXX,
-                                                                                      bondLevelUnrotatedRateOfDeformationXY,
-                                                                                      bondLevelUnrotatedRateOfDeformationXZ,
-                                                                                      bondLevelUnrotatedRateOfDeformationYX,
-                                                                                      bondLevelUnrotatedRateOfDeformationYY,
-                                                                                      bondLevelUnrotatedRateOfDeformationYZ,
-                                                                                      bondLevelUnrotatedRateOfDeformationZX,
-                                                                                      bondLevelUnrotatedRateOfDeformationZY,
-                                                                                      bondLevelUnrotatedRateOfDeformationZZ,
-                                                                                      bondLevelUnrotatedCauchyStressXXN, 
-                                                                                      bondLevelUnrotatedCauchyStressXYN, 
-                                                                                      bondLevelUnrotatedCauchyStressXZN, 
-                                                                                      bondLevelUnrotatedCauchyStressYXN, 
-                                                                                      bondLevelUnrotatedCauchyStressYYN, 
-                                                                                      bondLevelUnrotatedCauchyStressYZN, 
-                                                                                      bondLevelUnrotatedCauchyStressZXN, 
-                                                                                      bondLevelUnrotatedCauchyStressZYN, 
-                                                                                      bondLevelUnrotatedCauchyStressZZN, 
-                                                                                      bondLevelUnrotatedCauchyStressXXNP1, 
-                                                                                      bondLevelUnrotatedCauchyStressXYNP1, 
-                                                                                      bondLevelUnrotatedCauchyStressXZNP1, 
-                                                                                      bondLevelUnrotatedCauchyStressYXNP1, 
-                                                                                      bondLevelUnrotatedCauchyStressYYNP1, 
-                                                                                      bondLevelUnrotatedCauchyStressYZNP1, 
-                                                                                      bondLevelUnrotatedCauchyStressZXNP1, 
-                                                                                      bondLevelUnrotatedCauchyStressZYNP1, 
-                                                                                      bondLevelUnrotatedCauchyStressZZNP1, 
-                                                                                      bondLevelVonMisesStress,
-                                                                                      bondLevelEquivalentPlasticStrainN,
-                                                                                      bondLevelEquivalentPlasticStrainNP1,
-                                                                                      bondLevelStressTriaxiality,
-                                                                                      flyingPointFlag,
-                                                                                      neighborhoodList,
-                                                                                      numOwnedPoints,
-                                                                                      m_bulkModulus,
-                                                                                      m_shearModulus,
-                                                                                      m_yieldStress,
-                                                                                      m_hardeningStrainConstant,
-                                                                                      m_hardeningExponent,
-                                                                                      dt);
+  double *bondLevelMaxPrincipalStress;
+  dataManager.getData(m_bondLevelMaxPrincipalStressFieldId, PeridigmField::STEP_NONE)->ExtractView(&bondLevelMaxPrincipalStress);
+
+  if(m_hardeningRule == "Power-law"){
+    CORRESPONDENCE::updateBondLevelElasticIsotropicPowerlawHardeningPlasticCauchyStress(bondLevelUnrotatedRateOfDeformationXX,
+                                                                                        bondLevelUnrotatedRateOfDeformationXY,
+                                                                                        bondLevelUnrotatedRateOfDeformationXZ,
+                                                                                        bondLevelUnrotatedRateOfDeformationYX,
+                                                                                        bondLevelUnrotatedRateOfDeformationYY,
+                                                                                        bondLevelUnrotatedRateOfDeformationYZ,
+                                                                                        bondLevelUnrotatedRateOfDeformationZX,
+                                                                                        bondLevelUnrotatedRateOfDeformationZY,
+                                                                                        bondLevelUnrotatedRateOfDeformationZZ,
+                                                                                        bondLevelUnrotatedCauchyStressXXN,
+                                                                                        bondLevelUnrotatedCauchyStressXYN,
+                                                                                        bondLevelUnrotatedCauchyStressXZN,
+                                                                                        bondLevelUnrotatedCauchyStressYXN,
+                                                                                        bondLevelUnrotatedCauchyStressYYN,
+                                                                                        bondLevelUnrotatedCauchyStressYZN,
+                                                                                        bondLevelUnrotatedCauchyStressZXN,
+                                                                                        bondLevelUnrotatedCauchyStressZYN,
+                                                                                        bondLevelUnrotatedCauchyStressZZN,
+                                                                                        bondLevelUnrotatedCauchyStressXXNP1,
+                                                                                        bondLevelUnrotatedCauchyStressXYNP1,
+                                                                                        bondLevelUnrotatedCauchyStressXZNP1,
+                                                                                        bondLevelUnrotatedCauchyStressYXNP1,
+                                                                                        bondLevelUnrotatedCauchyStressYYNP1,
+                                                                                        bondLevelUnrotatedCauchyStressYZNP1,
+                                                                                        bondLevelUnrotatedCauchyStressZXNP1,
+                                                                                        bondLevelUnrotatedCauchyStressZYNP1,
+                                                                                        bondLevelUnrotatedCauchyStressZZNP1,
+                                                                                        bondLevelVonMisesStress,
+                                                                                        bondLevelEquivalentPlasticStrainN,
+                                                                                        bondLevelEquivalentPlasticStrainNP1,
+                                                                                        bondLevelStressTriaxiality,
+                                                                                        flyingPointFlag,
+                                                                                        neighborhoodList,
+                                                                                        numOwnedPoints,
+                                                                                        m_bulkModulus,
+                                                                                        m_shearModulus,
+                                                                                        m_yieldStress,
+                                                                                        m_hardeningStrainConstant,
+                                                                                        m_hardeningExponent,
+                                                                                        dt);
+  }
+  else if(m_hardeningRule == "Saturation type exponential"){
+    CORRESPONDENCE::updateBondLevelElasticIsotropicSaturationExponentialHardeningPlasticCauchyStress(bondLevelUnrotatedRateOfDeformationXX,
+                                                                                                      bondLevelUnrotatedRateOfDeformationXY,
+                                                                                                      bondLevelUnrotatedRateOfDeformationXZ,
+                                                                                                      bondLevelUnrotatedRateOfDeformationYX,
+                                                                                                      bondLevelUnrotatedRateOfDeformationYY,
+                                                                                                      bondLevelUnrotatedRateOfDeformationYZ,
+                                                                                                      bondLevelUnrotatedRateOfDeformationZX,
+                                                                                                      bondLevelUnrotatedRateOfDeformationZY,
+                                                                                                      bondLevelUnrotatedRateOfDeformationZZ,
+                                                                                                      bondLevelUnrotatedCauchyStressXXN,
+                                                                                                      bondLevelUnrotatedCauchyStressXYN,
+                                                                                                      bondLevelUnrotatedCauchyStressXZN,
+                                                                                                      bondLevelUnrotatedCauchyStressYXN,
+                                                                                                      bondLevelUnrotatedCauchyStressYYN,
+                                                                                                      bondLevelUnrotatedCauchyStressYZN,
+                                                                                                      bondLevelUnrotatedCauchyStressZXN,
+                                                                                                      bondLevelUnrotatedCauchyStressZYN,
+                                                                                                      bondLevelUnrotatedCauchyStressZZN,
+                                                                                                      bondLevelUnrotatedCauchyStressXXNP1,
+                                                                                                      bondLevelUnrotatedCauchyStressXYNP1,
+                                                                                                      bondLevelUnrotatedCauchyStressXZNP1,
+                                                                                                      bondLevelUnrotatedCauchyStressYXNP1,
+                                                                                                      bondLevelUnrotatedCauchyStressYYNP1,
+                                                                                                      bondLevelUnrotatedCauchyStressYZNP1,
+                                                                                                      bondLevelUnrotatedCauchyStressZXNP1,
+                                                                                                      bondLevelUnrotatedCauchyStressZYNP1,
+                                                                                                      bondLevelUnrotatedCauchyStressZZNP1,
+                                                                                                      bondLevelVonMisesStress,
+                                                                                                      bondLevelEquivalentPlasticStrainN,
+                                                                                                      bondLevelEquivalentPlasticStrainNP1,
+                                                                                                      bondLevelStressTriaxiality,
+                                                                                                      bondLevelMaxPrincipalStress,
+                                                                                                      neighborhoodList,
+                                                                                                      numOwnedPoints,
+                                                                                                      m_bulkModulus,
+                                                                                                      m_shearModulus,
+                                                                                                      m_initialYieldStress,
+                                                                                                      m_saturatedYieldStress,
+                                                                                                      m_exponentialConstant,
+                                                                                                      m_linearConstant,
+                                                                                                      dt);
+  }
 }

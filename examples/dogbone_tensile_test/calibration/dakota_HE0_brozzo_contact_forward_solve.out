@@ -1,0 +1,85 @@
+Dakota version 6.24 released May 15 2026.
+Repository revision 1ab1c9924 (2026-05-11) built May 11 2026 11:08:44.
+Running MPI Dakota executable in serial mode.
+Start time: Wed Sep 30 10:05:03 2026
+
+------------------
+Begin Dakota input
+------------------
+environment
+
+method
+  list_parameter_study
+    # Single evaluation, re-running our locked-in best Brozzo result
+    # (d1=3.5, d2=0.99, ThresholdDamage=0.85) with a native Peridigm Contact
+    # model (Short Range Force, General + Self Contact) added, to see whether
+    # it removes the known post-fracture oscillation. Not an optimization --
+    # a one-off diagnostic forward solve.
+    list_of_points =  9.77e9  1.35e10  22.0  2.0e8  3.5  0.99  0.85
+
+variables
+  continuous_design = 7
+    descriptors  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'  'DamageParameter1'  'DamageParameter2'  'ThresholdDamage'
+
+interface
+  analysis_drivers = 'driver_HE0_brozzo_contact_forward_solve.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians
+
+----------------
+End Dakota input
+----------------
+
+Using Dakota parser: standard
+Writing new restart file 'dakota.rst'.
+
+>>>>> Executing environment.
+
+>>>>> Running list_parameter_study iterator.
+
+List parameter study for 1 samples
+
+
+---------------------
+Begin Evaluation    1
+---------------------
+Parameters for evaluation 1:
+                      9.7700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      3.5000000000e+00 DamageParameter1
+                      9.9000000000e-01 DamageParameter2
+                      8.5000000000e-01 ThresholdDamage
+
+blocking fork: driver_HE0_brozzo_contact_forward_solve.sh params.in results.out
+
+Active response data for evaluation 1:
+Active set vector = { 1 }
+                      1.0000000000e+00 obj_fn_1
+
+
+<<<<< Function evaluation summary: 1 total (1 new, 0 duplicate)
+<<<<< Best parameters          =
+                      9.7700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      3.5000000000e+00 DamageParameter1
+                      9.9000000000e-01 DamageParameter2
+                      8.5000000000e-01 ThresholdDamage
+<<<<< Best objective function  =
+                      1.0000000000e+00
+<<<<< Best evaluation ID: 1
+
+<<<<< Iterator list_parameter_study completed.
+<<<<< Environment execution completed.
+DAKOTA execution time in seconds:
+  Total CPU        =    0.04201 [parent =   0.042092, child =   -8.2e-05]
+  Total wall clock =    4347.89

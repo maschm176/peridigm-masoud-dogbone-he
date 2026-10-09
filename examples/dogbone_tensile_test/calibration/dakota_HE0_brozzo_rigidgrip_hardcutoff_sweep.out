@@ -1,0 +1,194 @@
+Dakota version 6.24 released May 15 2026.
+Repository revision 1ab1c9924 (2026-05-11) built May 11 2026 11:08:44.
+Running MPI Dakota executable in serial mode.
+Start time: Tue Oct  6 17:47:56 2026
+
+------------------
+Begin Dakota input
+------------------
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE0_brozzo_rigidgrip_hardcutoff_sweep.dat'
+
+method
+  list_parameter_study
+    # ThresholdDamage sweep under Hard Cutoff=true, rigid-grip BC, HE_0.
+    # Spans both below and above the locked-in ramp-mode threshold (0.85)
+    # to map out the oscillation-amplitude vs fracture-timing tradeoff, and
+    # check whether HE_0 shows the same crossover behavior seen comparing
+    # the three single Hard Cutoff data points at HE_0 (0.85, narrow),
+    # HE_30 (0.51, mid), HE_60 (0.19, wide).
+    list_of_points = 0.60  0.70  0.75  0.85  0.90  0.95
+
+variables
+  continuous_design = 1
+    descriptors 'ThresholdDamage'
+  continuous_state = 6
+    descriptors      'DamageParameter1'  'DamageParameter2'  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'
+    initial_state     3.5                 0.99                9.77e9                1.35e10                 22.0                   2.0e8
+
+interface
+  # Serial (no concurrency) -- see the concurrency lesson learned during
+  # HE_30's joint polish (CLAUDE.md).
+  analysis_drivers = 'driver_HE0_brozzo_rigidgrip_hardcutoff_sweep.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians
+
+----------------
+End Dakota input
+----------------
+
+Using Dakota parser: standard
+Writing new restart file 'dakota.rst'.
+
+>>>>> Executing environment.
+
+>>>>> Running list_parameter_study iterator.
+
+List parameter study for 6 samples
+
+
+---------------------
+Begin Evaluation    1
+---------------------
+Parameters for evaluation 1:
+                      6.0000000000e-01 ThresholdDamage
+                      3.5000000000e+00 DamageParameter1
+                      9.9000000000e-01 DamageParameter2
+                      9.7700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+
+blocking fork: driver_HE0_brozzo_rigidgrip_hardcutoff_sweep.sh params.in.1 results.out.1
+
+Active response data for evaluation 1:
+Active set vector = { 1 }
+                      1.0991240095e-01 obj_fn_1
+
+
+
+---------------------
+Begin Evaluation    2
+---------------------
+Parameters for evaluation 2:
+                      7.0000000000e-01 ThresholdDamage
+                      3.5000000000e+00 DamageParameter1
+                      9.9000000000e-01 DamageParameter2
+                      9.7700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+
+blocking fork: driver_HE0_brozzo_rigidgrip_hardcutoff_sweep.sh params.in.2 results.out.2
+
+Active response data for evaluation 2:
+Active set vector = { 1 }
+                      1.5843386207e-01 obj_fn_1
+
+
+
+---------------------
+Begin Evaluation    3
+---------------------
+Parameters for evaluation 3:
+                      7.5000000000e-01 ThresholdDamage
+                      3.5000000000e+00 DamageParameter1
+                      9.9000000000e-01 DamageParameter2
+                      9.7700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+
+blocking fork: driver_HE0_brozzo_rigidgrip_hardcutoff_sweep.sh params.in.3 results.out.3
+
+Active response data for evaluation 3:
+Active set vector = { 1 }
+                      1.8837329968e-01 obj_fn_1
+
+
+
+---------------------
+Begin Evaluation    4
+---------------------
+Parameters for evaluation 4:
+                      8.5000000000e-01 ThresholdDamage
+                      3.5000000000e+00 DamageParameter1
+                      9.9000000000e-01 DamageParameter2
+                      9.7700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+
+blocking fork: driver_HE0_brozzo_rigidgrip_hardcutoff_sweep.sh params.in.4 results.out.4
+
+Active response data for evaluation 4:
+Active set vector = { 1 }
+                      2.0289402440e-01 obj_fn_1
+
+
+
+---------------------
+Begin Evaluation    5
+---------------------
+Parameters for evaluation 5:
+                      9.0000000000e-01 ThresholdDamage
+                      3.5000000000e+00 DamageParameter1
+                      9.9000000000e-01 DamageParameter2
+                      9.7700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+
+blocking fork: driver_HE0_brozzo_rigidgrip_hardcutoff_sweep.sh params.in.5 results.out.5
+
+Active response data for evaluation 5:
+Active set vector = { 1 }
+                      2.3490425874e-01 obj_fn_1
+
+
+
+---------------------
+Begin Evaluation    6
+---------------------
+Parameters for evaluation 6:
+                      9.5000000000e-01 ThresholdDamage
+                      3.5000000000e+00 DamageParameter1
+                      9.9000000000e-01 DamageParameter2
+                      9.7700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+
+blocking fork: driver_HE0_brozzo_rigidgrip_hardcutoff_sweep.sh params.in.6 results.out.6
+
+Active response data for evaluation 6:
+Active set vector = { 1 }
+                      2.4802553548e-01 obj_fn_1
+
+
+<<<<< Function evaluation summary: 6 total (6 new, 0 duplicate)
+<<<<< Best parameters          =
+                      6.0000000000e-01 ThresholdDamage
+                      3.5000000000e+00 DamageParameter1
+                      9.9000000000e-01 DamageParameter2
+                      9.7700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+<<<<< Best objective function  =
+                      1.0991240095e-01
+<<<<< Best evaluation ID: 1
+
+<<<<< Iterator list_parameter_study completed.
+<<<<< Environment execution completed.
+DAKOTA execution time in seconds:
+  Total CPU        =   0.050454 [parent =   0.050491, child =   -3.7e-05]
+  Total wall clock =    20381.7

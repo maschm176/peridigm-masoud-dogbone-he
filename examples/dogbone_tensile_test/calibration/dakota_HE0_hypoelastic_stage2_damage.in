@@ -1,0 +1,48 @@
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE0_hypoelastic_stage2.dat'
+
+method
+  coliny_pattern_search
+    max_function_evaluations = 30
+
+variables
+  # Hardening params below are frozen at Stage 1's converged result (eval 25,
+  # objective 0.05728, dakota_HE0_hypoelastic_stage1_hardening.out):
+  #   python3 extract_best_params.py dakota_HE0_hypoelastic_stage1_hardening.out \
+  #     YieldStress HardeningCharacteristicStrain HardeningExponent
+  # D1/D2/D3/Threshold initial_point is warm-started from the first Stage 2
+  # attempt's best result before it crashed (eval 13, objective 0.0841 --
+  # see dakota_HE0_hypoelastic_stage2_damage.out.attempt1 / the archived
+  # curves/HE0_hypoelastic_stage2_damage/sim_curve.13.csv fit, fracture
+  # strain 14.91% vs real 15.37%). That crash is also why DamageParameter3's
+  # lower bound is tightened to -0.6 here (was -2.0): eval 18 pushed D3 to
+  # -0.8 and produced `NaN returned by force evaluation`, aborting Dakota
+  # entirely -- Johnson-Cook's fracture-strain formula is
+  # epsF = D1 + D2*exp(-D3*triaxiality), and very negative D3 combined with
+  # the neck's high tensile triaxiality overflows the exponential. D3=-0.4
+  # (eval 13) ran fine, so -0.6 leaves some room to explore past it without
+  # re-entering the crash zone. Critical Damage is fixed at 0.95 in the
+  # template itself (not a search variable -- see
+  # hypoelastic_jc_input_template.yaml's header comment for why).
+  continuous_design = 4
+    descriptors                    'DamageParameter1'  'DamageParameter2'  'DamageParameter3'  'ThresholdDamage'
+    initial_point                   0.205               0.04               -0.4                0.5
+    lower_bounds                    0.05                0.0                -0.6                0.1
+    upper_bounds                    1.0                 0.5                 2.0                0.85
+  continuous_state = 3
+    descriptors                    'YieldStress'  'HardeningCharacteristicStrain'  'HardeningExponent'
+    initial_state                   1.0455332647e10  1.3609018823e-01                4.4050487731e-01
+
+interface
+  analysis_drivers = 'driver_HE0_hypoelastic_stage2_damage.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+  asynchronous evaluation_concurrency = 2
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

@@ -1,0 +1,213 @@
+Dakota version 6.24 released May 15 2026.
+Repository revision 1ab1c9924 (2026-05-11) built May 11 2026 11:08:44.
+Running MPI Dakota executable in serial mode.
+Start time: Tue Sep 29 18:10:07 2026
+
+------------------
+Begin Dakota input
+------------------
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE0_brozzo_parabolicdecay_d1d2_polish.dat'
+
+method
+  coliny_pattern_search
+    max_function_evaluations = 6
+
+variables
+  # Joint d1/d2 polish under Influence Function: Parabolic Decay,
+  # warm-started at the already-evaluated point (d1=3.5, d2=0.95,
+  # obj=0.120). Same bounds as the constant-influence-function polish
+  # search (paused before completion) -- bracketing the two best d1 sweep
+  # points with a little headroom, and a modest window around d2's
+  # original value. ThresholdDamage=0.85 and hardening fixed.
+  continuous_design = 2
+    descriptors                    'DamageParameter1'  'DamageParameter2'
+    initial_point                   3.5                 0.95
+    lower_bounds                    3.0                 0.75
+    upper_bounds                    4.5                 1.15
+  continuous_state = 5
+    descriptors                    'ThresholdDamage'  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'
+    initial_state                   0.85               9.77e9                1.35e10                 22.0                   2.0e8
+
+interface
+  analysis_drivers = 'driver_HE0_brozzo_parabolicdecay_d1d2_polish.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+  asynchronous evaluation_concurrency = 2
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians
+
+----------------
+End Dakota input
+----------------
+
+Using Dakota parser: standard
+Writing new restart file 'dakota_HE0_brozzo_parabolicdecay_d1d2_polish.rst'.
+
+Seed (system-generated) = 1790723407
+
+>>>>> Executing environment.
+
+>>>>> Running coliny_pattern_search iterator.
+
+---------------------
+Begin Evaluation    1
+---------------------
+Parameters for evaluation 1:
+                      3.5000000000e+00 DamageParameter1
+                      9.5000000000e-01 DamageParameter2
+                      8.5000000000e-01 ThresholdDamage
+                      9.7700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+
+blocking fork: driver_HE0_brozzo_parabolicdecay_d1d2_polish.sh params.in.1 results.out.1
+
+Active response data for evaluation 1:
+Active set vector = { 1 }
+                      1.2018715052e-01 obj_fn_1
+
+
+
+---------------------
+Begin Evaluation    2
+---------------------
+Parameters for evaluation 2:
+                      3.6500000000e+00 DamageParameter1
+                      9.5000000000e-01 DamageParameter2
+                      8.5000000000e-01 ThresholdDamage
+                      9.7700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+
+(Asynchronous job 2 added to queue)
+
+---------------------
+Begin Evaluation    3
+---------------------
+Parameters for evaluation 3:
+                      3.5000000000e+00 DamageParameter1
+                      9.9000000000e-01 DamageParameter2
+                      8.5000000000e-01 ThresholdDamage
+                      9.7700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+
+(Asynchronous job 3 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 2
+nonblocking fork: driver_HE0_brozzo_parabolicdecay_d1d2_polish.sh params.in.2 results.out.2
+Initiating evaluation 3
+nonblocking fork: driver_HE0_brozzo_parabolicdecay_d1d2_polish.sh params.in.3 results.out.3
+Waiting on completed jobs
+Evaluation 3 has completed
+Waiting on completed jobs
+Evaluation 2 has completed
+
+Active response data for evaluation 2:
+Active set vector = { 1 }
+                      1.4004128983e-01 obj_fn_1
+
+
+Active response data for evaluation 3:
+Active set vector = { 1 }
+                      1.4707920127e-01 obj_fn_1
+
+
+---------------------
+Begin Evaluation    4
+---------------------
+Parameters for evaluation 4:
+                      3.3500000000e+00 DamageParameter1
+                      9.5000000000e-01 DamageParameter2
+                      8.5000000000e-01 ThresholdDamage
+                      9.7700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+
+(Asynchronous job 4 added to queue)
+
+---------------------
+Begin Evaluation    5
+---------------------
+Parameters for evaluation 5:
+                      3.5000000000e+00 DamageParameter1
+                      9.1000000000e-01 DamageParameter2
+                      8.5000000000e-01 ThresholdDamage
+                      9.7700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+
+(Asynchronous job 5 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 4
+nonblocking fork: driver_HE0_brozzo_parabolicdecay_d1d2_polish.sh params.in.4 results.out.4
+Initiating evaluation 5
+nonblocking fork: driver_HE0_brozzo_parabolicdecay_d1d2_polish.sh params.in.5 results.out.5
+Waiting on completed jobs
+Evaluation 4 has completed
+Waiting on completed jobs
+Evaluation 5 has completed
+
+Active response data for evaluation 4:
+Active set vector = { 1 }
+                      1.3678186755e-01 obj_fn_1
+
+
+Active response data for evaluation 5:
+Active set vector = { 1 }
+                      1.3664317351e-01 obj_fn_1
+
+
+---------------------
+Begin Evaluation    6
+---------------------
+Parameters for evaluation 6:
+                      3.5750000000e+00 DamageParameter1
+                      9.5000000000e-01 DamageParameter2
+                      8.5000000000e-01 ThresholdDamage
+                      9.7700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+
+(Asynchronous job 6 added to queue)
+
+---------------------
+Begin Evaluation    7
+---------------------
+Parameters for evaluation 7:
+                      3.5000000000e+00 DamageParameter1
+                      9.7000000000e-01 DamageParameter2
+                      8.5000000000e-01 ThresholdDamage
+                      9.7700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+
+(Asynchronous job 7 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 6
+nonblocking fork: driver_HE0_brozzo_parabolicdecay_d1d2_polish.sh params.in.6 results.out.6
+Initiating evaluation 7
+nonblocking fork: driver_HE0_brozzo_parabolicdecay_d1d2_polish.sh params.in.7 results.out.7
+Waiting on completed jobs
+
+Dakota caught signal 15

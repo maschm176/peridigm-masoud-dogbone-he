@@ -1,0 +1,53 @@
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE30_voce_hypoelastic_stage1.dat'
+
+method
+  coliny_pattern_search
+    max_function_evaluations = 25
+
+variables
+  # Same methodology as the HE_0 Voce-under-Hypoelastic Stage 1
+  # (dakota_HE0_voce_hypoelastic_stage1_hardening.in): hardening only,
+  # damage disabled, STRESS_ONLY drops the fracture-strain term from the
+  # objective. CONCENTRATION=30 selects calibration_{stress,strain}_data_HE_30.txt
+  # via driver_HE30_voce_hypoelastic_stage1_hardening.sh.
+  #
+  # Warm-started from HE_0's actual Stage 1 result under this exact
+  # Hypoelastic+Voce methodology (InitialYieldStress=9.77e9,
+  # SaturatedYieldStress=1.35e10, ExponentialConstant=22.0,
+  # LinearConstant=2.0e8; obj=0.0360) rather than the older
+  # Bond-Associated-era HE_30 result (dakota_HE30_stage1_voce.in), since
+  # that older search used a different material model and a since-fixed
+  # objective function (see its own comments re: pre-STRESS_ONLY scoring).
+  # Bounds kept identical and wide, matching the "wide box costs nothing"
+  # lesson from that same prior HE_30 staging saga -- pattern search only
+  # walks as far as the objective keeps improving, and a wide box is
+  # required to find the true optimum if it sits further from the warm
+  # start than HE_0's.
+  #
+  # Damage is fixed via continuous_state at values that keep it from ever
+  # triggering: Threshold Damage fixed at 0.9 (below the template's fixed
+  # Critical Damage = 0.999) and Damage Parameter 1 set far above any local
+  # plastic strain this run will reach.
+  continuous_design = 4
+    descriptors                    'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'
+    initial_point                   9.77e9                 1.35e10                 22.0                   2.0e8
+    lower_bounds                    5.0e9                  1.0e10                  10.0                   0.0
+    upper_bounds                    1.5e10                 1.5e10                  150.0                  2.0e9
+  continuous_state = 4
+    descriptors                    'DamageParameter1'  'DamageParameter2'  'DamageParameter3'  'ThresholdDamage'
+    initial_state                   5.0                 0.0                 0.0                 0.9
+
+interface
+  analysis_drivers = 'driver_HE30_voce_hypoelastic_stage1_hardening.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+  asynchronous evaluation_concurrency = 2
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

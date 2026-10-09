@@ -1,0 +1,136 @@
+Dakota version 6.24 released May 15 2026.
+Repository revision 1ab1c9924 (2026-05-11) built May 11 2026 11:08:44.
+Running MPI Dakota executable in serial mode.
+Start time: Wed Aug 19 14:10:53 2026
+
+------------------
+Begin Dakota input
+------------------
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular.dat'
+
+method
+  coliny_pattern_search
+    max_function_evaluations = 3
+
+variables
+  continuous_design = 2
+    descriptors      'YieldStress'  'HardeningModulus'
+    initial_point     3.0e8          8.0e8
+    lower_bounds       1.0e8          5.0e8
+    upper_bounds       5.0e8          2.0e9
+
+interface
+  analysis_drivers = 'driver.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians
+
+----------------
+End Dakota input
+----------------
+
+Using Dakota parser: standard
+Writing new restart file 'dakota.rst'.
+
+Seed (system-generated) = 1787166653
+
+>>>>> Executing environment.
+
+>>>>> Running coliny_pattern_search iterator.
+
+---------------------
+Begin Evaluation    1
+---------------------
+Parameters for evaluation 1:
+                      3.0000000000e+08 YieldStress
+                      8.0000000000e+08 HardeningModulus
+
+blocking fork: driver.sh params.in.1 results.out.1
+
+Active response data for evaluation 1:
+Active set vector = { 1 }
+                      2.4256256514e-02 obj_fn_1
+
+
+
+---------------------
+Begin Evaluation    2
+---------------------
+Parameters for evaluation 2:
+                      3.4000000000e+08 YieldStress
+                      8.0000000000e+08 HardeningModulus
+
+blocking fork: driver.sh params.in.2 results.out.2
+
+Active response data for evaluation 2:
+Active set vector = { 1 }
+                      2.3621735865e-02 obj_fn_1
+
+
+
+---------------------
+Begin Evaluation    3
+---------------------
+Parameters for evaluation 3:
+                      3.0000000000e+08 YieldStress
+                      9.5000000000e+08 HardeningModulus
+
+blocking fork: driver.sh params.in.3 results.out.3
+
+Active response data for evaluation 3:
+Active set vector = { 1 }
+                      2.8989508202e-02 obj_fn_1
+
+
+
+---------------------
+Begin Evaluation    4
+---------------------
+Parameters for evaluation 4:
+                      2.6000000000e+08 YieldStress
+                      8.0000000000e+08 HardeningModulus
+
+blocking fork: driver.sh params.in.4 results.out.4
+
+Active response data for evaluation 4:
+Active set vector = { 1 }
+                      9.4441029906e-03 obj_fn_1
+
+
+
+---------------------
+Begin Evaluation    5
+---------------------
+Parameters for evaluation 5:
+                      3.0000000000e+08 YieldStress
+                      6.5000000000e+08 HardeningModulus
+
+blocking fork: driver.sh params.in.5 results.out.5
+
+Active response data for evaluation 5:
+Active set vector = { 1 }
+                      1.4291876299e-02 obj_fn_1
+
+
+<<<<< Function evaluation summary: 5 total (5 new, 0 duplicate)
+<<<<< Best parameters          =
+                      2.6000000000e+08 YieldStress
+                      8.0000000000e+08 HardeningModulus
+<<<<< Best objective function  =
+                      9.4441029906e-03
+<<<<< Best evaluation ID: 4
+
+
+<<<<< Iterator coliny_pattern_search completed.
+<<<<< Environment execution completed.
+DAKOTA execution time in seconds:
+  Total CPU        =   0.038542 [parent =    0.03854, child =      2e-06]
+  Total wall clock =    55.8532

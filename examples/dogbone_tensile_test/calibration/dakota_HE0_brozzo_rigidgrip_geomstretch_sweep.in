@@ -1,0 +1,34 @@
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE0_brozzo_rigidgrip_geomstretch_sweep.dat'
+
+method
+  list_parameter_study
+    # Geometric Critical Stretch sweep, bracketing the two single points
+    # already run (0.15: real effect, std 297.8 vs baseline 325.2, but
+    # undershoots fracture strain at 13.87% vs real 15.37%; 0.30: no
+    # measurable effect, matches baseline). Two points below 0.15 (more
+    # aggressive) and two between 0.15 and 0.30 (less aggressive) to map
+    # the oscillation-amplitude vs fracture-timing tradeoff.
+    list_of_points = 0.08  0.10  0.20  0.25
+
+variables
+  continuous_design = 1
+    descriptors 'GeometricCriticalStretch'
+  continuous_state = 7
+    descriptors      'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'  'DamageParameter1'  'DamageParameter2'  'ThresholdDamage'
+    initial_state     9.77e9                1.35e10                22.0                   2.0e8                3.5                 0.99                0.85
+
+interface
+  # Serial (no concurrency) -- see the concurrency lesson learned during
+  # HE_30's joint polish (CLAUDE.md).
+  analysis_drivers = 'driver_HE0_brozzo_rigidgrip_geomstretch_sweep.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

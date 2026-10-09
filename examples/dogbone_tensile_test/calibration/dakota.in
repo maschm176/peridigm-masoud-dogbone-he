@@ -1,0 +1,27 @@
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular.dat'
+
+method
+  coliny_pattern_search
+    max_function_evaluations = 25
+
+variables
+  continuous_design = 5
+    descriptors                    'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'  'CriticalStretch'
+    initial_point                   9.27e9                 1.3e10                  36.0                   2.0e8             0.15
+    lower_bounds                    5.0e9                  1.0e10                  10.0                   0.0               0.12
+    upper_bounds                    1.5e10                 1.5e10                  150.0                  2.0e9             0.29
+
+interface
+  analysis_drivers = 'driver.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+  asynchronous evaluation_concurrency = 2
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

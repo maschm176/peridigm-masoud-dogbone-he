@@ -1,0 +1,10 @@
+Input FEM file                   = mesh.g
+LB file                          = mesh.g.nem
+Parallel Results File Base Name  = mesh
+File Extension for Spread Files  = .g
+Number of Processors             = 1020 
+------------------------------------------------------------
+                Parallel I/O section
+------------------------------------------------------------
+Parallel Disk Info= number=1, offset=1, zeros, nosubdirectory
+Parallel file location = root=/home1/02937/behzadi/temp/Tests/mesh_notched/, subdir=.

@@ -1,0 +1,25 @@
+environment
+
+method
+  list_parameter_study
+    # Single evaluation at the best-to-date HE_0 Voce-under-Hypoelastic
+    # parameters (Stage 2 attempt 8, ThresholdDamage=0.97, eval 4:
+    # obj=0.0537, fracture 15.62% vs real 15.37%). Not an optimization --
+    # just a one-off forward solve to retain the full Exodus output for
+    # ParaView (see driver_HE0_voce_hypoelastic_forward_solve.sh).
+    list_of_points =  9.77e9  1.35e10  22.0  2.0e8  0.1355  0.03  1.55  0.97
+
+variables
+  continuous_design = 8
+    descriptors  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'  'DamageParameter1'  'DamageParameter2'  'DamageParameter3'  'ThresholdDamage'
+
+interface
+  analysis_drivers = 'driver_HE0_voce_hypoelastic_forward_solve.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

@@ -1,0 +1,32 @@
+
+-- Peridigm
+-- version 1.5.0 (Dev)
+
+MPI initialized on 4 processors.
+
+Time step (seconds):
+  Stable time step    9.57396e-07
+  User time step      not provided
+  Safety factor       0.3
+  Time step           2.87219e-07
+
+Total number of time steps 3
+
+Explicit time integration [0% Complete=====================] Explicit time integration [======33% Complete==============] Explicit time integration [=============66% Complete=======] Explicit time integration [===================100% Complete] 
+
+Memory Usage (Heap Alloc MB):
+                                         Min            Max            Ave
+  Zoltan Search Tree                 4.29688        4.75285        4.45942
+  Post Execute                       101.828        112.073        106.951
+
+Wallclock Time (seconds):
+                                        Min            Max            Ave
+  Total                                0.62           0.63           0.62
+  Rebalance                         1.8e-06        2.1e-06        1.9e-06
+  Output                              0.094           0.11            0.1
+  Internal Force                       0.16           0.19           0.17
+  Gather/Scatter                      0.018           0.06          0.042
+  Apply Kinematic B.C.              1.5e-05        1.8e-05        1.7e-05
+  Apply Initial Conditions           0.0056         0.0075         0.0064
+  Apply Body Forces                 3.4e-05        3.8e-05        3.6e-05
+

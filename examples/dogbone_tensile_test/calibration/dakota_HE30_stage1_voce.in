@@ -1,0 +1,47 @@
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE30_stage1.dat'
+
+method
+  coliny_pattern_search
+    # Capped at 9 (initial point + one full round of 8 directional probes)
+    # for a quick sanity check of the corrected (STRESS_ONLY) objective
+    # before committing to the full ~30-eval search. Bounds/initial_point
+    # below are unchanged from the full-search config, so if the trajectory
+    # looks right, resuming with a higher cap via -read_restart will extend
+    # this run cleanly instead of recomputing it.
+    max_function_evaluations = 9
+
+variables
+  # Warm-started at the HE_0 optimum, but bounds match HE_0's ORIGINAL wide
+  # search range rather than a tightened window around it. An earlier
+  # attempt tightened these to +/-30-40%, reasoning that similar
+  # concentrations would converge faster in a narrower box -- backwards:
+  # pattern search only walks as far as the objective keeps improving, so a
+  # wide box costs nothing when the true optimum is close to the warm start,
+  # and only a wide box can actually find it when the optimum (as it turned
+  # out here) sits further out. CriticalStretch is fixed far above any bond
+  # stretch this curve will reach, so damage never triggers and the
+  # objective's stress term (scored over HE_30's own real strain range)
+  # drives the fit.
+  continuous_design = 4
+    descriptors                    'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'
+    initial_point                   9.27e9                 1.35e10                 22.0                   2.0e8
+    lower_bounds                    5.0e9                  1.0e10                  10.0                   0.0
+    upper_bounds                    1.5e10                 1.5e10                  150.0                  2.0e9
+  continuous_state = 1
+    descriptors                    'CriticalStretch'
+    initial_state                   0.5
+
+interface
+  analysis_drivers = 'driver_HE30_stage1_voce.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+  asynchronous evaluation_concurrency = 2
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

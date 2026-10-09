@@ -1,0 +1,32 @@
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE30_sfc3_d2_sweep2.dat'
+
+method
+  list_parameter_study
+    # Narrowed HE_30 D2 sweep, bracketing between D2=0.4 (frac=15.06%,
+    # genuine fracture, still ~1.8pt above real 13.27%) and D2=0.2
+    # (frac=5.68%, almost certainly a false-positive detector artifact,
+    # same pattern as HE_0's D2=0.25 case). D1=0.02, D3=3.0 fixed,
+    # ThresholdDamage=0.97.
+    list_of_points = 0.35  0.3  0.25
+
+variables
+  continuous_design = 1
+    descriptors 'DamageParameter2'
+  continuous_state = 7
+    descriptors      'DamageParameter1'  'DamageParameter3'  'ThresholdDamage'  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'
+    initial_state     0.02                3.0                 0.97               1.027e10               1.35e10                 22.0                   2.0e8
+
+interface
+  analysis_drivers = 'driver_HE30_voce_hypoelastic_d2_sweep2.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+  asynchronous evaluation_concurrency = 2
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

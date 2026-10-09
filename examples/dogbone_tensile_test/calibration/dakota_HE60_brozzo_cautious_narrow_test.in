@@ -1,0 +1,24 @@
+environment
+
+method
+  list_parameter_study
+    # Single evaluation: a much smaller step toward narrowing the ramp than
+    # the prior failed attempt (6.4/0.35). d1=4.6, ThresholdDamage=0.25 --
+    # regular ramp, no Hard Cutoff. Not an optimization -- a one-off
+    # diagnostic test of whether a modest narrowing is numerically stable.
+    list_of_points =  9.77e9  1.35e10  22.0  2.0e8  4.6  0.99  0.25
+
+variables
+  continuous_design = 7
+    descriptors  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'  'DamageParameter1'  'DamageParameter2'  'ThresholdDamage'
+
+interface
+  analysis_drivers = 'driver_HE60_brozzo_cautious_narrow_test.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

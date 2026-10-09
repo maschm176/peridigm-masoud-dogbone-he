@@ -1,0 +1,35 @@
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE0_brozzo_rigidgrip_artificialviscosity_test.dat'
+
+method
+  list_parameter_study
+    # Coefficient scan for the new Bond-Level Artificial Viscosity damping
+    # model at HE_0's locked-in Brozzo point, rigid-grip BC, fast rate
+    # (220 cm/s). Three orders of magnitude bracketing a rough a priori
+    # estimate (c~1e5, CGS units) of where the quadratic damping force
+    # becomes comparable to a few percent of the internal force scale for
+    # plausible post-fracture bond velocities, while staying negligible at
+    # ordinary loading velocities.
+    list_of_points = 1.0e4  1.0e5  1.0e6
+
+variables
+  continuous_design = 1
+    descriptors 'ViscosityCoefficient'
+  continuous_state = 7
+    descriptors      'DamageParameter1'  'DamageParameter2'  'ThresholdDamage'  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'
+    initial_state     3.5                 0.99                0.85               9.77e9                1.35e10                 22.0                   2.0e8
+
+interface
+  # Serial (no concurrency) -- see the concurrency lesson learned during
+  # HE_30's joint polish (CLAUDE.md).
+  analysis_drivers = 'driver_HE0_brozzo_rigidgrip_artificialviscosity_test.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

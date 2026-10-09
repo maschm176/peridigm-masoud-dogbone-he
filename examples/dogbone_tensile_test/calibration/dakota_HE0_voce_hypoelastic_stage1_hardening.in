@@ -1,0 +1,45 @@
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE0_voce_hypoelastic_stage1.dat'
+
+method
+  coliny_pattern_search
+    max_function_evaluations = 25
+
+variables
+  # Warm-started from the old HE_0 Voce optimum under Bond-Associated
+  # Correspondence + Critical Stretch (objective 0.060, eval 23 of that
+  # campaign -- see dakota.in). The full-length forward test under
+  # Hypoelastic (voce_hypoelastic_full_test.yaml) confirmed this same point
+  # transfers very well to the new material as-is: near-exact match through
+  # the yield knee and plateau, and it even reproduces genuine geometric
+  # necking/softening past ~12% strain with damage disabled, same as the
+  # original Bond-Associated finding. So this stage is expected to be a
+  # short polish, not a big search -- bounds are still the original wide
+  # ones from dakota.in (widening costs nothing when the optimum is close,
+  # per the lesson learned during the HE_30 staging saga).
+  # Damage is fixed via continuous_state at values that keep it from ever
+  # triggering: Threshold Damage fixed at 0.9 (must stay below the
+  # template's fixed Critical Damage = 0.95) and Damage Parameter 1 set far
+  # above any local plastic strain this run will reach.
+  continuous_design = 4
+    descriptors                    'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'
+    initial_point                   9.27e9                 1.35e10                 22.0                   2.0e8
+    lower_bounds                    5.0e9                  1.0e10                  10.0                   0.0
+    upper_bounds                    1.5e10                 1.5e10                  150.0                  2.0e9
+  continuous_state = 4
+    descriptors                    'DamageParameter1'  'DamageParameter2'  'DamageParameter3'  'ThresholdDamage'
+    initial_state                   5.0                 0.0                 0.0                 0.9
+
+interface
+  analysis_drivers = 'driver_HE0_voce_hypoelastic_stage1_hardening.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+  asynchronous evaluation_concurrency = 2
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

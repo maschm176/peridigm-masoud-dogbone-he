@@ -1,0 +1,30 @@
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE0_brozzo_d1_sweep2.dat'
+
+method
+  list_parameter_study
+    # Tighter d1 sweep bracketing the coarse sweep's best result (d1=3.0,
+    # frac=16.86%, obj=0.133, real target 15.37%) and staying safely below
+    # the crash point at d1=6.0. d2=0.95, ThresholdDamage=0.85 fixed.
+    list_of_points = 3.5  4.0  4.5  5.0
+
+variables
+  continuous_design = 1
+    descriptors 'DamageParameter1'
+  continuous_state = 6
+    descriptors      'DamageParameter2'  'ThresholdDamage'  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'
+    initial_state     0.95                0.85               9.77e9                1.35e10                 22.0                   2.0e8
+
+interface
+  analysis_drivers = 'driver_HE0_brozzo_d1_sweep2.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+  asynchronous evaluation_concurrency = 2
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

@@ -1,0 +1,52 @@
+
+# Dakota Input File: calibration_test_dakota.in
+# Usage:
+#   dakota -i calibration_test_dakota.in -o calibration_test_dakota.out > calibration_test_dakota.stdout
+
+#environment
+  #graphics
+  #tabular_data
+    #tabular_data_file = 'calibration_test_dakota.dat'
+
+method
+  efficient_global
+  #conmin_frcg
+    #convergence_tolerance = 0.1
+    #max_iterations = 100
+
+model
+  single
+
+variables
+  continuous_design = 3
+    #initial_point      1.0       1.0       1.0     
+    lower_bounds       500000     0.2       0.35      
+    upper_bounds       600000     0.4       0.65      
+    descriptors         'x1'      'x2'      'x3'     
+    #scales =          500000     1.0        25      
+    
+    #initial_point         480e3                25                    
+    #lower_bounds          350e3                10                    
+    #upper_bounds          650e3                100                    
+    #descriptors            'x1'                'x3'
+    #scale_types =        'value'             'value'
+    #scales =              500e3                50
+    #descriptors      'Yield Stress'  'Anisotropy Parameter Y'   'Hardening Exponent'   'Damage Parameter 1'   'Damage Parameter 2'   'Damage Parameter 3'
+
+interface
+  analysis_drivers = 'run_calibration_test.sh'
+    fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    #file_tag
+    #file_save
+
+responses
+  objective_functions = 1
+  #numerical_gradients
+    #method_source dakota
+    #interval_type forward
+    #fd_step_size = 5.e-2 2.e-2 5.e-2 2.e-2 2.e-2 2.e-2
+    #fd_step_size = 1.e-3 1.e-6 1.e-6 1.e-6 1.e-6 1.e-6  
+  no_gradients
+  no_hessians

@@ -1,0 +1,189 @@
+Peridigm:
+
+#     Dogbone specimen calibration template: Isotropic Hardening BOND
+#     ASSOCIATED Correspondence (not Hypoelastic/"ordinary" correspondence,
+#     used by every other template in this directory) with Voce ("Saturation
+#     type exponential") hardening + Brozzo/Wellman ductile damage
+#     (Behzadinasab & Foster 2020, "Revisiting the third Sandia Fracture
+#     Challenge"). Requires only the existing peridigm-masoud:voce-
+#     hypoelastic-brozzo image -- Bond Associated Correspondence is core
+#     Peridigm source, already compiled into every image in this project, no
+#     rebuild needed.
+#
+#     Units are CGS, matching the mesh, same as the original template.
+#
+#     Why: after three separate attempts to fix the post-fracture
+#     oscillation by changing how damage gets applied to bonds (freeze
+#     nearly-failed points, per-bond hard cutoff, complete plane severance --
+#     see CLAUDE.md "Post-fracture oscillation" section) all failed, the
+#     likely real culprit is the MATERIAL formulation itself, not the damage
+#     law. The "ordinary" correspondence formulation used everywhere else in
+#     this project computes ONE shared shape tensor per point, built from
+#     that point's ENTIRE bond family. The SFC3 authors' own 2019 paper
+#     (Behzadinasab & Foster 2019, Fig. 15) documents exactly this as a known
+#     failure mode: once a crack breaks enough of a point's bonds, the
+#     remaining ones may span a rank-deficient (non-invertible) shape tensor,
+#     and "a computer may not detect such [a singular] tensor... hence
+#     continue with the simulation, leading to large errors afterwards" --
+#     plausibly exactly what we've been seeing as "oscillation." Their entire
+#     follow-up paper (where our Brozzo damage law comes from) exists to
+#     replace this with a bond-associated, semi-Lagrangian formulation
+#     specifically to fix this. We only ever adopted their damage LAW, never
+#     their material KINEMATICS.
+#
+#     Bond Associated Correspondence (this template) computes a SEPARATE,
+#     LOCAL shape tensor for EACH INDIVIDUAL BOND, from a smaller sub-family
+#     associated with that bond, rather than one shared shape tensor per
+#     point. Damage that knocks out part of a point's overall neighborhood
+#     doesn't necessarily touch the sub-family of a different bond from that
+#     same point, so this should be far more resistant to the exact
+#     singularity failure mode described above. Not a semi-Lagrangian
+#     formulation (that would be a much larger change, not currently
+#     implemented anywhere in this codebase) -- this tests the bond-
+#     associated half of their fix in isolation.
+#
+#     Same locked-in point as every other diagnostic in this investigation:
+#     d1=3.5, d2=0.99, ThresholdDamage=0.85, HE_0 Stage 1 Voce hardening.
+#     Known structural note: this material computes a shape tensor PER BOND
+#     instead of per POINT (roughly N times more 3x3 matrix inversions per
+#     point, where N = neighbor count), so a real but as-yet-unmeasured
+#     slowdown is expected -- Peridigm always prints an exact wallclock
+#     breakdown at the end of a run, so this will be measured directly
+#     rather than estimated.
+#
+#     YAML structural differences from the Hypoelastic templates: Material
+#     Model name changed; "Actual Horizon" removed (Hypoelastic-specific,
+#     not used/needed by Bond Associated); Voce hardening parameters moved
+#     under a nested "Hardening Parameters" sublist (this material reads
+#     them from `params.sublist("Hardening Parameters")`, not flat).
+#     Density/Bulk Modulus/Shear Modulus remain flat, unchanged, read via
+#     the same shared base-class helper used by every material in this
+#     project. Damage Models/Blocks/Boundary Conditions/Solver/Output
+#     sections are all unchanged from the Hypoelastic templates.
+
+  Discretization:
+      Type: "Exodus"
+      Input Mesh File: "tensile_test.g"
+
+  Materials:
+      My Material:
+          Material Model: "Isotropic Hardening Bond Associated Correspondence"
+          Density: 7.8
+          Bulk Modulus: 1.30e12
+          Shear Modulus: 7.8e11
+          Hardening Rule: "Saturation type exponential"
+          Hardening Parameters:
+              Initial Yield Stress: {InitialYieldStress}
+              Saturated Yield Stress: {SaturatedYieldStress}
+              Exponential Constant: {ExponentialConstant}
+              Linear Constant: {LinearConstant}
+
+  Damage Models:
+      My Damage Model:
+          Damage Model: "Brozzo"
+          Damage Parameter 1: {DamageParameter1}
+          Damage Parameter 2: {DamageParameter2}
+          Threshold Damage: {ThresholdDamage}
+
+  Blocks:
+      My Block:
+          Block Names: "block_1 block_2 block_3"
+          Material: "My Material"
+          Damage Model: "My Damage Model"
+          Horizon: 0.236
+
+  Boundary Conditions:
+      Prescribed Displacement Bottom:
+          Type: "Prescribed Displacement"
+          Node Set: "nodelist_1"
+          Coordinate: "y"
+          Value: "y*45.0*t"
+      Prescribed Displacement Top:
+          Type: "Prescribed Displacement"
+          Node Set: "nodelist_2"
+          Coordinate: "y"
+          Value: "y*45.0*t"
+      Prescribed Displacement Fix Bottom Rigid Body Motion In X:
+          Type: "Prescribed Displacement"
+          Node Set: "nodelist_3"
+          Coordinate: "x"
+          Value: "0.0"
+      Prescribed Displacement Fix Bottom Rigid Body Motion In Z:
+          Type: "Prescribed Displacement"
+          Node Set: "nodelist_4"
+          Coordinate: "z"
+          Value: "0.0"
+      Prescribed Displacement Fix Top Rigid Body Motion In X:
+          Type: "Prescribed Displacement"
+          Node Set: "nodelist_5"
+          Coordinate: "x"
+          Value: "0.0"
+      Prescribed Displacement Fix Top Rigid Body Motion In Z:
+          Type: "Prescribed Displacement"
+          Node Set: "nodelist_6"
+          Coordinate: "z"
+          Value: "0.0"
+
+  Solver:
+      Verbose: false
+      Initial Time: 0.0
+      Final Time: 1.84e-3
+      Verlet:
+          Safety Factor: 0.7
+
+  Compute Class Parameters:
+      Strain Gage Top Initial Position:
+          Compute Class: "Nearest_Point_Data"
+          X: 0.0317
+          Y: 1.238
+          Z: 0.0
+          Variable: "Model_Coordinates"
+          Output Label: "Gage_Top_Initial_Position"
+      Strain Gage Bottom Initial Position:
+          Compute Class: "Nearest_Point_Data"
+          X: 0.0317
+          Y: -1.238
+          Z: 0.0
+          Variable: "Model_Coordinates"
+          Output Label: "Gage_Bottom_Initial_Position"
+      Strain Gage Top Displacement:
+          Compute Class: "Nearest_Point_Data"
+          X: 0.0317
+          Y: 1.238
+          Z: 0.0
+          Variable: "Displacement"
+          Output Label: "Gage_Top_Displacement"
+      Strain Gage Bottom Displacement:
+          Compute Class: "Nearest_Point_Data"
+          X: 0.0317
+          Y: -1.238
+          Z: 0.0
+          Variable: "Displacement"
+          Output Label: "Gage_Bottom_Displacement"
+      Top Reaction Force:
+          Compute Class: "Block_Data"
+          Calculation Type: "Sum"
+          Block: "block_3"
+          Variable: "Force"
+          Output Label: "Top_Reaction_Force"
+      Bottom Reaction Force:
+          Compute Class: "Block_Data"
+          Calculation Type: "Sum"
+          Block: "block_1"
+          Variable: "Force"
+          Output Label: "Bottom_Reaction_Force"
+
+  Output:
+      Output File Type: "ExodusII"
+      Output Filename: "output"
+      Output Frequency: 20
+      Output Variables:
+          Displacement: true
+          Force: true
+          Gage_Top_Displacement: true
+          Gage_Bottom_Displacement: true
+          Top_Reaction_Force: true
+          Bottom_Reaction_Force: true
+          Damage: true
+          Broken_Bond_Volume_Averaged: true
+          Flying_Point_Flag: true

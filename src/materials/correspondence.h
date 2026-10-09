@@ -88,6 +88,10 @@ void rotateCauchyStress
     int numPoints
 );
 
+//! Optional shapeTensorMinSingularValue/shapeTensorMaxSingularValue (length numPoints, left untouched
+//! if null) report the per-point moment matrix's SVD singular-value range -- a diagnostic for
+//! near-singular/rank-deficient conditioning as damage removes bonds from a point's neighborhood
+//! (see Behzadinasab & Foster 2019, Fig. 15).
 template<typename ScalarT>
 int computeGradientWeights
 (
@@ -102,7 +106,9 @@ int computeGradientWeights
     const double* flyingPointFlag,
     const double* bondDamage,
     const int* neighborhoodList,
-    int numPoints
+    int numPoints,
+    ScalarT* shapeTensorMinSingularValue = 0,
+    ScalarT* shapeTensorMaxSingularValue = 0
 );
 
 template<typename ScalarT>
@@ -190,13 +196,17 @@ int computeSymmetrixMatrixInverse
 );
 
 //! Invert a single N-by-N symmetric matrix; returns zero of successful, one if not successful (e.g., singular matrix).
+//! Optional minSingularValue/maxSingularValue report the matrix's SVD singular-value range (diagnostic
+//! for near-singular/rank-deficient conditioning), left untouched if null.
 template<typename ScalarT>
 int invertAndCond
 (
     const ScalarT* Min,
     ScalarT *Mout,
     const int size,
-    const double thresVal
+    const double thresVal,
+    ScalarT* minSingularValue = 0,
+    ScalarT* maxSingularValue = 0
 );
 
 template<typename ScalarT>

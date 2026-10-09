@@ -1,0 +1,165 @@
+Dakota version 6.24 released May 15 2026.
+Repository revision 1ab1c9924 (2026-05-11) built May 11 2026 11:08:44.
+Running MPI Dakota executable in serial mode.
+Start time: Tue Sep 29 09:26:13 2026
+
+------------------
+Begin Dakota input
+------------------
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE0_brozzo_d1_sweep2.dat'
+
+method
+  list_parameter_study
+    # Tighter d1 sweep bracketing the coarse sweep's best result (d1=3.0,
+    # frac=16.86%, obj=0.133, real target 15.37%) and staying safely below
+    # the crash point at d1=6.0. d2=0.95, ThresholdDamage=0.85 fixed.
+    list_of_points = 3.5  4.0  4.5  5.0
+
+variables
+  continuous_design = 1
+    descriptors 'DamageParameter1'
+  continuous_state = 6
+    descriptors      'DamageParameter2'  'ThresholdDamage'  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'
+    initial_state     0.95                0.85               9.77e9                1.35e10                 22.0                   2.0e8
+
+interface
+  analysis_drivers = 'driver_HE0_brozzo_d1_sweep2.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+  asynchronous evaluation_concurrency = 2
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians
+
+----------------
+End Dakota input
+----------------
+
+Using Dakota parser: standard
+Writing new restart file 'dakota_HE0_brozzo_d1_sweep2.rst'.
+
+>>>>> Executing environment.
+
+>>>>> Running list_parameter_study iterator.
+
+List parameter study for 4 samples
+
+
+---------------------
+Begin Evaluation    1
+---------------------
+Parameters for evaluation 1:
+                      3.5000000000e+00 DamageParameter1
+                      9.5000000000e-01 DamageParameter2
+                      8.5000000000e-01 ThresholdDamage
+                      9.7700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+
+(Asynchronous job 1 added to queue)
+
+---------------------
+Begin Evaluation    2
+---------------------
+Parameters for evaluation 2:
+                      4.0000000000e+00 DamageParameter1
+                      9.5000000000e-01 DamageParameter2
+                      8.5000000000e-01 ThresholdDamage
+                      9.7700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+
+(Asynchronous job 2 added to queue)
+
+---------------------
+Begin Evaluation    3
+---------------------
+Parameters for evaluation 3:
+                      4.5000000000e+00 DamageParameter1
+                      9.5000000000e-01 DamageParameter2
+                      8.5000000000e-01 ThresholdDamage
+                      9.7700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+
+(Asynchronous job 3 added to queue)
+
+---------------------
+Begin Evaluation    4
+---------------------
+Parameters for evaluation 4:
+                      5.0000000000e+00 DamageParameter1
+                      9.5000000000e-01 DamageParameter2
+                      8.5000000000e-01 ThresholdDamage
+                      9.7700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+
+(Asynchronous job 4 added to queue)
+
+Blocking synchronize of 4 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 1
+nonblocking fork: driver_HE0_brozzo_d1_sweep2.sh params.in.1 results.out.1
+Initiating evaluation 2
+nonblocking fork: driver_HE0_brozzo_d1_sweep2.sh params.in.2 results.out.2
+Second pass: scheduling 2 remaining local asynchronous jobs
+Waiting on completed jobs
+Evaluation 1 has completed
+Initiating evaluation 3
+nonblocking fork: driver_HE0_brozzo_d1_sweep2.sh params.in.3 results.out.3
+Waiting on completed jobs
+Evaluation 2 has completed
+Initiating evaluation 4
+nonblocking fork: driver_HE0_brozzo_d1_sweep2.sh params.in.4 results.out.4
+Waiting on completed jobs
+Evaluation 3 has completed
+Evaluation 4 has completed
+
+Active response data for evaluation 1:
+Active set vector = { 1 }
+                      7.1458826413e-02 obj_fn_1
+
+
+Active response data for evaluation 2:
+Active set vector = { 1 }
+                      1.7567144272e-01 obj_fn_1
+
+
+Active response data for evaluation 3:
+Active set vector = { 1 }
+                      1.3983439163e-01 obj_fn_1
+
+
+Active response data for evaluation 4:
+Active set vector = { 1 }
+                      9.8690606453e-02 obj_fn_1
+
+<<<<< Function evaluation summary: 4 total (4 new, 0 duplicate)
+<<<<< Best parameters          =
+                      3.5000000000e+00 DamageParameter1
+                      9.5000000000e-01 DamageParameter2
+                      8.5000000000e-01 ThresholdDamage
+                      9.7700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+<<<<< Best objective function  =
+                      7.1458826413e-02
+<<<<< Best evaluation ID: 1
+
+<<<<< Iterator list_parameter_study completed.
+<<<<< Environment execution completed.
+DAKOTA execution time in seconds:
+  Total CPU        =   0.040878 [parent =   0.040927, child =   -4.9e-05]
+  Total wall clock =    15942.7

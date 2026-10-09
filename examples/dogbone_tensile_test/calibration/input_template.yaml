@@ -1,0 +1,145 @@
+Peridigm:
+
+#     Dogbone specimen (examples/tensile_test/tensile_test.g), parameterized
+#     for DAKOTA calibration of plasticity + fracture parameters against
+#     real experimental data (calibration_stress_data_HE_0.txt /
+#     calibration_strain_data_HE_0.txt). Uses the state-based Isotropic
+#     Hardening Bond Associated Correspondence material, "Saturation type
+#     exponential" (Voce-style) hardening rule, plus a Critical Stretch
+#     damage model for fracture. Johnson Cook was tried first (ties fracture
+#     to accumulated plastic strain + triaxiality) but is incompatible with
+#     this material -- both register a field named "Jacobian_Determinant"
+#     with conflicting specs, which Peridigm's field manager rejects.
+#     Critical Stretch has no such collision, and correlates spatially with
+#     the neck since bond stretch peaks there anyway. Units are CGS,
+#     matching the mesh (its Cubit journal sets the unit system to cgs):
+#     mass g, length cm, time s, force dyne, pressure dyne/cm^2. Loading
+#     rate/duration set to reach ~16% strain, just past the real data's
+#     15.37% max, without wasting steps. Loaded 4x more gradually than the
+#     initial sanity-check run to reduce the dynamic/inertial oscillation
+#     seen at low strain in explicit dynamics. Meant to be run with
+#     `mpirun -np N` against a mesh pre-decomposed via
+#     `decomp -p N tensile_test.g` (see driver.sh).
+
+  Discretization:
+      Type: "Exodus"
+      Input Mesh File: "tensile_test.g"
+
+  Materials:
+      My Material:
+          Material Model: "Isotropic Hardening Bond Associated Correspondence"
+          Density: 7.8
+          Bulk Modulus: 1.30e12
+          Shear Modulus: 7.8e11
+          Hardening Rule: "Saturation type exponential"
+          Hardening Parameters:
+              Initial Yield Stress: {InitialYieldStress}
+              Saturated Yield Stress: {SaturatedYieldStress}
+              Exponential Constant: {ExponentialConstant}
+              Linear Constant: {LinearConstant}
+
+  Damage Models:
+      My Damage Model:
+          Damage Model: "Critical Stretch"
+          Critical Stretch: {CriticalStretch}
+
+  Blocks:
+      My Block:
+          Block Names: "block_1 block_2 block_3"
+          Material: "My Material"
+          Damage Model: "My Damage Model"
+          Horizon: 0.189
+
+  Boundary Conditions:
+      Prescribed Displacement Bottom:
+          Type: "Prescribed Displacement"
+          Node Set: "nodelist_1"
+          Coordinate: "y"
+          Value: "y*45.0*t"
+      Prescribed Displacement Top:
+          Type: "Prescribed Displacement"
+          Node Set: "nodelist_2"
+          Coordinate: "y"
+          Value: "y*45.0*t"
+      Prescribed Displacement Fix Bottom Rigid Body Motion In X:
+          Type: "Prescribed Displacement"
+          Node Set: "nodelist_3"
+          Coordinate: "x"
+          Value: "0.0"
+      Prescribed Displacement Fix Bottom Rigid Body Motion In Z:
+          Type: "Prescribed Displacement"
+          Node Set: "nodelist_4"
+          Coordinate: "z"
+          Value: "0.0"
+      Prescribed Displacement Fix Top Rigid Body Motion In X:
+          Type: "Prescribed Displacement"
+          Node Set: "nodelist_5"
+          Coordinate: "x"
+          Value: "0.0"
+      Prescribed Displacement Fix Top Rigid Body Motion In Z:
+          Type: "Prescribed Displacement"
+          Node Set: "nodelist_6"
+          Coordinate: "z"
+          Value: "0.0"
+
+  Solver:
+      Verbose: false
+      Initial Time: 0.0
+      Final Time: 1.84e-3
+      Verlet:
+          Safety Factor: 0.7
+
+  Compute Class Parameters:
+      Strain Gage Top Initial Position:
+          Compute Class: "Nearest_Point_Data"
+          X: 0.0317
+          Y: 1.238
+          Z: 0.0
+          Variable: "Model_Coordinates"
+          Output Label: "Gage_Top_Initial_Position"
+      Strain Gage Bottom Initial Position:
+          Compute Class: "Nearest_Point_Data"
+          X: 0.0317
+          Y: -1.238
+          Z: 0.0
+          Variable: "Model_Coordinates"
+          Output Label: "Gage_Bottom_Initial_Position"
+      Strain Gage Top Displacement:
+          Compute Class: "Nearest_Point_Data"
+          X: 0.0317
+          Y: 1.238
+          Z: 0.0
+          Variable: "Displacement"
+          Output Label: "Gage_Top_Displacement"
+      Strain Gage Bottom Displacement:
+          Compute Class: "Nearest_Point_Data"
+          X: 0.0317
+          Y: -1.238
+          Z: 0.0
+          Variable: "Displacement"
+          Output Label: "Gage_Bottom_Displacement"
+      Top Reaction Force:
+          Compute Class: "Block_Data"
+          Calculation Type: "Sum"
+          Block: "block_3"
+          Variable: "Force"
+          Output Label: "Top_Reaction_Force"
+      Bottom Reaction Force:
+          Compute Class: "Block_Data"
+          Calculation Type: "Sum"
+          Block: "block_1"
+          Variable: "Force"
+          Output Label: "Bottom_Reaction_Force"
+
+  Output:
+      Output File Type: "ExodusII"
+      Output Filename: "output"
+      Output Frequency: 20
+      Output Variables:
+          Displacement: true
+          Force: true
+          Gage_Top_Displacement: true
+          Gage_Bottom_Displacement: true
+          Top_Reaction_Force: true
+          Bottom_Reaction_Force: true
+          Damage: true

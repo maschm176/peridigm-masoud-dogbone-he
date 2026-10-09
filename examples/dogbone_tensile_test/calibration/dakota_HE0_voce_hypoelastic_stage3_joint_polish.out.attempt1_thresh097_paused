@@ -1,0 +1,282 @@
+Dakota version 6.24 released May 15 2026.
+Repository revision 1ab1c9924 (2026-05-11) built May 11 2026 11:08:44.
+Running MPI Dakota executable in serial mode.
+Start time: Tue Sep 22 09:52:29 2026
+
+------------------
+Begin Dakota input
+------------------
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE0_voce_hypoelastic_stage3.dat'
+
+method
+  coliny_pattern_search
+    max_function_evaluations = 20
+
+variables
+  # Short joint 7-param polish pass around the combined Stage 1 + Stage 2
+  # result: Stage 1's best (eval 9, obj=0.0360: InitialYieldStress/
+  # SaturatedYieldStress/ExponentialConstant/LinearConstant) and Stage 2's
+  # final best (ThresholdDamage=0.97 attempt, eval 4, obj=0.0537:
+  # DamageParameter1/2/3; fracture 15.62% vs real 15.37%). ThresholdDamage
+  # stays fixed (continuous_state, not searched) at 0.97, same as Stage 2 --
+  # it's deliberately near the template's fixed Critical Damage (0.999) to
+  # approximate a hard bond-cutoff, not a free fit parameter (see CLAUDE.md).
+  #
+  # Bounds are +/-15% around the warm start (mirroring the power-law
+  # Stage 3's approach), clipped to the hard physical/numerical limits
+  # established in Stages 1-2: SaturatedYieldStress capped at 1.5e10
+  # (Stage 1's own upper bound), DamageParameter1/2 floored at 0.02
+  # (Stage 2's lower bound, chosen so warm starts near it aren't silently
+  # clamped -- see dakota_HE0_voce_hypoelastic_stage2_damage.in), and
+  # DamageParameter3 floored at 0.0 (non-negative triaxiality sensitivity;
+  # negative D3 was the power-law path's numerically fragile dead end, never
+  # revisited under Voce).
+  continuous_design = 7
+    descriptors                    'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'  'DamageParameter1'  'DamageParameter2'  'DamageParameter3'
+    initial_point                   9.77e9                 1.35e10                 22.0                   2.0e8             0.1355              0.03                1.55
+    lower_bounds                    8.30e9                 1.1475e10               18.7                   1.7e8             0.115               0.02                1.3175
+    upper_bounds                    1.1235e10              1.5e10                  25.3                   2.3e8             0.156               0.0345              1.7825
+  continuous_state = 1
+    descriptors                    'ThresholdDamage'
+    initial_state                   0.97
+
+interface
+  analysis_drivers = 'driver_HE0_voce_hypoelastic_stage3_joint_polish.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+  asynchronous evaluation_concurrency = 2
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians
+
+----------------
+End Dakota input
+----------------
+
+Using Dakota parser: standard
+Writing new restart file 'dakota_HE0_voce_hypoelastic_stage3_joint_polish.rst'.
+
+Seed (system-generated) = 1790088749
+
+>>>>> Executing environment.
+
+>>>>> Running coliny_pattern_search iterator.
+
+---------------------
+Begin Evaluation    1
+---------------------
+Parameters for evaluation 1:
+                      9.7700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      1.3550000000e-01 DamageParameter1
+                      3.0000000000e-02 DamageParameter2
+                      1.5500000000e+00 DamageParameter3
+                      9.7000000000e-01 ThresholdDamage
+
+blocking fork: driver_HE0_voce_hypoelastic_stage3_joint_polish.sh params.in.1 results.out.1
+
+Active response data for evaluation 1:
+Active set vector = { 1 }
+                      5.3687325470e-02 obj_fn_1
+
+
+
+---------------------
+Begin Evaluation    2
+---------------------
+Parameters for evaluation 2:
+                      1.0063500000e+10 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      1.3550000000e-01 DamageParameter1
+                      3.0000000000e-02 DamageParameter2
+                      1.5500000000e+00 DamageParameter3
+                      9.7000000000e-01 ThresholdDamage
+
+(Asynchronous job 2 added to queue)
+
+---------------------
+Begin Evaluation    3
+---------------------
+Parameters for evaluation 3:
+                      9.7700000000e+09 InitialYieldStress
+                      1.3852500000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      1.3550000000e-01 DamageParameter1
+                      3.0000000000e-02 DamageParameter2
+                      1.5500000000e+00 DamageParameter3
+                      9.7000000000e-01 ThresholdDamage
+
+(Asynchronous job 3 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 2
+nonblocking fork: driver_HE0_voce_hypoelastic_stage3_joint_polish.sh params.in.2 results.out.2
+Initiating evaluation 3
+nonblocking fork: driver_HE0_voce_hypoelastic_stage3_joint_polish.sh params.in.3 results.out.3
+Waiting on completed jobs
+Evaluation 2 has completed
+Evaluation 3 has completed
+
+Active response data for evaluation 2:
+Active set vector = { 1 }
+                      5.7012192870e-02 obj_fn_1
+
+
+Active response data for evaluation 3:
+Active set vector = { 1 }
+                      1.0115169311e-01 obj_fn_1
+
+
+---------------------
+Begin Evaluation    4
+---------------------
+Parameters for evaluation 4:
+                      9.7700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2660000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      1.3550000000e-01 DamageParameter1
+                      3.0000000000e-02 DamageParameter2
+                      1.5500000000e+00 DamageParameter3
+                      9.7000000000e-01 ThresholdDamage
+
+(Asynchronous job 4 added to queue)
+
+---------------------
+Begin Evaluation    5
+---------------------
+Parameters for evaluation 5:
+                      9.7700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0600000000e+08 LinearConstant
+                      1.3550000000e-01 DamageParameter1
+                      3.0000000000e-02 DamageParameter2
+                      1.5500000000e+00 DamageParameter3
+                      9.7000000000e-01 ThresholdDamage
+
+(Asynchronous job 5 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 4
+nonblocking fork: driver_HE0_voce_hypoelastic_stage3_joint_polish.sh params.in.4 results.out.4
+Initiating evaluation 5
+nonblocking fork: driver_HE0_voce_hypoelastic_stage3_joint_polish.sh params.in.5 results.out.5
+Waiting on completed jobs
+Evaluation 5 has completed
+Waiting on completed jobs
+Evaluation 4 has completed
+
+Active response data for evaluation 4:
+Active set vector = { 1 }
+                      6.8360456643e-02 obj_fn_1
+
+
+Active response data for evaluation 5:
+Active set vector = { 1 }
+                      5.3868992947e-02 obj_fn_1
+
+
+---------------------
+Begin Evaluation    6
+---------------------
+Parameters for evaluation 6:
+                      9.7700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      1.3960000000e-01 DamageParameter1
+                      3.0000000000e-02 DamageParameter2
+                      1.5500000000e+00 DamageParameter3
+                      9.7000000000e-01 ThresholdDamage
+
+(Asynchronous job 6 added to queue)
+
+---------------------
+Begin Evaluation    7
+---------------------
+Parameters for evaluation 7:
+                      9.7700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      1.3550000000e-01 DamageParameter1
+                      3.1450000000e-02 DamageParameter2
+                      1.5500000000e+00 DamageParameter3
+                      9.7000000000e-01 ThresholdDamage
+
+(Asynchronous job 7 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 6
+nonblocking fork: driver_HE0_voce_hypoelastic_stage3_joint_polish.sh params.in.6 results.out.6
+Initiating evaluation 7
+nonblocking fork: driver_HE0_voce_hypoelastic_stage3_joint_polish.sh params.in.7 results.out.7
+Waiting on completed jobs
+Evaluation 6 has completed
+Waiting on completed jobs
+Evaluation 7 has completed
+
+Active response data for evaluation 6:
+Active set vector = { 1 }
+                      7.9045749322e-02 obj_fn_1
+
+
+Active response data for evaluation 7:
+Active set vector = { 1 }
+                      6.0564715086e-02 obj_fn_1
+
+
+---------------------
+Begin Evaluation    8
+---------------------
+Parameters for evaluation 8:
+                      9.7700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      1.3550000000e-01 DamageParameter1
+                      3.0000000000e-02 DamageParameter2
+                      1.5965000000e+00 DamageParameter3
+                      9.7000000000e-01 ThresholdDamage
+
+(Asynchronous job 8 added to queue)
+
+---------------------
+Begin Evaluation    9
+---------------------
+Parameters for evaluation 9:
+                      9.4765000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      1.3550000000e-01 DamageParameter1
+                      3.0000000000e-02 DamageParameter2
+                      1.5500000000e+00 DamageParameter3
+                      9.7000000000e-01 ThresholdDamage
+
+(Asynchronous job 9 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 8
+nonblocking fork: driver_HE0_voce_hypoelastic_stage3_joint_polish.sh params.in.8 results.out.8
+Initiating evaluation 9
+nonblocking fork: driver_HE0_voce_hypoelastic_stage3_joint_polish.sh params.in.9 results.out.9
+Waiting on completed jobs
+
+Dakota caught signal 15

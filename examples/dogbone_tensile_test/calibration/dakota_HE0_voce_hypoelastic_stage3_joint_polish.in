@@ -1,0 +1,53 @@
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE0_voce_hypoelastic_stage3.dat'
+
+method
+  coliny_pattern_search
+    max_function_evaluations = 20
+
+variables
+  # Short joint 7-param polish pass around the combined Stage 1 + Stage 2
+  # result: Stage 1's best (eval 9, obj=0.0360: InitialYieldStress/
+  # SaturatedYieldStress/ExponentialConstant/LinearConstant) and the D1-shift
+  # Stage 2 rerun's final best (ThresholdDamage=0.85, eval 23, obj=0.0447:
+  # DamageParameter1/2/3=0.131/0.03/0.175; fracture 15.25% vs real 15.37%,
+  # with a genuine pre-fracture softening dip -- see CLAUDE.md). This
+  # supersedes the earlier ThresholdDamage=0.97/eval 4 warm start (obj=0.0537,
+  # no visible softening): reading the JC damage model source clarified that
+  # ThresholdDamage sets the softening ramp's width while D1/D2/D3 (via
+  # epsF) set when it begins, so 0.85 (wide enough ramp for visible
+  # softening) plus a D1 shift up (delays onset to match real HE_0's own
+  # softening timing) beat the narrower 0.97 ramp on both fit and shape.
+  # ThresholdDamage stays fixed (continuous_state, not searched) at 0.85.
+  #
+  # Bounds are +/-15% around the warm start (mirroring the power-law
+  # Stage 3's approach), clipped to the hard physical/numerical limits
+  # established in Stages 1-2: SaturatedYieldStress capped at 1.5e10
+  # (Stage 1's own upper bound), DamageParameter1/2 floored at 0.02
+  # (Stage 2's lower bound, chosen so warm starts near it aren't silently
+  # clamped -- see dakota_HE0_voce_hypoelastic_stage2_damage.in), and
+  # DamageParameter3 floored at 0.0 (non-negative triaxiality sensitivity;
+  # negative D3 was the power-law path's numerically fragile dead end, never
+  # revisited under Voce).
+  continuous_design = 7
+    descriptors                    'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'  'DamageParameter1'  'DamageParameter2'  'DamageParameter3'
+    initial_point                   9.77e9                 1.35e10                 22.0                   2.0e8             0.131               0.03                0.175
+    lower_bounds                    8.30e9                 1.1475e10               18.7                   1.7e8             0.111               0.02                0.14875
+    upper_bounds                    1.1235e10              1.5e10                  25.3                   2.3e8             0.151               0.0345              0.20125
+  continuous_state = 1
+    descriptors                    'ThresholdDamage'
+    initial_state                   0.85
+
+interface
+  analysis_drivers = 'driver_HE0_voce_hypoelastic_stage3_joint_polish.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+  asynchronous evaluation_concurrency = 2
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

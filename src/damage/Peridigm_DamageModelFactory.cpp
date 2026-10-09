@@ -53,6 +53,7 @@
 #include "Peridigm_InitialDamageModel.hpp"
 #include "Peridigm_JohnsonCookDamageModel.hpp"
 #include "Peridigm_VonMisesStressDamageModel.hpp"
+#include "Peridigm_BrozzoDamageModel.hpp"
 
 using namespace std;
 
@@ -74,11 +75,13 @@ PeridigmNS::DamageModelFactory::create(const Teuchos::ParameterList& damageModel
   else if(damageModelName == "Johnson Cook")
     damageModel = Teuchos::rcp( new JohnsonCookDamageModel(damageModelParams) );  
   else if(damageModelName == "Von Mises Stress")
-    damageModel = Teuchos::rcp( new VonMisesStressDamageModel(damageModelParams) );  
+    damageModel = Teuchos::rcp( new VonMisesStressDamageModel(damageModelParams) );
+  else if(damageModelName == "Brozzo")
+    damageModel = Teuchos::rcp( new BrozzoDamageModel(damageModelParams) );
   else {
     string invalidDamageModel("\n**** Unrecognized damage model type: ");
     invalidDamageModel += damageModelName;
-    invalidDamageModel += ", must be \"Critical Stretch\", \"Time Dependent Critical Stretch\", \"Interface Aware\", or \"Initial Damage\".\n";
+    invalidDamageModel += ", must be \"Critical Stretch\", \"Time Dependent Critical Stretch\", \"Interface Aware\", \"Initial Damage\", \"Johnson Cook\", \"Von Mises Stress\", or \"Brozzo\".\n";
     TEUCHOS_TEST_FOR_EXCEPT_MSG(true, invalidDamageModel);
   }
 

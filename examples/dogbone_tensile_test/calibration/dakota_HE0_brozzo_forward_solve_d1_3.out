@@ -1,0 +1,62 @@
+Dakota version 6.24 released May 15 2026.
+Repository revision 1ab1c9924 (2026-05-11) built May 11 2026 11:08:44.
+Running MPI Dakota executable in serial mode.
+Start time: Tue Sep 29 11:07:46 2026
+
+------------------
+Begin Dakota input
+------------------
+environment
+
+method
+  list_parameter_study
+    # Single evaluation, re-running the best Brozzo d1 sweep result so far
+    # (d1=3.0, d2=0.95, ThresholdDamage=0.85, HE_0 Stage 1 Voce hardening)
+    # to retain the full Exodus output for viewing in ParaView. Not an
+    # optimization -- a one-off diagnostic forward solve.
+    list_of_points =  9.77e9  1.35e10  22.0  2.0e8  3.0  0.95  0.85
+
+variables
+  continuous_design = 7
+    descriptors  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'  'DamageParameter1'  'DamageParameter2'  'ThresholdDamage'
+
+interface
+  analysis_drivers = 'driver_HE0_brozzo_forward_solve_d1_3.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians
+
+----------------
+End Dakota input
+----------------
+
+Using Dakota parser: standard
+Writing new restart file 'dakota_HE0_brozzo_forward_solve_d1_3.rst'.
+
+>>>>> Executing environment.
+
+>>>>> Running list_parameter_study iterator.
+
+List parameter study for 1 samples
+
+
+---------------------
+Begin Evaluation    1
+---------------------
+Parameters for evaluation 1:
+                      9.7700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      3.0000000000e+00 DamageParameter1
+                      9.5000000000e-01 DamageParameter2
+                      8.5000000000e-01 ThresholdDamage
+
+blocking fork: driver_HE0_brozzo_forward_solve_d1_3.sh params.in results.out
+
+Dakota caught signal 15

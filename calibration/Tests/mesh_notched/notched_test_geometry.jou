@@ -1,0 +1,64 @@
+reset
+
+#  or alternatively if you have the SEACAS tools from Trilinos built:
+#
+#  decomp -p 2 mesh.g
+#
+
+#{GRIP_WIDTH=15.0}
+#{GRIP_RADUIS=2.5}
+#{LENGTH=22.5}
+#{GAUGE_WIDTH=2.7}
+#{GAUGE_LENGTH=10.2}
+#{THICKNESS=2.5}
+#{NOTCH_DEPTH=0.35}
+#{NOTCH_THICKNESS=0.2}
+#{ANGLE=45}
+#{LENGTH=GAUGE_LENGTH + (GRIP_WIDTH-GAUGE_WIDTH-2*GRIP_RADIUS*(1-sind(ANGLE)))*tand(ANGLE) + 2*GRIP_RADIUS*cosd(ANGLE)}
+
+#{NUM_ELEM_THROUGH_THICKNESS=15}
+#{ELEMENT_SIZE=THICKNESS/NUM_ELEM_THROUGH_THICKNESS}
+#{HORIZON=2.0*ELEMENT_SIZE}
+
+#Build geometry
+create vertex 0 0 {THICKNESS/2}
+create vertex {GAUGE_WIDTH/2-NOTCH_DEPTH} 0 {THICKNESS/2}
+create vertex {GAUGE_WIDTH/2} {-NOTCH_THICKNESS/2} {THICKNESS/2}
+create vertex {GAUGE_WIDTH/2} {-GAUGE_LENGTH/2} {THICKNESS/2}
+create vertex 0 {-GAUGE_LENGTH/2} {THICKNESS/2}
+create curve vertex 1 vertex 2
+create curve vertex 2 vertex 3
+create curve vertex 3 vertex 4
+create curve vertex 4 vertex 5
+create curve vertex 5 vertex 1
+
+create surface curve all
+
+sweep surface all vector 0 0 -1 distance {THICKNESS}
+volume all copy reflect x 
+volume all copy reflect y 
+
+unite volume all
+compress ids
+
+create brick x {GAUGE_WIDTH} y {HORIZON} z {THICKNESS}
+volume 2 move x 0.0 y {(GAUGE_LENGTH+HORIZON)/2} z 0.0
+create brick x {GAUGE_WIDTH} y {HORIZON} z {THICKNESS}
+volume 3 move x 0.0 y {-(GAUGE_LENGTH+HORIZON)/2} z 0.0
+
+block 1 volume 3
+block 2 volume 1
+block 3 volume 2
+
+volume all size {ELEMENT_SIZE}
+volume ALL scheme Tetmesh
+mesh volume all
+
+nodeset 1 volume 3 # bottom block
+nodeset 2 volume 2 # top block
+nodeset 3 curve 48 # bottom x axis
+nodeset 4 curve 51 # bottom z axis
+nodeset 5 curve 38 # top x axis
+nodeset 6 curve 41 # top z axis
+
+export genesis "mesh.g" overwrite

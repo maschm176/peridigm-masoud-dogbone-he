@@ -1,0 +1,32 @@
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE30_sfc3_d2d3_check.dat'
+
+method
+  list_parameter_study
+    # Direct test of "safer D2, higher D3" hypothesis: D2=0.8 and D2=1.0
+    # (well clear of the ~0.3 collapse cliff found at D3=3.0), combined with
+    # D3=4.0 (sharper triaxiality suppression, to try to reach the same
+    # ~0.11 realized epsF target inferred from the old flat-epsF HE_30
+    # result without needing a dangerously low D2).
+    list_of_points = 0.8  1.0
+
+variables
+  continuous_design = 1
+    descriptors 'DamageParameter2'
+  continuous_state = 7
+    descriptors      'DamageParameter1'  'DamageParameter3'  'ThresholdDamage'  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'
+    initial_state     0.02                4.0                 0.97               1.027e10               1.35e10                 22.0                   2.0e8
+
+interface
+  analysis_drivers = 'driver_HE30_voce_hypoelastic_d2d3_check.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+  asynchronous evaluation_concurrency = 2
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

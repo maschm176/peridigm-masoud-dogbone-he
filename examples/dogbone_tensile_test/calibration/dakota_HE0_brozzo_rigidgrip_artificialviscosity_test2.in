@@ -1,0 +1,37 @@
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE0_brozzo_rigidgrip_artificialviscosity_test2.dat'
+
+method
+  list_parameter_study
+    # Follow-up coefficient scan for Bond-Level Artificial Viscosity. The
+    # first scan (1e4, 1e5, 1e6) showed essentially no effect on the
+    # post-fracture oscillation at any of the three points -- even c=1e6
+    # (100x the first point) produced curves visually indistinguishable
+    # from negligible damping (same amplitude, same chaotic pattern), with
+    # the lower objective there driven by a coincidental fracture-timing
+    # shift, not real damping. Jumping much further this time (4 more
+    # orders of magnitude) to quickly locate the regime where this term
+    # actually starts acting, before narrowing in.
+    list_of_points = 1.0e8  1.0e10  1.0e12
+
+variables
+  continuous_design = 1
+    descriptors 'ViscosityCoefficient'
+  continuous_state = 7
+    descriptors      'DamageParameter1'  'DamageParameter2'  'ThresholdDamage'  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'
+    initial_state     3.5                 0.99                0.85               9.77e9                1.35e10                 22.0                   2.0e8
+
+interface
+  # Serial (no concurrency) -- see the concurrency lesson learned during
+  # HE_30's joint polish (CLAUDE.md).
+  analysis_drivers = 'driver_HE0_brozzo_rigidgrip_artificialviscosity_test2.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

@@ -79,6 +79,8 @@ PeridigmNS::HypoelasticCorrespondenceMaterial::HypoelasticCorrespondenceMaterial
     m_jacobianDeterminantFieldId(-1),
     m_weightedVolumeFieldId(-1),
     m_undamagedWeightedVolumeFieldId(-1),
+    m_shapeTensorMinSingularValueFieldId(-1),
+    m_shapeTensorMaxSingularValueFieldId(-1),
     m_bondLevelLeftStretchTensorXXFieldId(-1),
     m_bondLevelLeftStretchTensorXYFieldId(-1),
     m_bondLevelLeftStretchTensorXZFieldId(-1),
@@ -175,6 +177,8 @@ PeridigmNS::HypoelasticCorrespondenceMaterial::HypoelasticCorrespondenceMaterial
   m_jacobianDeterminantFieldId        = fieldManager.getFieldId(PeridigmField::ELEMENT, PeridigmField::SCALAR, PeridigmField::TWO_STEP, "Jacobian_Determinant");
   m_weightedVolumeFieldId             = fieldManager.getFieldId(PeridigmField::ELEMENT, PeridigmField::SCALAR, PeridigmField::CONSTANT, "Weighted_Volume");
   m_undamagedWeightedVolumeFieldId    = fieldManager.getFieldId(PeridigmField::ELEMENT, PeridigmField::SCALAR, PeridigmField::CONSTANT, "Undamaged_Weighted_Volume");
+  m_shapeTensorMinSingularValueFieldId = fieldManager.getFieldId(PeridigmField::ELEMENT, PeridigmField::SCALAR, PeridigmField::TWO_STEP, "Shape_Tensor_Min_Singular_Value");
+  m_shapeTensorMaxSingularValueFieldId = fieldManager.getFieldId(PeridigmField::ELEMENT, PeridigmField::SCALAR, PeridigmField::TWO_STEP, "Shape_Tensor_Max_Singular_Value");
   
   // Currently BOND Field is limited to SCALAR. The reason is to avoid
   // allocating too much memory for the bond data. 
@@ -260,6 +264,8 @@ PeridigmNS::HypoelasticCorrespondenceMaterial::HypoelasticCorrespondenceMaterial
   m_fieldIds.push_back(m_jacobianDeterminantFieldId);
   m_fieldIds.push_back(m_weightedVolumeFieldId);
   m_fieldIds.push_back(m_undamagedWeightedVolumeFieldId);
+  m_fieldIds.push_back(m_shapeTensorMinSingularValueFieldId);
+  m_fieldIds.push_back(m_shapeTensorMaxSingularValueFieldId);
 
   m_fieldIds.push_back(m_bondLevelLeftStretchTensorXXFieldId);
   m_fieldIds.push_back(m_bondLevelLeftStretchTensorXYFieldId);
@@ -474,6 +480,10 @@ PeridigmNS::HypoelasticCorrespondenceMaterial::initialize(const double dt,
   dataManager.getData(m_undamagedWeightedVolumeFieldId, PeridigmField::STEP_NONE)->PutScalar(0.0);
   dataManager.getData(m_jacobianDeterminantFieldId, PeridigmField::STEP_N)->PutScalar(1.0);
   dataManager.getData(m_jacobianDeterminantFieldId, PeridigmField::STEP_NP1)->PutScalar(1.0);
+  dataManager.getData(m_shapeTensorMinSingularValueFieldId, PeridigmField::STEP_N)->PutScalar(0.0);
+  dataManager.getData(m_shapeTensorMinSingularValueFieldId, PeridigmField::STEP_NP1)->PutScalar(0.0);
+  dataManager.getData(m_shapeTensorMaxSingularValueFieldId, PeridigmField::STEP_N)->PutScalar(0.0);
+  dataManager.getData(m_shapeTensorMaxSingularValueFieldId, PeridigmField::STEP_NP1)->PutScalar(0.0);
 
   dataManager.getData(m_flyingPointFlagFieldId, PeridigmField::STEP_N)->PutScalar(-1.0);
   dataManager.getData(m_flyingPointFlagFieldId, PeridigmField::STEP_NP1)->PutScalar(-1.0);
@@ -953,12 +963,15 @@ void PeridigmNS::HypoelasticCorrespondenceMaterial::precompute(const double dt,
   double *gradientWeightX, *gradientWeightY, *gradientWeightZ;
   double *velocityGradient, *velocityGradientX, *velocityGradientY, *velocityGradientZ;
   double *flyingPointFlag, *bondDamage;
+  double *shapeTensorMinSingularValue, *shapeTensorMaxSingularValue;
   dataManager.getData(m_horizonFieldId, PeridigmField::STEP_NONE)->ExtractView(&horizon);
   dataManager.getData(m_volumeFieldId, PeridigmField::STEP_NONE)->ExtractView(&volume);
   dataManager.getData(m_weightedVolumeFieldId, PeridigmField::STEP_NONE)->ExtractView(&weightedVolume);
   dataManager.getData(m_undamagedWeightedVolumeFieldId, PeridigmField::STEP_NONE)->ExtractView(&undamagedWeightedVolume);
   dataManager.getData(m_jacobianDeterminantFieldId, PeridigmField::STEP_N)->ExtractView(&jacobianDeterminantN);
   dataManager.getData(m_jacobianDeterminantFieldId, PeridigmField::STEP_NP1)->ExtractView(&jacobianDeterminantNP1);
+  dataManager.getData(m_shapeTensorMinSingularValueFieldId, PeridigmField::STEP_NP1)->ExtractView(&shapeTensorMinSingularValue);
+  dataManager.getData(m_shapeTensorMaxSingularValueFieldId, PeridigmField::STEP_NP1)->ExtractView(&shapeTensorMaxSingularValue);
   dataManager.getData(m_coordinatesFieldId, PeridigmField::STEP_NP1)->ExtractView(&coordinates);
   dataManager.getData(m_velocitiesFieldId, PeridigmField::STEP_NP1)->ExtractView(&velocities);
   dataManager.getData(m_gradientWeightXFieldId, PeridigmField::STEP_NONE)->ExtractView(&gradientWeightX);
@@ -993,7 +1006,9 @@ void PeridigmNS::HypoelasticCorrespondenceMaterial::precompute(const double dt,
                                                                         flyingPointFlag,
                                                                         bondDamage,
                                                                         neighborhoodList,
-                                                                        numOwnedPoints);
+                                                                        numOwnedPoints,
+                                                                        shapeTensorMinSingularValue,
+                                                                        shapeTensorMaxSingularValue);
 
   string gradientWeightErrorMessage =
     "**** Error:  HypoelasticCorrespondenceMaterial::precompute() failed to compute gradient weights.\n";

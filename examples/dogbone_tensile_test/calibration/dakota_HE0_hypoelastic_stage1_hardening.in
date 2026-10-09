@@ -1,0 +1,42 @@
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE0_hypoelastic_stage1.dat'
+
+method
+  coliny_pattern_search
+    max_function_evaluations = 30
+
+variables
+  # Warm-started from this project's own archived power-law campaign
+  # (dakota_run4_powerlaw_local_refine.out, objective 0.036 against the OLD
+  # bond-associated correspondence material -- a starting guess, not an
+  # already-optimal answer for Hypoelastic's different formulation). Bounds
+  # are wide from the start (lesson learned from the HE_30 staging saga:
+  # tightening bounds around a warm start only ever hurts -- costs nothing
+  # when the optimum is close, and blocks convergence when it isn't).
+  # Damage is fixed via continuous_state at values that keep it from ever
+  # triggering: Threshold Damage fixed at 0.9 (must stay below the
+  # template's fixed Critical Damage = 0.95) and Damage Parameter 1 (the
+  # constant term of the fracture-strain criterion epsF = D1 + D2*exp(...))
+  # set far above any local plastic strain this run will reach.
+  continuous_design = 3
+    descriptors                    'YieldStress'  'HardeningCharacteristicStrain'  'HardeningExponent'
+    initial_point                   1.0267832647e10  1.3609018823e-01                5.3800487731e-01
+    lower_bounds                    5.0e9            1.0e-2                          5.0e-2
+    upper_bounds                    2.0e10           1.0                             2.0
+  continuous_state = 4
+    descriptors                    'DamageParameter1'  'DamageParameter2'  'DamageParameter3'  'ThresholdDamage'
+    initial_state                   5.0                 0.0                 0.0                 0.9
+
+interface
+  analysis_drivers = 'driver_HE0_hypoelastic_stage1_hardening.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+  asynchronous evaluation_concurrency = 2
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

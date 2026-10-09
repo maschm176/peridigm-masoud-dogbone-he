@@ -6,15 +6,21 @@ Peridigm:
 
   Materials:
       My Material:
-          Material Model: "Elastic"
+          Material Model: "Isotropic Hardening Bond Associated Correspondence"
           Density: 7800.0
           Bulk Modulus: 130.0e9
           Shear Modulus: 78.0e9
+          Hardening Rule: "Saturation type exponential"
+          Hardening Parameters:
+              Initial Yield Stress: 9.27e9
+              Saturated Yield Stress: 1.35e10
+              Exponential Constant: 22.0
+              Linear Constant: 2.0e8
 
   Damage Models:
       My Damage Model:
           Damage Model: "Critical Stretch"
-          Critical Stretch: 0.02
+          Critical Stretch: 0.167
 
   Blocks:
       My Block:
@@ -59,7 +65,6 @@ Peridigm:
           Force_Density: true
           Force: true
           Element_Id: true
-          Dilatation: true
           Weighted_Volume: true
           Damage: true
           Radius: true

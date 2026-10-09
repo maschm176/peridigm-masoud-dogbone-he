@@ -1,0 +1,4 @@
+%eval_id interface ViscosityCoefficient DamageParameter1 DamageParameter2 ThresholdDamage InitialYieldStress SaturatedYieldStress ExponentialConstant LinearConstant obj_fn_1       
+1        NO_ID      10000          3.5            0.99           0.85           9770000000     1.35e+10       22             200000000      0.2354041017   
+2        NO_ID      100000         3.5            0.99           0.85           9770000000     1.35e+10       22             200000000      0.2371381566   
+3        NO_ID      1000000        3.5            0.99           0.85           9770000000     1.35e+10       22             200000000      0.07360777971  

@@ -1,0 +1,24 @@
+environment
+
+method
+  list_parameter_study
+    # Single evaluation, re-running the best Brozzo d1 sweep result so far
+    # (d1=3.0, d2=0.95, ThresholdDamage=0.85, HE_0 Stage 1 Voce hardening)
+    # to retain the full Exodus output for viewing in ParaView. Not an
+    # optimization -- a one-off diagnostic forward solve.
+    list_of_points =  9.77e9  1.35e10  22.0  2.0e8  3.0  0.95  0.85
+
+variables
+  continuous_design = 7
+    descriptors  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'  'DamageParameter1'  'DamageParameter2'  'ThresholdDamage'
+
+interface
+  analysis_drivers = 'driver_HE0_brozzo_forward_solve_d1_3.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

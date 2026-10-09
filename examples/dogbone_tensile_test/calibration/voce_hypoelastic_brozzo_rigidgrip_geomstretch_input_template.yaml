@@ -1,0 +1,152 @@
+Peridigm:
+
+#     Dogbone specimen diagnostic template: same as
+#     voce_hypoelastic_brozzo_rigidgrip_input_template.yaml (Voce hardening +
+#     Brozzo damage, locked-in HE_0 parameters, rigid-grip BC at 220 cm/s,
+#     plain ramp mode), but with "Enable Geometric Stretch Cutoff: true" and
+#     "Geometric Critical Stretch: {GeometricCriticalStretch}" -- a
+#     lightweight approximation of the "Revisiting" paper's semi-Lagrangian
+#     re-neighboring, scoped to just the "drop a bond once its points have
+#     moved far enough apart" direction (current relative stretch,
+#     recomputed fresh every step from current geometry, no dependence on
+#     Brozzo's own accumulated/stress-history-driven damage parameter).
+#     Targets the "patchy holdout" bonds directly: the flying-point
+#     diagnostic (see CLAUDE.md) found Broken_Bond_Volume_Averaged plateaus
+#     around 0.855 under the unmodified damage law and never reaches the
+#     0.95 flying-point threshold, meaning the specimen never genuinely
+#     severs. This cutoff is OR'd with Brozzo's own ramp/Hard-Cutoff logic
+#     (a bond fails if EITHER criterion is met), implemented in
+#     Peridigm_BrozzoDamageModel.cpp. Requires the
+#     peridigm-masoud:voce-hypoelastic-brozzo-geomstretch image (rebuilt
+#     with this change).
+#
+#     Units are CGS, matching the mesh, same as the original template.
+
+  Discretization:
+      Type: "Exodus"
+      Input Mesh File: "tensile_test.g"
+
+  Materials:
+      My Material:
+          Material Model: "Isotropic Hardening Hypoelastic Correspondence"
+          Density: 7.8
+          Bulk Modulus: 1.30e12
+          Shear Modulus: 7.8e11
+          Hardening Rule: "Saturation type exponential"
+          Initial Yield Stress: {InitialYieldStress}
+          Saturated Yield Stress: {SaturatedYieldStress}
+          Exponential Constant: {ExponentialConstant}
+          Linear Constant: {LinearConstant}
+          Actual Horizon: 0.189
+
+  Damage Models:
+      My Damage Model:
+          Damage Model: "Brozzo"
+          Damage Parameter 1: {DamageParameter1}
+          Damage Parameter 2: {DamageParameter2}
+          Threshold Damage: {ThresholdDamage}
+          Enable Geometric Stretch Cutoff: true
+          Geometric Critical Stretch: {GeometricCriticalStretch}
+
+  Blocks:
+      My Block:
+          Block Names: "block_1 block_2 block_3"
+          Material: "My Material"
+          Damage Model: "My Damage Model"
+          Horizon: 0.236
+
+  Boundary Conditions:
+      Prescribed Displacement Bottom:
+          Type: "Prescribed Displacement"
+          Node Set: "nodelist_1"
+          Coordinate: "y"
+          Value: "-220.0*t"
+      Prescribed Displacement Top:
+          Type: "Prescribed Displacement"
+          Node Set: "nodelist_2"
+          Coordinate: "y"
+          Value: "220.0*t"
+      Prescribed Displacement Fix Bottom Rigid Body Motion In X:
+          Type: "Prescribed Displacement"
+          Node Set: "nodelist_3"
+          Coordinate: "x"
+          Value: "0.0"
+      Prescribed Displacement Fix Bottom Rigid Body Motion In Z:
+          Type: "Prescribed Displacement"
+          Node Set: "nodelist_4"
+          Coordinate: "z"
+          Value: "0.0"
+      Prescribed Displacement Fix Top Rigid Body Motion In X:
+          Type: "Prescribed Displacement"
+          Node Set: "nodelist_5"
+          Coordinate: "x"
+          Value: "0.0"
+      Prescribed Displacement Fix Top Rigid Body Motion In Z:
+          Type: "Prescribed Displacement"
+          Node Set: "nodelist_6"
+          Coordinate: "z"
+          Value: "0.0"
+
+  Solver:
+      Verbose: false
+      Initial Time: 0.0
+      Final Time: 1.84e-3
+      Verlet:
+          Safety Factor: 0.7
+
+  Compute Class Parameters:
+      Strain Gage Top Initial Position:
+          Compute Class: "Nearest_Point_Data"
+          X: 0.0317
+          Y: 1.238
+          Z: 0.0
+          Variable: "Model_Coordinates"
+          Output Label: "Gage_Top_Initial_Position"
+      Strain Gage Bottom Initial Position:
+          Compute Class: "Nearest_Point_Data"
+          X: 0.0317
+          Y: -1.238
+          Z: 0.0
+          Variable: "Model_Coordinates"
+          Output Label: "Gage_Bottom_Initial_Position"
+      Strain Gage Top Displacement:
+          Compute Class: "Nearest_Point_Data"
+          X: 0.0317
+          Y: 1.238
+          Z: 0.0
+          Variable: "Displacement"
+          Output Label: "Gage_Top_Displacement"
+      Strain Gage Bottom Displacement:
+          Compute Class: "Nearest_Point_Data"
+          X: 0.0317
+          Y: -1.238
+          Z: 0.0
+          Variable: "Displacement"
+          Output Label: "Gage_Bottom_Displacement"
+      Top Reaction Force:
+          Compute Class: "Block_Data"
+          Calculation Type: "Sum"
+          Block: "block_3"
+          Variable: "Force"
+          Output Label: "Top_Reaction_Force"
+      Bottom Reaction Force:
+          Compute Class: "Block_Data"
+          Calculation Type: "Sum"
+          Block: "block_1"
+          Variable: "Force"
+          Output Label: "Bottom_Reaction_Force"
+
+  Output:
+      Output File Type: "ExodusII"
+      Output Filename: "output"
+      Output Frequency: 20
+      Output Variables:
+          Displacement: true
+          Force: true
+          Gage_Top_Displacement: true
+          Gage_Bottom_Displacement: true
+          Top_Reaction_Force: true
+          Bottom_Reaction_Force: true
+          Damage: true
+          Broken_Bond_Volume_Averaged: true
+          Flying_Point_Flag: true

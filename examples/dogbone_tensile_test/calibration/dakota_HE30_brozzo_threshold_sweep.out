@@ -1,0 +1,147 @@
+Dakota version 6.24 released May 15 2026.
+Repository revision 1ab1c9924 (2026-05-11) built May 11 2026 11:08:44.
+Running MPI Dakota executable in serial mode.
+Start time: Thu Oct  1 23:05:09 2026
+
+------------------
+Begin Dakota input
+------------------
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE30_brozzo_threshold_sweep.dat'
+
+method
+  list_parameter_study
+    # ThresholdDamage sweep for HE_30, d1=3.5/d2=0.99 fixed (the best
+    # surviving point from the stalled joint polish). 0.85 (HE_0's value,
+    # used throughout every HE_30 run so far) is already known:
+    # obj=0.1840, fracture_strain=15.40% vs real target 13.27% (see
+    # dakota_tabular_HE30_brozzo_d1d2_polish.dat eval 1) -- not re-run here.
+    # Testing lower values to see whether widening the damage ramp shifts
+    # fracture earlier and/or changes stability, bracketing down from there.
+    list_of_points = 0.75  0.65  0.5
+
+variables
+  continuous_design = 1
+    descriptors 'ThresholdDamage'
+  continuous_state = 6
+    descriptors      'DamageParameter1'  'DamageParameter2'  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'
+    initial_state     3.5                 0.99                1.027e10              1.35e10                 22.0                   2.0e8
+
+interface
+  analysis_drivers = 'driver_HE30_brozzo_threshold_sweep.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+    asynchronous evaluation_concurrency = 2
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians
+
+----------------
+End Dakota input
+----------------
+
+Using Dakota parser: standard
+Writing new restart file 'dakota.rst'.
+
+>>>>> Executing environment.
+
+>>>>> Running list_parameter_study iterator.
+
+List parameter study for 3 samples
+
+
+---------------------
+Begin Evaluation    1
+---------------------
+Parameters for evaluation 1:
+                      7.5000000000e-01 ThresholdDamage
+                      3.5000000000e+00 DamageParameter1
+                      9.9000000000e-01 DamageParameter2
+                      1.0270000000e+10 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+
+(Asynchronous job 1 added to queue)
+
+---------------------
+Begin Evaluation    2
+---------------------
+Parameters for evaluation 2:
+                      6.5000000000e-01 ThresholdDamage
+                      3.5000000000e+00 DamageParameter1
+                      9.9000000000e-01 DamageParameter2
+                      1.0270000000e+10 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+
+(Asynchronous job 2 added to queue)
+
+---------------------
+Begin Evaluation    3
+---------------------
+Parameters for evaluation 3:
+                      5.0000000000e-01 ThresholdDamage
+                      3.5000000000e+00 DamageParameter1
+                      9.9000000000e-01 DamageParameter2
+                      1.0270000000e+10 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+
+(Asynchronous job 3 added to queue)
+
+Blocking synchronize of 3 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 1
+nonblocking fork: driver_HE30_brozzo_threshold_sweep.sh params.in.1 results.out.1
+Initiating evaluation 2
+nonblocking fork: driver_HE30_brozzo_threshold_sweep.sh params.in.2 results.out.2
+Second pass: scheduling 1 remaining local asynchronous jobs
+Waiting on completed jobs
+Evaluation 2 has completed
+Initiating evaluation 3
+nonblocking fork: driver_HE30_brozzo_threshold_sweep.sh params.in.3 results.out.3
+Waiting on completed jobs
+Evaluation 1 has completed
+Waiting on completed jobs
+Evaluation 3 has completed
+
+Active response data for evaluation 1:
+Active set vector = { 1 }
+                      1.4137906432e-01 obj_fn_1
+
+
+Active response data for evaluation 2:
+Active set vector = { 1 }
+                      1.0049088047e-01 obj_fn_1
+
+
+Active response data for evaluation 3:
+Active set vector = { 1 }
+                      2.7144053807e-02 obj_fn_1
+
+<<<<< Function evaluation summary: 3 total (3 new, 0 duplicate)
+<<<<< Best parameters          =
+                      5.0000000000e-01 ThresholdDamage
+                      3.5000000000e+00 DamageParameter1
+                      9.9000000000e-01 DamageParameter2
+                      1.0270000000e+10 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+<<<<< Best objective function  =
+                      2.7144053807e-02
+<<<<< Best evaluation ID: 3
+
+<<<<< Iterator list_parameter_study completed.
+<<<<< Environment execution completed.
+DAKOTA execution time in seconds:
+  Total CPU        =   0.043505 [parent =   0.043557, child =   -5.2e-05]
+  Total wall clock =    7534.67

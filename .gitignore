@@ -28,3 +28,8 @@ test/performance/twist_and_pull/twist_and_pull_gold.e
 /GCC_4.7.2_OPT_SYMBOLS/
 /GCC_4.7.2_DBG/
 
+
+# large regenerable simulation output (dogbone HE calibration project)
+examples/dogbone_tensile_test/calibration/forward_runs/
+examples/dogbone_tensile_test/calibration/*.e
+examples/dogbone_tensile_test/calibration/*.e.4.*

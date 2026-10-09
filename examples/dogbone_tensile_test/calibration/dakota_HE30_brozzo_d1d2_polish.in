@@ -1,0 +1,36 @@
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE30_brozzo_d1d2_polish.dat'
+
+method
+  coliny_pattern_search
+    max_function_evaluations = 10
+
+variables
+  # Joint d1/d2 polish for HE_30, warm-started at the best surviving point
+  # from the two d1-only sweeps (d1=3.5, d2=0.99 fixed, obj frac=15.40% vs
+  # real target 13.27%). d1 upper bound capped at 5.0 -- the confirmed last
+  # safe value, since 5.5/6.0 both crashed (NaN returned by force
+  # evaluation). d2 bounds mirror the exact window used for HE_0's own
+  # joint polish (0.75-1.15 around ~0.95-0.99).
+  continuous_design = 2
+    descriptors                    'DamageParameter1'  'DamageParameter2'
+    initial_point                   3.5                 0.99
+    lower_bounds                    2.0                 0.75
+    upper_bounds                    5.0                 1.15
+  continuous_state = 5
+    descriptors                    'ThresholdDamage'  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'
+    initial_state                   0.85               1.027e10              1.35e10                 22.0                   2.0e8
+
+interface
+  analysis_drivers = 'driver_HE30_brozzo_d1d2_polish.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+    asynchronous evaluation_concurrency = 2
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

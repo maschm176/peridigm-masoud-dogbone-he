@@ -1,0 +1,70 @@
+Dakota version 6.24 released May 15 2026.
+Repository revision 1ab1c9924 (2026-05-11) built May 11 2026 11:08:44.
+Running MPI Dakota executable in serial mode.
+Start time: Mon Oct  5 16:42:48 2026
+
+------------------
+Begin Dakota input
+------------------
+environment
+
+method
+  list_parameter_study
+    # Single evaluation: HE_0's locked-in optimized hardening parameters,
+    # but with DamageParameter1 pushed to near-zero (not just ThresholdDamage
+    # raised) so D_dot = d1*<...>^d2*eqps_dot stays ~0 regardless of local
+    # plastic strain -- the first attempt (d1=3.5, ThresholdDamage=0.999)
+    # was NOT actually damage-free: D still crossed 0.999 during extreme
+    # necking strain localization late in the run, producing a real bond-
+    # failure event at ~16-17% strain (confirmed by the sharp drop + violent
+    # oscillation in the resulting curve). This mirrors how Stage 1 runs
+    # disable Johnson-Cook damage elsewhere in this project (D1=5.0, an
+    # unreachable fracture strain) rather than relying on ThresholdDamage
+    # alone. Not an optimization -- a one-off reference run for the
+    # post-fracture ringing investigation.
+    list_of_points =  9.77e9  1.35e10  22.0  2.0e8  0.001  0.99  0.999
+
+variables
+  continuous_design = 7
+    descriptors  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'  'DamageParameter1'  'DamageParameter2'  'ThresholdDamage'
+
+interface
+  analysis_drivers = 'driver_HE0_brozzo_damagedisabled_forward_solve.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians
+
+----------------
+End Dakota input
+----------------
+
+Using Dakota parser: standard
+Writing new restart file 'dakota.rst'.
+
+>>>>> Executing environment.
+
+>>>>> Running list_parameter_study iterator.
+
+List parameter study for 1 samples
+
+
+---------------------
+Begin Evaluation    1
+---------------------
+Parameters for evaluation 1:
+                      9.7700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      1.0000000000e-03 DamageParameter1
+                      9.9000000000e-01 DamageParameter2
+                      9.9900000000e-01 ThresholdDamage
+
+blocking fork: driver_HE0_brozzo_damagedisabled_forward_solve.sh params.in results.out
+
+Dakota caught signal 15

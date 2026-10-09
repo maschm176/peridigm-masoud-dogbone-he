@@ -1,0 +1,12 @@
+                                        3 variables
+                     3.0000000000000000e+09 YieldStress
+                     2.0000000000000000e-02 HardeningCharacteristicStrain
+                     5.0000000000000000e-01 HardeningExponent
+                                        1 functions
+                                        1 ASV_1:obj_fn_1
+                                        3 derivative_variables
+                                        1 DVV_1:YieldStress
+                                        2 DVV_2:HardeningCharacteristicStrain
+                                        3 DVV_3:HardeningExponent
+                                        0 analysis_components
+                                        1 eval_id

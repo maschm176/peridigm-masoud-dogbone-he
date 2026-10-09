@@ -1,0 +1,52 @@
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE30_voce_hypoelastic_stage2.dat'
+
+method
+  coliny_pattern_search
+    max_function_evaluations = 30
+
+variables
+  # Same framework as the HE_0 Voce-under-Hypoelastic Stage 2 D1-shift rerun
+  # (dakota_HE0_voce_hypoelastic_stage2_damage.in), applied to HE_30:
+  # Johnson Cook damage only (Damage Parameter 1/2/3), hardening frozen via
+  # continuous_state at HE_30's own Stage 1 result (InitialYieldStress=
+  # 1.027e10, SaturatedYieldStress=1.35e10, ExponentialConstant=22.0,
+  # LinearConstant=2.0e8; obj=0.2233 -- see
+  # dakota_HE30_voce_hypoelastic_stage1_hardening.in). CONCENTRATION=30
+  # selects calibration_{stress,strain}_data_HE_30.txt via
+  # driver_HE30_voce_hypoelastic_stage2_damage.sh.
+  #
+  # ThresholdDamage fixed at 0.85 (continuous_state, not searched) --
+  # matches HE_0's own final Stage 2/3 threshold, wide enough a ramp for
+  # visible pre-fracture softening.
+  #
+  # Warm-started from HE_0's own Stage 2 D1-shift attempt's initial guess
+  # (D1/D2/D3 = 0.1355/0.03/0.55) rather than HE_0's final true-best
+  # (0.131/0.03/0.175), per explicit request. Bounds kept wide and identical
+  # to every prior Voce Stage 2 attempt: D1/D2 floored at 0.02 (avoids
+  # Dakota silently clamping a warm start near a tighter bound), D3 floored
+  # at 0.0 (non-negative triaxiality sensitivity; negative D3 was the
+  # power-law path's numerically fragile dead end, never revisited under
+  # Voce).
+  continuous_design = 3
+    descriptors                    'DamageParameter1'  'DamageParameter2'  'DamageParameter3'
+    initial_point                   0.1355              0.03                0.55
+    lower_bounds                    0.02                0.02                0.0
+    upper_bounds                    0.60                4.00                5.0
+  continuous_state = 5
+    descriptors                    'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'  'ThresholdDamage'
+    initial_state                   1.027e10               1.35e10                 22.0                   2.0e8             0.85
+
+interface
+  analysis_drivers = 'driver_HE30_voce_hypoelastic_stage2_damage.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+  asynchronous evaluation_concurrency = 2
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

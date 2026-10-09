@@ -1,0 +1,34 @@
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE0_brozzo_rigidgrip_hardcutoff_sweep.dat'
+
+method
+  list_parameter_study
+    # ThresholdDamage sweep under Hard Cutoff=true, rigid-grip BC, HE_0.
+    # Spans both below and above the locked-in ramp-mode threshold (0.85)
+    # to map out the oscillation-amplitude vs fracture-timing tradeoff, and
+    # check whether HE_0 shows the same crossover behavior seen comparing
+    # the three single Hard Cutoff data points at HE_0 (0.85, narrow),
+    # HE_30 (0.51, mid), HE_60 (0.19, wide).
+    list_of_points = 0.60  0.70  0.75  0.85  0.90  0.95
+
+variables
+  continuous_design = 1
+    descriptors 'ThresholdDamage'
+  continuous_state = 6
+    descriptors      'DamageParameter1'  'DamageParameter2'  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'
+    initial_state     3.5                 0.99                9.77e9                1.35e10                 22.0                   2.0e8
+
+interface
+  # Serial (no concurrency) -- see the concurrency lesson learned during
+  # HE_30's joint polish (CLAUDE.md).
+  analysis_drivers = 'driver_HE0_brozzo_rigidgrip_hardcutoff_sweep.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

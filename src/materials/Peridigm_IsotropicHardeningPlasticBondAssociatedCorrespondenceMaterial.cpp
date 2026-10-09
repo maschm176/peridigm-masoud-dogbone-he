@@ -60,9 +60,10 @@ PeridigmNS::IsotropicHardeningPlasticBondAssociatedCorrespondenceMaterial::Isotr
     m_vonMisesStressFieldId(-1), 
     m_equivalentPlasticStrainFieldId(-1),
     m_stressTriaxialityFieldId(-1),
-    m_bondLevelVonMisesStressFieldId(-1), 
+    m_bondLevelVonMisesStressFieldId(-1),
     m_bondLevelEquivalentPlasticStrainFieldId(-1),
-    m_bondLevelStressTriaxialityFieldId(-1)
+    m_bondLevelStressTriaxialityFieldId(-1),
+    m_bondLevelMaxPrincipalStressFieldId(-1)
 {
 
   m_hardeningRule = params.get<string>("Hardening Rule");
@@ -97,10 +98,12 @@ PeridigmNS::IsotropicHardeningPlasticBondAssociatedCorrespondenceMaterial::Isotr
   m_bondLevelVonMisesStressFieldId               = fieldManager.getFieldId(PeridigmField::BOND, PeridigmField::SCALAR, PeridigmField::CONSTANT, "Bond_Von_Mises_Stress");
   m_bondLevelEquivalentPlasticStrainFieldId      = fieldManager.getFieldId(PeridigmField::BOND, PeridigmField::SCALAR, PeridigmField::TWO_STEP, "Bond_Equivalent_Plastic_Strain");
   m_bondLevelStressTriaxialityFieldId            = fieldManager.getFieldId(PeridigmField::BOND, PeridigmField::SCALAR, PeridigmField::CONSTANT, "Bond_Stress_Triaxiality");
+  m_bondLevelMaxPrincipalStressFieldId           = fieldManager.getFieldId(PeridigmField::BOND, PeridigmField::SCALAR, PeridigmField::CONSTANT, "Bond_Max_Principal_Stress");
 
   m_fieldIds.push_back(m_bondLevelVonMisesStressFieldId);
   m_fieldIds.push_back(m_bondLevelEquivalentPlasticStrainFieldId);
   m_fieldIds.push_back(m_bondLevelStressTriaxialityFieldId);
+  m_fieldIds.push_back(m_bondLevelMaxPrincipalStressFieldId);
 }
 
 PeridigmNS::IsotropicHardeningPlasticBondAssociatedCorrespondenceMaterial::~IsotropicHardeningPlasticBondAssociatedCorrespondenceMaterial()
@@ -130,6 +133,7 @@ PeridigmNS::IsotropicHardeningPlasticBondAssociatedCorrespondenceMaterial::initi
   dataManager.getData(m_bondLevelEquivalentPlasticStrainFieldId, PeridigmField::STEP_NP1)->PutScalar(0.0);
   dataManager.getData(m_bondLevelEquivalentPlasticStrainFieldId, PeridigmField::STEP_N)->PutScalar(0.0);
   dataManager.getData(m_bondLevelStressTriaxialityFieldId, PeridigmField::STEP_NONE)->PutScalar(0.0);
+  dataManager.getData(m_bondLevelMaxPrincipalStressFieldId, PeridigmField::STEP_NONE)->PutScalar(0.0);
 }
 
 void
@@ -238,6 +242,9 @@ PeridigmNS::IsotropicHardeningPlasticBondAssociatedCorrespondenceMaterial::compu
   dataManager.getData(m_bondLevelEquivalentPlasticStrainFieldId, PeridigmField::STEP_N)->ExtractView(&bondLevelEquivalentPlasticStrainN);
   dataManager.getData(m_bondLevelStressTriaxialityFieldId, PeridigmField::STEP_NONE)->ExtractView(&bondLevelStressTriaxiality);
 
+  double *bondLevelMaxPrincipalStress;
+  dataManager.getData(m_bondLevelMaxPrincipalStressFieldId, PeridigmField::STEP_NONE)->ExtractView(&bondLevelMaxPrincipalStress);
+
   if(m_hardeningRule == "Power-law"){
     CORRESPONDENCE::updateBondLevelElasticIsotropicPowerlawHardeningPlasticCauchyStress(bondLevelUnrotatedRateOfDeformationXX,
                                                                                         bondLevelUnrotatedRateOfDeformationXY,
@@ -311,6 +318,7 @@ PeridigmNS::IsotropicHardeningPlasticBondAssociatedCorrespondenceMaterial::compu
                                                                                                      bondLevelEquivalentPlasticStrainN,
                                                                                                      bondLevelEquivalentPlasticStrainNP1,
                                                                                                      bondLevelStressTriaxiality,
+                                                                                                     bondLevelMaxPrincipalStress,
                                                                                                      neighborhoodList,
                                                                                                      numOwnedPoints,
                                                                                                      m_bulkModulus,

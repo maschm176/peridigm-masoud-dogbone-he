@@ -1,0 +1,81 @@
+Dakota version 6.24 released May 15 2026.
+Repository revision 1ab1c9924 (2026-05-11) built May 11 2026 11:08:44.
+Running MPI Dakota executable in serial mode.
+Start time: Mon Oct  5 16:45:42 2026
+
+------------------
+Begin Dakota input
+------------------
+environment
+
+method
+  list_parameter_study
+    # Single evaluation: HE_0's locked-in optimized Voce hardening
+    # parameters, with NO damage model attached at all (see
+    # voce_hypoelastic_nodamage_input_template.yaml) -- the cleanest
+    # possible "damage disabled" reference run, zero risk of any bond ever
+    # losing strength regardless of how extreme the necking strain gets.
+    # Not an optimization -- a one-off reference run for the post-fracture
+    # ringing investigation.
+    list_of_points =  9.77e9  1.35e10  22.0  2.0e8
+
+variables
+  continuous_design = 4
+    descriptors  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'
+
+interface
+  analysis_drivers = 'driver_HE0_voce_nodamage_forward_solve.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians
+
+----------------
+End Dakota input
+----------------
+
+Using Dakota parser: standard
+Writing new restart file 'dakota.rst'.
+
+>>>>> Executing environment.
+
+>>>>> Running list_parameter_study iterator.
+
+List parameter study for 1 samples
+
+
+---------------------
+Begin Evaluation    1
+---------------------
+Parameters for evaluation 1:
+                      9.7700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+
+blocking fork: driver_HE0_voce_nodamage_forward_solve.sh params.in results.out
+
+Active response data for evaluation 1:
+Active set vector = { 1 }
+                      1.0000000000e+00 obj_fn_1
+
+
+<<<<< Function evaluation summary: 1 total (1 new, 0 duplicate)
+<<<<< Best parameters          =
+                      9.7700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+<<<<< Best objective function  =
+                      1.0000000000e+00
+<<<<< Best evaluation ID: 1
+
+<<<<< Iterator list_parameter_study completed.
+<<<<< Environment execution completed.
+DAKOTA execution time in seconds:
+  Total CPU        =   0.042794 [parent =   0.042904, child =   -0.00011]
+  Total wall clock =    4496.91

@@ -1,0 +1,94 @@
+Dakota version 6.24 released May 15 2026.
+Repository revision 1ab1c9924 (2026-05-11) built May 11 2026 11:08:44.
+Running MPI Dakota executable in serial mode.
+Start time: Mon Sep 28 18:08:08 2026
+
+------------------
+Begin Dakota input
+------------------
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE0_brozzo_smoketest.dat'
+
+method
+  list_parameter_study
+    # Single-point smoke test: HE_0 Stage 1 Voce hardening (converged,
+    # InitialYieldStress=9.77e9) + the paper's own calibrated Brozzo
+    # d1=0.76, d2=0.95. ThresholdDamage=0.95 (pushed above the paper's own
+    # Dc=0.9) as a check of whether narrowing the ramp further can get
+    # fracture to propagate with the paper's own d1/d2 -- 0.85 and 0.9 both
+    # gave byte-identical no-fracture results (obj=1.035990241), since D
+    # never got close to either threshold, so this is expected to behave
+    # the same, but confirming directly before moving on to retuning d1/d2.
+    list_of_points = 0.95
+
+variables
+  continuous_design = 1
+    descriptors 'ThresholdDamage'
+  continuous_state = 6
+    descriptors      'DamageParameter1'  'DamageParameter2'  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'
+    initial_state     0.76                0.95                9.77e9                1.35e10                 22.0                   2.0e8
+
+interface
+  analysis_drivers = 'driver_HE0_brozzo_smoketest.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians
+
+----------------
+End Dakota input
+----------------
+
+Using Dakota parser: standard
+Writing new restart file 'dakota_HE0_brozzo_smoketest.rst'.
+
+>>>>> Executing environment.
+
+>>>>> Running list_parameter_study iterator.
+
+List parameter study for 1 samples
+
+
+---------------------
+Begin Evaluation    1
+---------------------
+Parameters for evaluation 1:
+                      9.5000000000e-01 ThresholdDamage
+                      7.6000000000e-01 DamageParameter1
+                      9.5000000000e-01 DamageParameter2
+                      9.7700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+
+blocking fork: driver_HE0_brozzo_smoketest.sh params.in.1 results.out.1
+
+Active response data for evaluation 1:
+Active set vector = { 1 }
+                      1.0359902413e+00 obj_fn_1
+
+
+<<<<< Function evaluation summary: 1 total (1 new, 0 duplicate)
+<<<<< Best parameters          =
+                      9.5000000000e-01 ThresholdDamage
+                      7.6000000000e-01 DamageParameter1
+                      9.5000000000e-01 DamageParameter2
+                      9.7700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+<<<<< Best objective function  =
+                      1.0359902413e+00
+<<<<< Best evaluation ID: 1
+
+<<<<< Iterator list_parameter_study completed.
+<<<<< Environment execution completed.
+DAKOTA execution time in seconds:
+  Total CPU        =   0.028998 [parent =   0.029001, child =     -3e-06]
+  Total wall clock =    3172.08

@@ -1,0 +1,59 @@
+
+-- Peridigm
+-- version 1.5.0 (Dev)
+
+Allocating global tangent matrix...
+  number of rows = 37875
+  number of nonzeros = 30378033
+
+Load step 1, initial time = 0, final time = 0.1, convergence criterion = 100000
+  iteration 1: residual = 3.06454e+11
+  iteration 2: residual = 3.69597e+10
+  iteration 3: residual = 4.69204e+09
+  iteration 4: residual = 4.32856e+07
+  iteration 5: residual = 4282.2
+  cpu time for load step = 69 sec., cumulative cpu time = 69 sec.
+
+Load step 2, initial time = 0.1, final time = 0.2, convergence criterion = 1e+05
+  iteration 1: residual = 3.1e+11
+  iteration 2: residual = 6.6e+09
+  iteration 3: residual = 2.3e+09
+  iteration 4: residual = 1.3e+09
+  iteration 5: residual = 7.5e+08
+  iteration 6: residual = 6e+08
+  iteration 7: residual = 5.4e+08
+  iteration 8: residual = 5.3e+08
+  --line search unable to reduce residual, attempting to increase residual by 10% in hopes of escaping local minimum--
+  --selecting alpha = 0.1, increasing residual by 1--
+  iteration 9: residual = 1.1e+09
+  iteration 10: residual = 9.9e+08
+  iteration 11: residual = 9.5e+08
+Warning:  Belos linear solver aborted with Belos::CGIterateFailure.
+  --switching nonlinear solver to damped Newton and deactivating preconditioner--
+Warning:  Belos linear solver aborted with Belos::CGIterateFailure.
+
+Error:  Belos linear solver failed to converge.
+
+Error:  Aborting analysis.
+
+
+Memory Usage (Heap Alloc MB):
+  Allocated Jacobian                 7.1e+02
+  Post Execute                         4e+02
+  Zoltan Search Tree                      10
+
+Wallclock Time (seconds):
+  Total                              2.6e+02
+  Solve Linear System                1.2e+02
+  Output                               0.042
+  Line Search                            2.7
+  Internal Force                         2.8
+  Gather/Scatter                       0.059
+  Evaluate Jacobian                       98
+  Compute Residual                       2.9
+  Apply Kinematic B.C.                0.0017
+  Apply Initial Conditions           8.6e-05
+  Apply Boundary Conditions               30
+  Apply Body Forces                  0.00012
+  Allocate Global Tangent                 10
+

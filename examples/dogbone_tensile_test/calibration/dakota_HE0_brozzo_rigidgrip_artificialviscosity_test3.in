@@ -1,0 +1,32 @@
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE0_brozzo_rigidgrip_artificialviscosity_test3.dat'
+
+method
+  list_parameter_study
+    # Narrower bracket between the known-safe c=1e6 (no visible effect) and
+    # the known-crash c=1e8 (NaN returned essentially instantly, at 0%
+    # complete -- suggesting the quadratic term overwhelms ordinary elastic
+    # loading, not just the violent post-fracture phase, at that magnitude).
+    list_of_points = 1.0e7  2.0e7  4.0e7
+
+variables
+  continuous_design = 1
+    descriptors 'ViscosityCoefficient'
+  continuous_state = 7
+    descriptors      'DamageParameter1'  'DamageParameter2'  'ThresholdDamage'  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'
+    initial_state     3.5                 0.99                0.85               9.77e9                1.35e10                 22.0                   2.0e8
+
+interface
+  # Serial (no concurrency) -- see the concurrency lesson learned during
+  # HE_30's joint polish (CLAUDE.md).
+  analysis_drivers = 'driver_HE0_brozzo_rigidgrip_artificialviscosity_test3.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

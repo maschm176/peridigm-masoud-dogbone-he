@@ -1,0 +1,168 @@
+Peridigm:
+
+#     Dogbone specimen diagnostic template: "Isotropic Hardening
+#     Correspondence" material (NOT "...Hypoelastic Correspondence") +
+#     Critical Stretch damage, rigid-grip BC at 220 cm/s. This is the
+#     "original" Silling et al. 2007 correspondence formulation -- confirmed
+#     directly against the primary source: its deformation gradient is
+#     computed via computeShapeTensorInverseAndApproximateDeformationGradient
+#     (correspondence.cxx), which is an exact term-for-term match to that
+#     paper's Eq. (134), Fbar = (Y*X)*K^-1 -- as opposed to our locked-in
+#     Hypoelastic material, which explicitly calls computeGreenLagrangeStrain
+#     and is built on Foster & Xu 2018's generalized finite-deformation
+#     reformulation (Seth-Hill strain family, m=1/Green-Lagrange). Per
+#     Behzadinasab & Foster 2020a ("On the stability of the generalized,
+#     finite deformation correspondence model of peridynamics"), that
+#     finite-deformation/Green-Lagrange kinematics is provably unstable under
+#     even tiny local compression (~0.01%-0.1%), producing exactly the kind
+#     of growing oscillatory divergence seen in their own Fig. 4/5 -- while
+#     the original model's own (different, discretization-level) instability
+#     already has an established fix: Silling (2017)'s hourglass penalty
+#     term, exposed here via "Hourglass Coefficient" (nonzero value enables
+#     it; reference magnitude 0.02-0.05 from Peridigm's own verification test
+#     suite, e.g. ElasticCorrespondenceQSTension.xml).
+#
+#     Damage model: Critical Stretch (not Brozzo) for this first diagnostic
+#     pass -- Brozzo/Johnson-Cook/Von-Mises-Stress all require bond-level
+#     stress fields (Bond_Max_Principal_Stress, Bond_Stress_Triaxiality,
+#     Bond_Von_Mises_Stress) that this material does not compute (it only
+#     produces one Cauchy stress per point, no per-bond projection), so they
+#     are not usable without further source changes. Critical Stretch only
+#     needs bond geometry, so it works with any material unmodified.
+#     CriticalStretch=0.167 is this project's own original, very first
+#     locked-in value (back when Critical Stretch was the only damage model
+#     used, before Johnson-Cook/Brozzo).
+#
+#     Yield Stress / Hardening Modulus are a rough linear-hardening
+#     approximation of HE_0's locked-in Voce curve (InitialYieldStress=
+#     9.77e9, saturating toward 1.35e10 by ~15% strain) -- NOT a calibration,
+#     just a reasonable starting point per explicit instruction to defer
+#     recalibration; the purpose of this run is solely to check whether
+#     switching kinematics changes the post-fracture oscillation.
+#
+#     Requires the peridigm-masoud:voce-hypoelastic-brozzo image (this
+#     material is a standard, already-built-in part of core Peridigm, no
+#     rebuild needed).
+#
+#     Units are CGS, matching the mesh, same as every other template here.
+
+  Discretization:
+      Type: "Exodus"
+      Input Mesh File: "tensile_test.g"
+
+  Materials:
+      My Material:
+          Material Model: "Isotropic Hardening Correspondence"
+          Density: 7.8
+          Bulk Modulus: 1.30e12
+          Shear Modulus: 7.8e11
+          Yield Stress: 9.77e9
+          Hardening Modulus: 2.5e10
+          Hourglass Coefficient: 0.05
+
+  Damage Models:
+      My Damage Model:
+          Damage Model: "Critical Stretch"
+          Critical Stretch: 0.05
+
+  Blocks:
+      My Block:
+          Block Names: "block_1 block_2 block_3"
+          Material: "My Material"
+          Damage Model: "My Damage Model"
+          Horizon: 0.236
+
+  Boundary Conditions:
+      Prescribed Displacement Bottom:
+          Type: "Prescribed Displacement"
+          Node Set: "nodelist_1"
+          Coordinate: "y"
+          Value: "-220.0*t"
+      Prescribed Displacement Top:
+          Type: "Prescribed Displacement"
+          Node Set: "nodelist_2"
+          Coordinate: "y"
+          Value: "220.0*t"
+      Prescribed Displacement Fix Bottom Rigid Body Motion In X:
+          Type: "Prescribed Displacement"
+          Node Set: "nodelist_3"
+          Coordinate: "x"
+          Value: "0.0"
+      Prescribed Displacement Fix Bottom Rigid Body Motion In Z:
+          Type: "Prescribed Displacement"
+          Node Set: "nodelist_4"
+          Coordinate: "z"
+          Value: "0.0"
+      Prescribed Displacement Fix Top Rigid Body Motion In X:
+          Type: "Prescribed Displacement"
+          Node Set: "nodelist_5"
+          Coordinate: "x"
+          Value: "0.0"
+      Prescribed Displacement Fix Top Rigid Body Motion In Z:
+          Type: "Prescribed Displacement"
+          Node Set: "nodelist_6"
+          Coordinate: "z"
+          Value: "0.0"
+
+  Solver:
+      Verbose: false
+      Initial Time: 0.0
+      Final Time: 1.84e-3
+      Verlet:
+          Safety Factor: 0.7
+
+  Compute Class Parameters:
+      Strain Gage Top Initial Position:
+          Compute Class: "Nearest_Point_Data"
+          X: 0.0317
+          Y: 1.238
+          Z: 0.0
+          Variable: "Model_Coordinates"
+          Output Label: "Gage_Top_Initial_Position"
+      Strain Gage Bottom Initial Position:
+          Compute Class: "Nearest_Point_Data"
+          X: 0.0317
+          Y: -1.238
+          Z: 0.0
+          Variable: "Model_Coordinates"
+          Output Label: "Gage_Bottom_Initial_Position"
+      Strain Gage Top Displacement:
+          Compute Class: "Nearest_Point_Data"
+          X: 0.0317
+          Y: 1.238
+          Z: 0.0
+          Variable: "Displacement"
+          Output Label: "Gage_Top_Displacement"
+      Strain Gage Bottom Displacement:
+          Compute Class: "Nearest_Point_Data"
+          X: 0.0317
+          Y: -1.238
+          Z: 0.0
+          Variable: "Displacement"
+          Output Label: "Gage_Bottom_Displacement"
+      Top Reaction Force:
+          Compute Class: "Block_Data"
+          Calculation Type: "Sum"
+          Block: "block_3"
+          Variable: "Force"
+          Output Label: "Top_Reaction_Force"
+      Bottom Reaction Force:
+          Compute Class: "Block_Data"
+          Calculation Type: "Sum"
+          Block: "block_1"
+          Variable: "Force"
+          Output Label: "Bottom_Reaction_Force"
+
+  Output:
+      Output File Type: "ExodusII"
+      Output Filename: "output"
+      Output Frequency: 20
+      Output Variables:
+          Displacement: true
+          Force: true
+          Gage_Top_Displacement: true
+          Gage_Bottom_Displacement: true
+          Top_Reaction_Force: true
+          Bottom_Reaction_Force: true
+          Damage: true
+          Von_Mises_Stress: true

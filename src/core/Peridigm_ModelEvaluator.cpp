@@ -122,6 +122,15 @@ PeridigmNS::ModelEvaluator::evalModel(Teuchos::RCP<Workset> workset) const
                                          ownedIDs,
                                          neighborhoodList,
                                          *dataManager);
+
+    Teuchos::RCP<const PeridigmNS::DampingModel> dampingModel = blockIt->getDampingModel();
+    if(!dampingModel.is_null()){
+      dampingModel->computeDamping(dt,
+                                   numOwnedPoints,
+                                   ownedIDs,
+                                   neighborhoodList,
+                                   *dataManager);
+    }
   }
 
   // ---- Evaluate Contact ----

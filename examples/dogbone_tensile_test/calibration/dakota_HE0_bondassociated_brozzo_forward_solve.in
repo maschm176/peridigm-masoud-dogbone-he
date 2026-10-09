@@ -1,0 +1,26 @@
+environment
+
+method
+  list_parameter_study
+    # Single evaluation, re-running our locked-in best Brozzo result
+    # (d1=3.5, d2=0.99, ThresholdDamage=0.85) under the Bond Associated
+    # Correspondence material instead of Hypoelastic Correspondence, to test
+    # whether the more robust shape-tensor formulation removes the
+    # post-fracture oscillation. Not an optimization -- a one-off
+    # diagnostic forward solve.
+    list_of_points =  9.77e9  1.35e10  22.0  2.0e8  3.5  0.99  0.85
+
+variables
+  continuous_design = 7
+    descriptors  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'  'DamageParameter1'  'DamageParameter2'  'ThresholdDamage'
+
+interface
+  analysis_drivers = 'driver_HE0_bondassociated_brozzo_forward_solve.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

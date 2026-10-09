@@ -1,0 +1,395 @@
+Dakota version 6.24 released May 15 2026.
+Repository revision 1ab1c9924 (2026-05-11) built May 11 2026 11:08:44.
+Running MPI Dakota executable in serial mode.
+Start time: Thu Sep  3 10:00:03 2026
+
+------------------
+Begin Dakota input
+------------------
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE30_stage1.dat'
+
+method
+  coliny_pattern_search
+    # Capped at 9 (initial point + one full round of 8 directional probes)
+    # for a quick sanity check of the corrected (STRESS_ONLY) objective
+    # before committing to the full ~30-eval search. Bounds/initial_point
+    # below are unchanged from the full-search config, so if the trajectory
+    # looks right, resuming with a higher cap via -read_restart will extend
+    # this run cleanly instead of recomputing it.
+    max_function_evaluations = 9
+
+variables
+  # Warm-started at the HE_0 optimum, but bounds match HE_0's ORIGINAL wide
+  # search range rather than a tightened window around it. An earlier
+  # attempt tightened these to +/-30-40%, reasoning that similar
+  # concentrations would converge faster in a narrower box -- backwards:
+  # pattern search only walks as far as the objective keeps improving, so a
+  # wide box costs nothing when the true optimum is close to the warm start,
+  # and only a wide box can actually find it when the optimum (as it turned
+  # out here) sits further out. CriticalStretch is fixed far above any bond
+  # stretch this curve will reach, so damage never triggers and the
+  # objective's stress term (scored over HE_30's own real strain range)
+  # drives the fit.
+  continuous_design = 4
+    descriptors                    'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'
+    initial_point                   9.27e9                 1.35e10                 22.0                   2.0e8
+    lower_bounds                    5.0e9                  1.0e10                  10.0                   0.0
+    upper_bounds                    1.5e10                 1.5e10                  150.0                  2.0e9
+  continuous_state = 1
+    descriptors                    'CriticalStretch'
+    initial_state                   0.5
+
+interface
+  analysis_drivers = 'driver_HE30_stage1_voce.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+  asynchronous evaluation_concurrency = 2
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians
+
+----------------
+End Dakota input
+----------------
+
+Using Dakota parser: standard
+Writing new restart file 'dakota_HE30_stage1_voce.rst'.
+
+Seed (system-generated) = 1788447603
+
+>>>>> Executing environment.
+
+>>>>> Running coliny_pattern_search iterator.
+
+---------------------
+Begin Evaluation    1
+---------------------
+Parameters for evaluation 1:
+                      9.2700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      5.0000000000e-01 CriticalStretch
+
+blocking fork: driver_HE30_stage1_voce.sh params.in.1 results.out.1
+
+Active response data for evaluation 1:
+Active set vector = { 1 }
+                      1.9182138247e-01 obj_fn_1
+
+
+
+---------------------
+Begin Evaluation    2
+---------------------
+Parameters for evaluation 2:
+                      1.0270000000e+10 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      5.0000000000e-01 CriticalStretch
+
+(Asynchronous job 2 added to queue)
+
+---------------------
+Begin Evaluation    3
+---------------------
+Parameters for evaluation 3:
+                      9.2700000000e+09 InitialYieldStress
+                      1.4000000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      5.0000000000e-01 CriticalStretch
+
+(Asynchronous job 3 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 2
+nonblocking fork: driver_HE30_stage1_voce.sh params.in.2 results.out.2
+Initiating evaluation 3
+nonblocking fork: driver_HE30_stage1_voce.sh params.in.3 results.out.3
+Waiting on completed jobs
+Evaluation 2 has completed
+Waiting on completed jobs
+Evaluation 3 has completed
+
+Active response data for evaluation 2:
+Active set vector = { 1 }
+                      1.7813199412e-01 obj_fn_1
+
+
+Active response data for evaluation 3:
+Active set vector = { 1 }
+                      1.9220419321e-01 obj_fn_1
+
+
+---------------------
+Begin Evaluation    4
+---------------------
+Parameters for evaluation 4:
+                      9.2700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      3.6000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      5.0000000000e-01 CriticalStretch
+
+(Asynchronous job 4 added to queue)
+
+---------------------
+Begin Evaluation    5
+---------------------
+Parameters for evaluation 5:
+                      9.2700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      4.0000000000e+08 LinearConstant
+                      5.0000000000e-01 CriticalStretch
+
+(Asynchronous job 5 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 4
+nonblocking fork: driver_HE30_stage1_voce.sh params.in.4 results.out.4
+Initiating evaluation 5
+nonblocking fork: driver_HE30_stage1_voce.sh params.in.5 results.out.5
+Waiting on completed jobs
+Evaluation 4 has completed
+Evaluation 5 has completed
+
+Active response data for evaluation 4:
+Active set vector = { 1 }
+                      1.8598858579e-01 obj_fn_1
+
+
+Active response data for evaluation 5:
+Active set vector = { 1 }
+                      1.9168885259e-01 obj_fn_1
+
+
+---------------------
+Begin Evaluation    6
+---------------------
+Parameters for evaluation 6:
+                      8.2700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      5.0000000000e-01 CriticalStretch
+
+(Asynchronous job 6 added to queue)
+
+---------------------
+Begin Evaluation    7
+---------------------
+Parameters for evaluation 7:
+                      9.2700000000e+09 InitialYieldStress
+                      1.3000000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      5.0000000000e-01 CriticalStretch
+
+(Asynchronous job 7 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 6
+nonblocking fork: driver_HE30_stage1_voce.sh params.in.6 results.out.6
+Initiating evaluation 7
+nonblocking fork: driver_HE30_stage1_voce.sh params.in.7 results.out.7
+Waiting on completed jobs
+Evaluation 6 has completed
+Evaluation 7 has completed
+
+Active response data for evaluation 6:
+Active set vector = { 1 }
+                      2.1404252165e-01 obj_fn_1
+
+
+Active response data for evaluation 7:
+Active set vector = { 1 }
+                      2.0205383028e-01 obj_fn_1
+
+
+---------------------
+Begin Evaluation    8
+---------------------
+Parameters for evaluation 8:
+                      9.2700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      0.0000000000e+00 LinearConstant
+                      5.0000000000e-01 CriticalStretch
+
+(Asynchronous job 8 added to queue)
+
+Blocking synchronize of 1 asynchronous evaluations
+First pass: initiating 1 local asynchronous jobs
+Initiating evaluation 8
+nonblocking fork: driver_HE30_stage1_voce.sh params.in.8 results.out.8
+Waiting on completed jobs
+Evaluation 8 has completed
+
+Active response data for evaluation 8:
+Active set vector = { 1 }
+                      1.9196576089e-01 obj_fn_1
+
+
+---------------------
+Begin Evaluation    9
+---------------------
+Parameters for evaluation 9:
+                      1.1270000000e+10 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      5.0000000000e-01 CriticalStretch
+
+(Asynchronous job 9 added to queue)
+
+---------------------
+Begin Evaluation   10
+---------------------
+Parameters for evaluation 10:
+                      1.0270000000e+10 InitialYieldStress
+                      1.4000000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      5.0000000000e-01 CriticalStretch
+
+(Asynchronous job 10 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 9
+nonblocking fork: driver_HE30_stage1_voce.sh params.in.9 results.out.9
+Initiating evaluation 10
+nonblocking fork: driver_HE30_stage1_voce.sh params.in.10 results.out.10
+Waiting on completed jobs
+Evaluation 10 has completed
+Waiting on completed jobs
+Evaluation 9 has completed
+
+Active response data for evaluation 9:
+Active set vector = { 1 }
+                      2.0183710656e-01 obj_fn_1
+
+
+Active response data for evaluation 10:
+Active set vector = { 1 }
+                      1.9552137718e-01 obj_fn_1
+
+
+---------------------
+Begin Evaluation   11
+---------------------
+Parameters for evaluation 11:
+                      1.0270000000e+10 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      3.6000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      5.0000000000e-01 CriticalStretch
+
+(Asynchronous job 11 added to queue)
+
+---------------------
+Begin Evaluation   12
+---------------------
+Parameters for evaluation 12:
+                      1.0270000000e+10 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      4.0000000000e+08 LinearConstant
+                      5.0000000000e-01 CriticalStretch
+
+(Asynchronous job 12 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 11
+nonblocking fork: driver_HE30_stage1_voce.sh params.in.11 results.out.11
+Initiating evaluation 12
+nonblocking fork: driver_HE30_stage1_voce.sh params.in.12 results.out.12
+Waiting on completed jobs
+Evaluation 12 has completed
+Waiting on completed jobs
+Evaluation 11 has completed
+
+Active response data for evaluation 11:
+Active set vector = { 1 }
+                      1.9317455471e-01 obj_fn_1
+
+
+Active response data for evaluation 12:
+Active set vector = { 1 }
+                      1.7848993153e-01 obj_fn_1
+
+
+---------------------
+Begin Evaluation   13
+---------------------
+Parameters for evaluation 13:
+                      1.0270000000e+10 InitialYieldStress
+                      1.3000000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      5.0000000000e-01 CriticalStretch
+
+(Asynchronous job 13 added to queue)
+
+---------------------
+Begin Evaluation   14
+---------------------
+Parameters for evaluation 14:
+                      1.0270000000e+10 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      0.0000000000e+00 LinearConstant
+                      5.0000000000e-01 CriticalStretch
+
+(Asynchronous job 14 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 13
+nonblocking fork: driver_HE30_stage1_voce.sh params.in.13 results.out.13
+Initiating evaluation 14
+nonblocking fork: driver_HE30_stage1_voce.sh params.in.14 results.out.14
+Waiting on completed jobs
+Evaluation 14 has completed
+Waiting on completed jobs
+Evaluation 13 has completed
+
+Active response data for evaluation 13:
+Active set vector = { 1 }
+                      1.8531785760e-01 obj_fn_1
+
+
+Active response data for evaluation 14:
+Active set vector = { 1 }
+                      1.7774194675e-01 obj_fn_1
+
+<<<<< Function evaluation summary: 14 total (14 new, 0 duplicate)
+<<<<< Best parameters          =
+                      1.0270000000e+10 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      5.0000000000e-01 CriticalStretch
+<<<<< Best objective function  =
+                      1.7813199412e-01
+<<<<< Best evaluation ID: 2
+
+
+<<<<< Iterator coliny_pattern_search completed.
+<<<<< Environment execution completed.
+DAKOTA execution time in seconds:
+  Total CPU        =     65.526 [parent =     65.526, child =          0]
+  Total wall clock =    24467.5

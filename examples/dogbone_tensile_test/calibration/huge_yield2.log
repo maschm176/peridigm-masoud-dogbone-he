@@ -1,0 +1,60 @@
+
+-- Peridigm
+-- version 1.5.0 (Dev)
+
+Allocating global tangent matrix...
+  number of rows = 37875
+  number of nonzeros = 30378033
+
+Load step 1, initial time = 0, final time = 0.2, convergence criterion = 100000
+  iteration 1: residual = 6.17129e+10
+  iteration 2: residual = 4.84875e+09
+  iteration 3: residual = 4.39825e+07
+  iteration 4: residual = 5078.67
+  cpu time for load step = 53 sec., cumulative cpu time = 53 sec.
+
+Load step 2, initial time = 0.2, final time = 0.4, convergence criterion = 1e+05
+  iteration 1: residual = 6.2e+10
+  iteration 2: residual = 5.4e+06
+  iteration 3: residual = 7.2e+02
+  cpu time for load step = 24 sec., cumulative cpu time = 77 sec.
+
+Load step 3, initial time = 0.4, final time = 0.6, convergence criterion = 1e+05
+  iteration 1: residual = 6.2e+10
+  iteration 2: residual = 5.3e+06
+  iteration 3: residual = 7.5e+02
+  cpu time for load step = 24 sec., cumulative cpu time = 1e+02 sec.
+
+Load step 4, initial time = 0.6, final time = 0.8, convergence criterion = 1e+05
+  iteration 1: residual = 6.2e+10
+  iteration 2: residual = 5.2e+06
+  iteration 3: residual = 9.7e+02
+  cpu time for load step = 22 sec., cumulative cpu time = 1.2e+02 sec.
+
+Load step 5, initial time = 0.8, final time = 1, convergence criterion = 1e+05
+  iteration 1: residual = 6.2e+10
+  iteration 2: residual = 5.2e+06
+  iteration 3: residual = 6.4e+02
+  cpu time for load step = 18 sec., cumulative cpu time = 1.4e+02 sec.
+
+
+Memory Usage (Heap Alloc MB):
+  Allocated Jacobian                 7.1e+02
+  Post Execute                         4e+02
+  Zoltan Search Tree                      10
+
+Wallclock Time (seconds):
+  Total                              1.5e+02
+  Solve Linear System                     72
+  Output                               0.042
+  Line Search                           0.99
+  Internal Force                         1.1
+  Gather/Scatter                       0.026
+  Evaluate Jacobian                       52
+  Compute Residual                       1.2
+  Apply Kinematic B.C.                0.0036
+  Apply Initial Conditions             6e-05
+  Apply Boundary Conditions               16
+  Apply Body Forces                  0.00011
+  Allocate Global Tangent                 10
+

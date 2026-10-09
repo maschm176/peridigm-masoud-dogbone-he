@@ -1,0 +1,41 @@
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE0_hypoelastic_stage3.dat'
+
+method
+  coliny_pattern_search
+    max_function_evaluations = 20
+
+variables
+  # initial_point is warm-started from the best results of Stage 1 (eval 25,
+  # objective 0.05728: YieldStress/HardeningCharacteristicStrain/
+  # HardeningExponent) and Stage 2 attempt 2 (eval 14, objective 0.0689,
+  # before that run crashed at eval 21: DamageParameter1/2/3/ThresholdDamage).
+  # Bounds are roughly +/-15% around that point, EXCEPT DamageParameter3 and
+  # ThresholdDamage, which are deliberately biased/tightened rather than
+  # centered: both Stage 2 attempts crashed with `NaN returned by force
+  # evaluation` when DamageParameter3 got too negative (overflows JC's
+  # epsF = D1 + D2*exp(-D3*triaxiality) under the neck's high tensile
+  # triaxiality), and specifically the combination D3=-0.53 with
+  # ThresholdDamage=0.4625 crashed even though D3=-0.53 alone (at
+  # ThresholdDamage=0.5) did not -- so ThresholdDamage's lower bound is kept
+  # above that known-bad combination (0.46, not the naive 0.425) and D3's
+  # lower bound stays at -0.60, not pushed further negative toward -0.61.
+  continuous_design = 7
+    descriptors                    'YieldStress'    'HardeningCharacteristicStrain'  'HardeningExponent'  'DamageParameter1'  'DamageParameter2'  'DamageParameter3'  'ThresholdDamage'
+    initial_point                   1.0455332647e10  1.3609018823e-01                4.4050487731e-01     0.205               0.04                -0.53               0.5
+    lower_bounds                    8.9e9            1.157e-1                        3.74e-1              0.174               0.034               -0.60                0.46
+    upper_bounds                    1.20e10          1.565e-1                        5.07e-1              0.236               0.046               -0.45                0.575
+
+interface
+  analysis_drivers = 'driver_HE0_hypoelastic_stage3_joint_polish.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+  asynchronous evaluation_concurrency = 2
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

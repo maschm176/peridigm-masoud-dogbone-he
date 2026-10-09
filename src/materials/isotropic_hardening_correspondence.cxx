@@ -53,6 +53,35 @@
 
 namespace CORRESPONDENCE {
 
+// Closed-form (Smith 1961) largest eigenvalue of a symmetric 3x3 matrix,
+// used to compute the bond-level maximum principal stress consumed by the
+// Brozzo damage model. Off-diagonal terms are pre-averaged by the caller so
+// this expects an exactly symmetric input.
+static inline double maxEigenvalueSymmetric3x3(double sxx, double syy, double szz,
+                                                double sxy, double sxz, double syz)
+{
+  double p1 = sxy*sxy + sxz*sxz + syz*syz;
+  if(p1 < 1.0e-30){
+    // already diagonal
+    return std::max(sxx, std::max(syy, szz));
+  }
+  double q = (sxx + syy + szz) / 3.0;
+  double p2 = (sxx-q)*(sxx-q) + (syy-q)*(syy-q) + (szz-q)*(szz-q) + 2.0*p1;
+  double p = std::sqrt(p2/6.0);
+  double bxx = (sxx-q)/p, byy = (syy-q)/p, bzz = (szz-q)/p;
+  double bxy = sxy/p, bxz = sxz/p, byz = syz/p;
+  double detB = bxx*(byy*bzz - byz*byz) - bxy*(bxy*bzz - byz*bxz) + bxz*(bxy*byz - byy*bxz);
+  double r = detB/2.0;
+  if(r <= -1.0) r = -1.0;
+  else if(r >= 1.0) r = 1.0;
+  double phi = std::acos(r)/3.0;
+  const double twoPiOverThree = 2.0943951023931953;
+  double eig1 = q + 2.0*p*std::cos(phi);
+  double eig3 = q + 2.0*p*std::cos(phi + twoPiOverThree);
+  double eig2 = 3.0*q - eig1 - eig3;
+  return std::max(eig1, std::max(eig2, eig3));
+}
+
 template<typename ScalarT>
 void updateElasticIsotropicHardeningPlasticCauchyStress
 (
@@ -1264,8 +1293,9 @@ void updateBondLevelElasticIsotropicSaturationExponentialHardeningPlasticCauchyS
     const ScalarT* bondLevelEquivalentPlasticStrainN,
     ScalarT* bondLevelEquivalentPlasticStrainNP1,
     ScalarT* bondLevelStressTriaxiality,
+    ScalarT* bondLevelMaxPrincipalStress,
     const int* neighborhoodList,
-    const int numPoints, 
+    const int numPoints,
     const double bulkMod,
     const double shearMod,
     const double initialYieldStress,
@@ -1309,6 +1339,7 @@ void updateBondLevelElasticIsotropicSaturationExponentialHardeningPlasticCauchyS
   const ScalarT* eqpsN = bondLevelEquivalentPlasticStrainN;
   ScalarT* eqpsNP1 = bondLevelEquivalentPlasticStrainNP1;
   ScalarT* triaxiality = bondLevelStressTriaxiality;
+  ScalarT* maxPrincipalStress = bondLevelMaxPrincipalStress;
 
   std::vector<ScalarT> rateOfDefVector(9);
   ScalarT* rateOfDef = &rateOfDefVector[0];
@@ -1325,45 +1356,65 @@ void updateBondLevelElasticIsotropicSaturationExponentialHardeningPlasticCauchyS
 
     // All is bond level.
     numNeighbors = *neighborListPtr; neighborListPtr++;
-    for(int n=0; n<numNeighbors; n++, neighborListPtr++, 
-        rateOfDefXX++, rateOfDefXY++, rateOfDefXZ++, 
-        rateOfDefYX++, rateOfDefYY++, rateOfDefYZ++, 
+    for(int n=0; n<numNeighbors; n++, neighborListPtr++,
+        rateOfDefXX++, rateOfDefXY++, rateOfDefXZ++,
+        rateOfDefYX++, rateOfDefYY++, rateOfDefYZ++,
         rateOfDefZX++, rateOfDefZY++, rateOfDefZZ++,
-        stressXXN++, stressXYN++, stressXZN++, 
-        stressYXN++, stressYYN++, stressYZN++, 
+        stressXXN++, stressXYN++, stressXZN++,
+        stressYXN++, stressYYN++, stressYZN++,
         stressZXN++, stressZYN++, stressZZN++,
-        stressXXNP1++, stressXYNP1++, stressXZNP1++, 
-        stressYXNP1++, stressYYNP1++, stressYZNP1++, 
+        stressXXNP1++, stressXYNP1++, stressXZNP1++,
+        stressYXNP1++, stressYYNP1++, stressYZNP1++,
         stressZXNP1++, stressZYNP1++, stressZZNP1++,
-        vmStress++, eqpsN++, eqpsNP1++, triaxiality++){
+        vmStress++, eqpsN++, eqpsNP1++, triaxiality++, maxPrincipalStress++){
 
-      *(rateOfDef+0) = *rateOfDefXX; *(rateOfDef+1) = *rateOfDefXY; *(rateOfDef+2) = *rateOfDefXZ; 
-      *(rateOfDef+3) = *rateOfDefYX; *(rateOfDef+4) = *rateOfDefYY; *(rateOfDef+5) = *rateOfDefYZ; 
-      *(rateOfDef+6) = *rateOfDefZX; *(rateOfDef+7) = *rateOfDefZY; *(rateOfDef+8) = *rateOfDefZZ; 
-      *(stressN+0) = *stressXXN; *(stressN+1) = *stressXYN; *(stressN+2) = *stressXZN; 
-      *(stressN+3) = *stressYXN; *(stressN+4) = *stressYYN; *(stressN+5) = *stressYZN; 
-      *(stressN+6) = *stressZXN; *(stressN+7) = *stressZYN; *(stressN+8) = *stressZZN; 
+      *(rateOfDef+0) = *rateOfDefXX; *(rateOfDef+1) = *rateOfDefXY; *(rateOfDef+2) = *rateOfDefXZ;
+      *(rateOfDef+3) = *rateOfDefYX; *(rateOfDef+4) = *rateOfDefYY; *(rateOfDef+5) = *rateOfDefYZ;
+      *(rateOfDef+6) = *rateOfDefZX; *(rateOfDef+7) = *rateOfDefZY; *(rateOfDef+8) = *rateOfDefZZ;
+      *(stressN+0) = *stressXXN; *(stressN+1) = *stressXYN; *(stressN+2) = *stressXZN;
+      *(stressN+3) = *stressYXN; *(stressN+4) = *stressYYN; *(stressN+5) = *stressYZN;
+      *(stressN+6) = *stressZXN; *(stressN+7) = *stressZYN; *(stressN+8) = *stressZZN;
 
-      radialReturnSaturationExponential(rateOfDef, 
-                                        stressN, 
-                                        stressNP1, 
+      radialReturnSaturationExponential(rateOfDef,
+                                        stressN,
+                                        stressNP1,
                                         vmStress,
-                                        eqpsN, 
-                                        eqpsNP1, 
-                                        bulkMod, 
+                                        eqpsN,
+                                        eqpsNP1,
+                                        bulkMod,
                                         shearMod,
-                                        initialYieldStress, 
+                                        initialYieldStress,
                                         saturatedYieldStress,
-                                        exponentialConstant, 
-                                        linearConstant, 
+                                        exponentialConstant,
+                                        linearConstant,
                                         dt);
 
       // compute stress triaxiality
       *triaxiality = (*stressXXNP1 + *stressYYNP1 + *stressZZNP1) / (3.0 * std::max(1.0e-20,*vmStress));
 
-      *stressXXNP1 = *(stressNP1+0); *stressXYNP1 = *(stressNP1+1); *stressXZNP1 = *(stressNP1+2); 
-      *stressYXNP1 = *(stressNP1+3); *stressYYNP1 = *(stressNP1+4); *stressYZNP1 = *(stressNP1+5); 
-      *stressZXNP1 = *(stressNP1+6); *stressZYNP1 = *(stressNP1+7); *stressZZNP1 = *(stressNP1+8); 
+      // compute bond-level maximum principal stress from the freshly
+      // computed NP1 stress tensor (stressNP1 local array), for the Brozzo
+      // damage model. Off-diagonal terms are averaged to guarantee an
+      // exactly symmetric matrix before the eigenvalue solve. This
+      // eigenvalue solve is the most expensive part of this update (it's
+      // called for every bond, every step), so skip it for bonds that have
+      // never accumulated plastic strain -- the Brozzo damage model only
+      // ever consumes it when there's a nonzero plastic strain increment,
+      // so a purely-elastic bond's max principal stress is never read.
+      if(*eqpsNP1 > 0.0){
+        *maxPrincipalStress = maxEigenvalueSymmetric3x3(
+            *(stressNP1+0), *(stressNP1+4), *(stressNP1+8),
+            0.5*(*(stressNP1+1) + *(stressNP1+3)),
+            0.5*(*(stressNP1+2) + *(stressNP1+6)),
+            0.5*(*(stressNP1+5) + *(stressNP1+7)));
+      }
+      else{
+        *maxPrincipalStress = 0.0;
+      }
+
+      *stressXXNP1 = *(stressNP1+0); *stressXYNP1 = *(stressNP1+1); *stressXZNP1 = *(stressNP1+2);
+      *stressYXNP1 = *(stressNP1+3); *stressYYNP1 = *(stressNP1+4); *stressYZNP1 = *(stressNP1+5);
+      *stressZXNP1 = *(stressNP1+6); *stressZYNP1 = *(stressNP1+7); *stressZZNP1 = *(stressNP1+8);
     }
   }
 }
@@ -1572,7 +1623,7 @@ void radialReturnSaturationExponential
   ScalarT deltaPlasticIncrement;
   ScalarT plasticIncrement;
 
-  double tol = 1.0e-16 * bulkMod;
+  double tol;
   int counter;
   int maxIterations = 100;
 
@@ -1619,6 +1670,17 @@ void radialReturnSaturationExponential
   deviatoricStressMagnitudeNP1 = std::max(1.0e-20,sqrt(tempScalar));
 
   vmStress_trial = sqrt(3.0/2.0*tempScalar);
+
+  // Convergence tolerance for the Newton iteration below: absolute
+  // (1.0e-16*bulkMod, the original criterion, dominant and sufficient for
+  // ordinary, gradual loading) OR relative to the trial stress
+  // (1.0e-12*vmStress_trial), whichever is looser. The absolute-only
+  // criterion can become numerically unreachable -- the Newton iteration
+  // oscillates at floating-point precision without ever satisfying it --
+  // when damage-driven abrupt stiffness loss produces an unusually large
+  // trial stress in a single time step; the relative term acts as a safety
+  // net in that regime without loosening anything for normal-scale steps.
+  tol = std::max(1.0e-16 * bulkMod, 1.0e-12 * vmStress_trial);
 
   //Evaluate the current yield stress
   hardenedYieldStress = initialYieldStress + (saturatedYieldStress - initialYieldStress) * ( 1.0 - exp(-exponentialConstant * *eqpsN)) + linearConstant * *eqpsN;
@@ -1890,8 +1952,9 @@ template void updateBondLevelElasticIsotropicSaturationExponentialHardeningPlast
     const double* bondLevelEquivalentPlasticStrainN,
     double* bondLevelEquivalentPlasticStrainNP1,
     double* bondLevelStressTriaxiality,
+    double* bondLevelMaxPrincipalStress,
     const int* neighborhoodList,
-    const int numPoints, 
+    const int numPoints,
     const double bulkMod,
     const double shearMod,
     const double initialYieldStress,

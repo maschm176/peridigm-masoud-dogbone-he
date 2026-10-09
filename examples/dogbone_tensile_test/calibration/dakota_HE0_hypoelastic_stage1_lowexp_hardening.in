@@ -1,0 +1,42 @@
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE0_hypoelastic_stage1_lowexp.dat'
+
+method
+  coliny_pattern_search
+    max_function_evaluations = 30
+
+variables
+  # Re-run of Stage 1 targeting the LOW hardening-exponent regime (see
+  # driver_HE0_hypoelastic_stage1_lowexp_hardening.sh for the full
+  # rationale). HardeningExponent is bounded to [0.15, 0.40], centered on
+  # the Considere-criterion estimate of 0.28 for necking onset near the
+  # real 15.37% fracture strain -- deliberately excluding the original
+  # Stage 1's unconstrained optimum (~0.44), which doesn't neck until
+  # ~35% strain. YieldStress and HardeningCharacteristicStrain stay free
+  # (similar wide bounds to the original Stage 1) to find the best
+  # achievable pre-peak fit within that exponent constraint -- YieldStress
+  # in particular may need to rise to partially compensate for the lower
+  # exponent's reduced overall hardening (visible as an undershoot in
+  # hypoelastic_lowexp_necking_test_fit.png).
+  continuous_design = 3
+    descriptors                    'YieldStress'  'HardeningCharacteristicStrain'  'HardeningExponent'
+    initial_point                   1.0455332647e10  1.3609018823e-01                2.8e-01
+    lower_bounds                    5.0e9            8.0e-2                          1.5e-1
+    upper_bounds                    2.0e10           2.0e-1                          4.0e-1
+  continuous_state = 4
+    descriptors                    'DamageParameter1'  'DamageParameter2'  'DamageParameter3'  'ThresholdDamage'
+    initial_state                   5.0                 0.0                 0.0                 0.9
+
+interface
+  analysis_drivers = 'driver_HE0_hypoelastic_stage1_lowexp_hardening.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+  asynchronous evaluation_concurrency = 2
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

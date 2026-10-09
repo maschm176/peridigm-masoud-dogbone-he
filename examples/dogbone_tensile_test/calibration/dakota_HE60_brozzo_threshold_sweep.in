@@ -1,0 +1,33 @@
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE60_brozzo_threshold_sweep.dat'
+
+method
+  list_parameter_study
+    # ThresholdDamage sweep for HE_60, d1=3.5/d2=0.99 fixed (transferred
+    # unchanged HE_0->HE_30, expected to transfer again). Real fracture
+    # target is 7.68%, far below HE_30's 13.27% (which itself needed
+    # threshold down to 0.51 from HE_0's 0.85) -- bracketing wide and low
+    # since HE_60 is substantially more embrittled.
+    list_of_points = 0.3  0.2  0.1
+
+variables
+  continuous_design = 1
+    descriptors 'ThresholdDamage'
+  continuous_state = 6
+    descriptors      'DamageParameter1'  'DamageParameter2'  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'
+    initial_state     3.5                 0.99                9.77e9                1.35e10                 22.0                   2.0e8
+
+interface
+  # Serial (no concurrency) from the start -- see the concurrency lesson
+  # learned during HE_30's joint polish (CLAUDE.md).
+  analysis_drivers = 'driver_HE60_brozzo_threshold_sweep.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

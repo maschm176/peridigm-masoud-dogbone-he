@@ -1,0 +1,31 @@
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE30_sfc3_d2_sweep.dat'
+
+method
+  list_parameter_study
+    # HE_30 D2 sweep (D1=0.02, D3=3.0 fixed, ThresholdDamage=0.97 -- HE_0's
+    # final values, treated as material-class properties). HE_0's own D2
+    # sweep found D2=0.95 gives fracture 15.53% vs real 15.37%. HE_30 needs
+    # to fracture earlier (real=13.27%), so starting the sweep below 0.95.
+    list_of_points = 0.8  0.6  0.4  0.2
+
+variables
+  continuous_design = 1
+    descriptors 'DamageParameter2'
+  continuous_state = 7
+    descriptors      'DamageParameter1'  'DamageParameter3'  'ThresholdDamage'  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'
+    initial_state     0.02                3.0                 0.97               1.027e10               1.35e10                 22.0                   2.0e8
+
+interface
+  analysis_drivers = 'driver_HE30_voce_hypoelastic_d2_sweep.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+  asynchronous evaluation_concurrency = 2
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

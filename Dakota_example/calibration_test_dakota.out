@@ -1,0 +1,77 @@
+Dakota version 6.24 released May 15 2026.
+Repository revision 1ab1c9924 (2026-05-11) built May 11 2026 11:08:44.
+Running MPI Dakota executable in serial mode.
+Start time: Tue Aug 18 15:22:15 2026
+
+------------------
+Begin Dakota input
+------------------
+
+# Dakota Input File: calibration_test_dakota.in
+# Usage:
+#   dakota -i calibration_test_dakota.in -o calibration_test_dakota.out > calibration_test_dakota.stdout
+
+environment
+  tabular_data
+    tabular_data_file = 'calibration_test_dakota.dat'
+
+method
+  efficient_global
+
+model
+  single
+
+# 6 material parameters needs calibration here; 3 hardening and 3 failure
+# The way I do is that I calibrate hardening ones first, cause the damage
+# is not involved until necking.
+# After I have the calibrated hardening modules, then I tune the failure
+# constants.
+# This is way more efficient than having all the 6 calibrated all together
+# The considered variables are specified in create_input_deck.py
+variables
+  continuous_design = 3
+    lower_bounds       250000     0.01    0.3
+    upper_bounds       400000     0.2     0.95
+    descriptors         'x1'      'x2'    'x3'
+    #                 'sigma0'   'eps0'   'n'
+    # x4/x5/x6 (damage params) dropped: create_input_deck.py only reads
+    # par1/par2/par3 (Yield Stress, Hardening Characteristic Strain,
+    # Hardening Exponent) -- the damage block there is commented out.
+    
+interface
+  analysis_drivers = 'run_calibration_test.sh'
+    fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians
+
+----------------
+End Dakota input
+----------------
+
+Using Dakota parser: standard
+Writing new restart file 'dakota.rst'.
+
+>>>>> Executing environment.
+
+>>>>> Running efficient_global iterator.
+
+>>>>> Building global_kriging approximations.
+
+NonD lhs Samples = 10 Seed (system-generated) = 372120
+
+---------------------
+Begin Evaluation    1
+---------------------
+Parameters for evaluation 1:
+                      2.7316924706e+05 x1
+                      1.7392958617e-01 x2
+                      3.0609501180e-01 x3
+
+blocking fork: run_calibration_test.sh params.in results.out
+
+Dakota caught signal 15

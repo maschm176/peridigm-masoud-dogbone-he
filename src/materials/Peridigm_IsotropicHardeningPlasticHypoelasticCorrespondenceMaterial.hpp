@@ -84,9 +84,16 @@ namespace PeridigmNS {
 
   protected:
 
+    std::string m_hardeningRule;
+
     double m_yieldStress;
-    double m_hardeningStrainConstant; 
+    double m_hardeningStrainConstant;
     double m_hardeningExponent;
+
+    double m_initialYieldStress;
+    double m_saturatedYieldStress;
+    double m_exponentialConstant;
+    double m_linearConstant;
 
     // field spec ids for all relevant data
     int m_unrotatedRateOfDeformationFieldId;
@@ -117,6 +124,7 @@ namespace PeridigmNS {
     int m_bondLevelVonMisesStressFieldId;
     int m_bondLevelEquivalentPlasticStrainFieldId;
     int m_bondLevelStressTriaxialityFieldId;
+    int m_bondLevelMaxPrincipalStressFieldId;
 
   };
 }

@@ -1,0 +1,25 @@
+environment
+
+method
+  list_parameter_study
+    # Single evaluation, re-running our current best Brozzo result
+    # (d1=3.5, d2=0.95, ThresholdDamage=0.85) with Influence Function:
+    # Parabolic Decay instead of the default constant "One", to see how
+    # much this changes the result. Not an optimization -- a one-off
+    # diagnostic forward solve.
+    list_of_points =  9.77e9  1.35e10  22.0  2.0e8  3.5  0.95  0.85
+
+variables
+  continuous_design = 7
+    descriptors  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'  'DamageParameter1'  'DamageParameter2'  'ThresholdDamage'
+
+interface
+  analysis_drivers = 'driver_HE0_brozzo_parabolicdecay_forward_solve.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

@@ -1,0 +1,27 @@
+environment
+
+method
+  list_parameter_study
+    # Single evaluation: HE_30's locked-in optimized Brozzo parameters
+    # (d1=3.5, d2=0.99, ThresholdDamage=0.51, HE_30 Stage 1 Voce hardening:
+    # InitialYieldStress=1.027e10, SaturatedYieldStress=1.35e10,
+    # ExponentialConstant=22.0, LinearConstant=2.0e8), rigid-grip BC at the
+    # original/faster rate (-220.0*t/220.0*t), Hard Cutoff enabled. Not an
+    # optimization -- a one-off diagnostic/reference run testing whether
+    # Hard Cutoff changes the post-fracture ringing for HE_30 specifically.
+    list_of_points =  1.027e10  1.35e10  22.0  2.0e8  3.5  0.99  0.51
+
+variables
+  continuous_design = 7
+    descriptors  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'  'DamageParameter1'  'DamageParameter2'  'ThresholdDamage'
+
+interface
+  analysis_drivers = 'driver_HE30_brozzo_rigidgrip_hardcutoff_forward_solve.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

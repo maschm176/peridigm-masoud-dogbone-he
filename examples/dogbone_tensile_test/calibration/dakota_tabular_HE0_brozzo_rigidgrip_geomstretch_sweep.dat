@@ -1,0 +1,5 @@
+%eval_id interface GeometricCriticalStretch InitialYieldStress SaturatedYieldStress ExponentialConstant LinearConstant DamageParameter1 DamageParameter2 ThresholdDamage obj_fn_1       
+1        NO_ID      0.08           9770000000     1.35e+10       22             200000000      3.5            0.99           0.85           1              
+2        NO_ID      0.1            9770000000     1.35e+10       22             200000000      3.5            0.99           0.85           1              
+3        NO_ID      0.2            9770000000     1.35e+10       22             200000000      3.5            0.99           0.85           1              
+4        NO_ID      0.25           9770000000     1.35e+10       22             200000000      3.5            0.99           0.85           1              

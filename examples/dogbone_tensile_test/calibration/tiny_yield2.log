@@ -1,0 +1,65 @@
+
+-- Peridigm
+-- version 1.5.0 (Dev)
+
+Allocating global tangent matrix...
+  number of rows = 37875
+  number of nonzeros = 30378033
+
+Load step 1, initial time = 0, final time = 0.2, convergence criterion = 100000
+  iteration 1: residual = 5.7019e+10
+  iteration 2: residual = 2.71242e+10
+  iteration 3: residual = 2.57907e+09
+  iteration 4: residual = 3.69587e+07
+  iteration 5: residual = 25486.7
+  cpu time for load step = 93 sec., cumulative cpu time = 93 sec.
+
+Load step 2, initial time = 0.2, final time = 0.4, convergence criterion = 1e+05
+  iteration 1: residual = 6.1e+10
+  iteration 2: residual = 1.4e+09
+  iteration 3: residual = 2.6e+06
+  iteration 4: residual = 1.2e+04
+  cpu time for load step = 57 sec., cumulative cpu time = 1.5e+02 sec.
+
+Load step 3, initial time = 0.4, final time = 0.6, convergence criterion = 1e+05
+  iteration 1: residual = 6.2e+10
+  iteration 2: residual = 6.6e+08
+  iteration 3: residual = 7.6e+05
+  iteration 4: residual = 64
+  cpu time for load step = 50 sec., cumulative cpu time = 2e+02 sec.
+
+Load step 4, initial time = 0.6, final time = 0.8, convergence criterion = 1e+05
+  iteration 1: residual = 6.2e+10
+  iteration 2: residual = 4.7e+08
+  iteration 3: residual = 4.7e+05
+  iteration 4: residual = 36
+  cpu time for load step = 53 sec., cumulative cpu time = 2.5e+02 sec.
+
+Load step 5, initial time = 0.8, final time = 1, convergence criterion = 1e+05
+  iteration 1: residual = 6.2e+10
+  iteration 2: residual = 3.8e+08
+  iteration 3: residual = 3.9e+05
+  iteration 4: residual = 27
+  cpu time for load step = 47 sec., cumulative cpu time = 3e+02 sec.
+
+
+Memory Usage (Heap Alloc MB):
+  Allocated Jacobian                 7.1e+02
+  Post Execute                         4e+02
+  Zoltan Search Tree                      10
+
+Wallclock Time (seconds):
+  Total                              3.1e+02
+  Solve Linear System                1.8e+02
+  Output                               0.051
+  Line Search                            1.6
+  Internal Force                         1.8
+  Gather/Scatter                        0.04
+  Evaluate Jacobian                       92
+  Compute Residual                       1.8
+  Apply Kinematic B.C.                 0.004
+  Apply Initial Conditions           6.4e-05
+  Apply Boundary Conditions               27
+  Apply Body Forces                  0.00025
+  Allocate Global Tangent                 12
+

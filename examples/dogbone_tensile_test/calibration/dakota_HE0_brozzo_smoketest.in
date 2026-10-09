@@ -1,0 +1,34 @@
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE0_brozzo_smoketest.dat'
+
+method
+  list_parameter_study
+    # Single-point smoke test: HE_0 Stage 1 Voce hardening (converged,
+    # InitialYieldStress=9.77e9) + the paper's own calibrated Brozzo
+    # d1=0.76, d2=0.95. ThresholdDamage=0.95 (pushed above the paper's own
+    # Dc=0.9) as a check of whether narrowing the ramp further can get
+    # fracture to propagate with the paper's own d1/d2 -- 0.85 and 0.9 both
+    # gave byte-identical no-fracture results (obj=1.035990241), since D
+    # never got close to either threshold, so this is expected to behave
+    # the same, but confirming directly before moving on to retuning d1/d2.
+    list_of_points = 0.95
+
+variables
+  continuous_design = 1
+    descriptors 'ThresholdDamage'
+  continuous_state = 6
+    descriptors      'DamageParameter1'  'DamageParameter2'  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'
+    initial_state     0.76                0.95                9.77e9                1.35e10                 22.0                   2.0e8
+
+interface
+  analysis_drivers = 'driver_HE0_brozzo_smoketest.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

@@ -73,6 +73,7 @@
 #include "Peridigm_Timer.hpp"
 #include "Peridigm_MaterialFactory.hpp"
 #include "Peridigm_DamageModelFactory.hpp"
+#include "Peridigm_DampingModelFactory.hpp"
 #include "Peridigm_InterfaceAwareDamageModel.hpp"
 #include "Peridigm_UserDefinedTimeDependentCriticalStretchDamageModel.hpp"
 #include "Peridigm_ShortRangeForceContactModel.hpp"
@@ -382,6 +383,11 @@ PeridigmNS::Peridigm::Peridigm(const MPI_Comm& comm,
   if(peridigmParams->isSublist("Damage Models"))
     damageModelParams = peridigmParams->sublist("Damage Models");
   DamageModelFactory damageModelFactory;
+  // Damping models
+  Teuchos::ParameterList dampingModelParams;
+  if(peridigmParams->isSublist("Damping Models"))
+    dampingModelParams = peridigmParams->sublist("Damping Models");
+  DampingModelFactory dampingModelFactory;
 
   // Associate material models and damage models with blocks
   for(blockIt = blocks->begin() ; blockIt != blocks->end() ; blockIt++){
@@ -447,6 +453,14 @@ PeridigmNS::Peridigm::Peridigm(const MPI_Comm& comm,
         CSDamageModel = Teuchos::rcp_dynamic_cast< PeridigmNS::UserDefinedTimeDependentCriticalStretchDamageModel >(damageModel);
         CSDamageModel->evaluateParserDmg(currentValue, previousValue, timeCurrent, timePrevious);
       }
+    }
+
+    // Set the damping model (if any)
+    string dampingModelName = blockIt->getDampingModelName();
+    if(dampingModelName != "None"){
+      Teuchos::ParameterList dampingParams = dampingModelParams.sublist(dampingModelName, true);
+      Teuchos::RCP<PeridigmNS::DampingModel> dampingModel = dampingModelFactory.create(dampingParams);
+      blockIt->setDampingModel(dampingModel);
     }
   }
 

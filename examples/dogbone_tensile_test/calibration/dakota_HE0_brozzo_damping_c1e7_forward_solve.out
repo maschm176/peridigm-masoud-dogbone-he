@@ -1,0 +1,91 @@
+Dakota version 6.24 released May 15 2026.
+Repository revision 1ab1c9924 (2026-05-11) built May 11 2026 11:08:44.
+Running MPI Dakota executable in serial mode.
+Start time: Thu Oct  1 19:49:01 2026
+
+------------------
+Begin Dakota input
+------------------
+environment
+
+method
+  list_parameter_study
+    # Single evaluation, re-running our locked-in best Brozzo result
+    # (d1=3.5, d2=0.99, ThresholdDamage=0.85) with the new Bond-Level
+    # Micro-Damping model added. Damping Coefficient=1.0e6 (the conservative
+    # first guess) had ZERO measurable effect -- post-fracture stress std
+    # 313.2 vs baseline's 313.6, overlay plot nearly identical everywhere --
+    # confirming it's stable but too weak, roughly 1-2% of the estimated
+    # ~7-8e7 stability ceiling (see voce_hypoelastic_brozzo_damping_input_template.yaml).
+    # Scaled up 10x to 1.0e7 (~13-15% of that ceiling) to look for a visible
+    # effect while remaining safely stable.
+    list_of_points =  9.77e9  1.35e10  22.0  2.0e8  3.5  0.99  0.85  1.0e7
+
+variables
+  continuous_design = 8
+    descriptors  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'  'DamageParameter1'  'DamageParameter2'  'ThresholdDamage'  'DampingCoefficient'
+
+interface
+  analysis_drivers = 'driver_HE0_brozzo_damping_forward_solve.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians
+
+----------------
+End Dakota input
+----------------
+
+Using Dakota parser: standard
+Writing new restart file 'dakota.rst'.
+
+>>>>> Executing environment.
+
+>>>>> Running list_parameter_study iterator.
+
+List parameter study for 1 samples
+
+
+---------------------
+Begin Evaluation    1
+---------------------
+Parameters for evaluation 1:
+                      9.7700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      3.5000000000e+00 DamageParameter1
+                      9.9000000000e-01 DamageParameter2
+                      8.5000000000e-01 ThresholdDamage
+                      1.0000000000e+07 DampingCoefficient
+
+blocking fork: driver_HE0_brozzo_damping_forward_solve.sh params.in results.out
+
+Active response data for evaluation 1:
+Active set vector = { 1 }
+                      1.0000000000e+00 obj_fn_1
+
+
+<<<<< Function evaluation summary: 1 total (1 new, 0 duplicate)
+<<<<< Best parameters          =
+                      9.7700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      3.5000000000e+00 DamageParameter1
+                      9.9000000000e-01 DamageParameter2
+                      8.5000000000e-01 ThresholdDamage
+                      1.0000000000e+07 DampingCoefficient
+<<<<< Best objective function  =
+                      1.0000000000e+00
+<<<<< Best evaluation ID: 1
+
+<<<<< Iterator list_parameter_study completed.
+<<<<< Environment execution completed.
+DAKOTA execution time in seconds:
+  Total CPU        =    0.03572 [parent =   0.035726, child =     -6e-06]
+  Total wall clock =    3171.49

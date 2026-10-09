@@ -1,0 +1,27 @@
+environment
+
+method
+  list_parameter_study
+    # Single evaluation using the SFC3 paper's own Johnson Cook damage
+    # constants (D1=0.04, D2=2.5, D3=3 -- Behzadinasab & Foster 2019) with
+    # our own calibrated HE_0 Voce hardening. Not an optimization -- a
+    # one-off diagnostic forward solve to see whether the paper's D1/D2/D3
+    # alone produce smoother post-fracture softening than our own calibrated
+    # values, isolated from any Contact/self-contact modeling or mesh
+    # changes (see CLAUDE.md).
+    list_of_points =  9.77e9  1.35e10  22.0  2.0e8  0.04  2.5  3.0  0.97
+
+variables
+  continuous_design = 8
+    descriptors  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'  'DamageParameter1'  'DamageParameter2'  'DamageParameter3'  'ThresholdDamage'
+
+interface
+  analysis_drivers = 'driver_HE0_voce_hypoelastic_forward_solve_sfc3params.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

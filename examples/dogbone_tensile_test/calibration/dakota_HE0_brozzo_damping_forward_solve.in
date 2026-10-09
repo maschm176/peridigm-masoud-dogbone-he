@@ -1,0 +1,35 @@
+environment
+
+method
+  list_parameter_study
+    # Single evaluation, re-running our locked-in best Brozzo result
+    # (d1=3.5, d2=0.99, ThresholdDamage=0.85) with the new Bond-Level
+    # Micro-Damping model added. Damping Coefficient=1.0e6 had ZERO
+    # measurable effect (post-fracture std 313.2 vs baseline 313.6).
+    # 1.0e7 (10x) was also nearly imperceptible (post-fracture std only
+    # 301.2, ~4% lower; overlay plot still nearly identical everywhere) --
+    # much weaker than the rough critical-damping/stability-ceiling estimate
+    # (~7-8e7) suggested it should be by this point, implying that estimate
+    # (based on a crude isolated 2-body bond approximation) is too
+    # conservative, and/or the per-bond force is diluted once summed across
+    # a point's full neighborhood (dozens of bonds, not just one). Jumping
+    # a full 10x again to 1.0e8 -- at or above the original rough ceiling --
+    # to find out whether there's a regime that actually suppresses the
+    # oscillation before hitting numerical instability (a crash here would
+    # itself be informative: it would mean we've found the real ceiling).
+    list_of_points =  9.77e9  1.35e10  22.0  2.0e8  3.5  0.99  0.85  1.0e8
+
+variables
+  continuous_design = 8
+    descriptors  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'  'DamageParameter1'  'DamageParameter2'  'ThresholdDamage'  'DampingCoefficient'
+
+interface
+  analysis_drivers = 'driver_HE0_brozzo_damping_forward_solve.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

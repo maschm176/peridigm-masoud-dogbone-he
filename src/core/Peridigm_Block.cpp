@@ -85,6 +85,11 @@ void PeridigmNS::Block::initialize(Teuchos::RCP<const Epetra_BlockMap> globalOwn
     vector<int> damageModelFieldIds = damageModel->FieldIds();
     fieldIds.insert(fieldIds.end(), damageModelFieldIds.begin(), damageModelFieldIds.end());
   }
+  // Damping model field Ids (if any)
+  if(!dampingModel.is_null()){
+    vector<int> dampingModelFieldIds = dampingModel->FieldIds();
+    fieldIds.insert(fieldIds.end(), dampingModelFieldIds.begin(), dampingModelFieldIds.end());
+  }
 
   BlockBase::initializeDataManager(fieldIds);
 }

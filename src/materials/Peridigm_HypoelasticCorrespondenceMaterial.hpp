@@ -162,6 +162,8 @@ namespace PeridigmNS {
     int m_jacobianDeterminantFieldId;
     int m_weightedVolumeFieldId;
     int m_undamagedWeightedVolumeFieldId;
+    int m_shapeTensorMinSingularValueFieldId;
+    int m_shapeTensorMaxSingularValueFieldId;
 
     int m_bondLevelLeftStretchTensorXXFieldId;
     int m_bondLevelLeftStretchTensorXYFieldId;

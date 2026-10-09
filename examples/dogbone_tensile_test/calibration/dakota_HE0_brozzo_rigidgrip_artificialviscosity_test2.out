@@ -1,0 +1,74 @@
+Dakota version 6.24 released May 15 2026.
+Repository revision 1ab1c9924 (2026-05-11) built May 11 2026 11:08:44.
+Running MPI Dakota executable in serial mode.
+Start time: Wed Oct  7 13:22:58 2026
+
+------------------
+Begin Dakota input
+------------------
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE0_brozzo_rigidgrip_artificialviscosity_test2.dat'
+
+method
+  list_parameter_study
+    # Follow-up coefficient scan for Bond-Level Artificial Viscosity. The
+    # first scan (1e4, 1e5, 1e6) showed essentially no effect on the
+    # post-fracture oscillation at any of the three points -- even c=1e6
+    # (100x the first point) produced curves visually indistinguishable
+    # from negligible damping (same amplitude, same chaotic pattern), with
+    # the lower objective there driven by a coincidental fracture-timing
+    # shift, not real damping. Jumping much further this time (4 more
+    # orders of magnitude) to quickly locate the regime where this term
+    # actually starts acting, before narrowing in.
+    list_of_points = 1.0e8  1.0e10  1.0e12
+
+variables
+  continuous_design = 1
+    descriptors 'ViscosityCoefficient'
+  continuous_state = 7
+    descriptors      'DamageParameter1'  'DamageParameter2'  'ThresholdDamage'  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'
+    initial_state     3.5                 0.99                0.85               9.77e9                1.35e10                 22.0                   2.0e8
+
+interface
+  # Serial (no concurrency) -- see the concurrency lesson learned during
+  # HE_30's joint polish (CLAUDE.md).
+  analysis_drivers = 'driver_HE0_brozzo_rigidgrip_artificialviscosity_test2.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians
+
+----------------
+End Dakota input
+----------------
+
+Using Dakota parser: standard
+Writing new restart file 'dakota.rst'.
+
+>>>>> Executing environment.
+
+>>>>> Running list_parameter_study iterator.
+
+List parameter study for 3 samples
+
+
+---------------------
+Begin Evaluation    1
+---------------------
+Parameters for evaluation 1:
+                      1.0000000000e+08 ViscosityCoefficient
+                      3.5000000000e+00 DamageParameter1
+                      9.9000000000e-01 DamageParameter2
+                      8.5000000000e-01 ThresholdDamage
+                      9.7700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+
+blocking fork: driver_HE0_brozzo_rigidgrip_artificialviscosity_test2.sh params.in.1 results.out.1

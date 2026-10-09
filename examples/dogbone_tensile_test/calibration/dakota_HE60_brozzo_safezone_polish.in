@@ -1,0 +1,39 @@
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE60_brozzo_safezone_polish.dat'
+
+method
+  coliny_pattern_search
+    max_function_evaluations = 15
+
+variables
+  # Joint d1/d2/ThresholdDamage polish for HE_60, bounded to the confirmed-
+  # stable neighborhood: ThresholdDamage upper bound 0.28 (comfortably below
+  # the 0.35 that oscillated, and above the 0.25 that was confirmed stable).
+  # d1 upper bound 5.5 (comfortably below the 6.4 that oscillated). Lower
+  # bounds pinned near the original wide-ramp point (0.17/3.0) so the search
+  # can still fall back toward it if nothing in the narrower zone beats it.
+  # Warm-started at the original best point (d1=3.5, d2=0.99,
+  # ThresholdDamage=0.19, obj=0.0540).
+  continuous_design = 3
+    descriptors                    'DamageParameter1'  'DamageParameter2'  'ThresholdDamage'
+    initial_point                   3.5                 0.99                0.19
+    lower_bounds                    3.0                 0.75                0.17
+    upper_bounds                    5.5                 1.15                0.28
+  continuous_state = 4
+    descriptors                    'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'
+    initial_state                   9.77e9                1.35e10                 22.0                   2.0e8
+
+interface
+  # Serial (no concurrency) -- see the concurrency lesson learned during
+  # HE_30's joint polish (CLAUDE.md).
+  analysis_drivers = 'driver_HE60_brozzo_safezone_polish.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

@@ -1,0 +1,10 @@
+Input FEM file                   = tensile_test.g
+LB file                          = tensile_test.g.nem
+Parallel Results File Base Name  = tensile_test
+File Extension for Spread Files  = .g
+Number of Processors             = 10 
+------------------------------------------------------------
+                Parallel I/O section
+------------------------------------------------------------
+Parallel Disk Info= number=1, offset=1, zeros, nosubdirectory
+Parallel file location = root=/output/, subdir=.

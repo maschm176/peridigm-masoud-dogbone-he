@@ -1,0 +1,32 @@
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE30_sfc3_d2_sweep3.dat'
+
+method
+  list_parameter_study
+    # Tight sweep straddling the collapse cliff found in d2_sweep2
+    # (D2=0.3 collapses, D2=0.35 is well-behaved, frac=14.59%, obj=0.133).
+    # Adding D2=0.33 to probe just below 0.35, plus 0.37/0.40 above it.
+    # D1=0.02, D3=3.0 fixed (the d2d3_check run showed D3=4.0 pushes
+    # fracture later, not earlier -- wrong direction).
+    list_of_points = 0.33  0.35  0.37  0.40
+
+variables
+  continuous_design = 1
+    descriptors 'DamageParameter2'
+  continuous_state = 7
+    descriptors      'DamageParameter1'  'DamageParameter3'  'ThresholdDamage'  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'
+    initial_state     0.02                3.0                 0.97               1.027e10               1.35e10                 22.0                   2.0e8
+
+interface
+  analysis_drivers = 'driver_HE30_voce_hypoelastic_d2_sweep3.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+  asynchronous evaluation_concurrency = 2
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

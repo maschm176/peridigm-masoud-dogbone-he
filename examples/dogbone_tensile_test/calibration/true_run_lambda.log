@@ -1,0 +1,397 @@
+
+-- Peridigm
+-- version 1.5.0 (Dev)
+
+Allocating global tangent matrix...
+  number of rows = 37875
+  number of nonzeros = 30378033
+
+Load step 1, initial time = 0, final time = 0.0166667, convergence criterion = 100000
+  iteration 1: residual = 4.02014e+10
+  iteration 2: residual = 2.65506e+09
+  iteration 3: residual = 2.04397e+07
+  iteration 4: residual = 1.23709e+07
+  iteration 5: residual = 1287.74
+  cpu time for load step = 88 sec., cumulative cpu time = 88 sec.
+
+Load step 2, initial time = 0.017, final time = 0.033, convergence criterion = 1e+05
+  iteration 1: residual = 4.4e+10
+  iteration 2: residual = 9.9e+08
+  iteration 3: residual = 1.4e+07
+  iteration 4: residual = 8.2e+02
+  cpu time for load step = 55 sec., cumulative cpu time = 1.4e+02 sec.
+
+Load step 3, initial time = 0.033, final time = 0.05, convergence criterion = 1e+05
+  iteration 1: residual = 4.5e+10
+  iteration 2: residual = 5.4e+08
+  iteration 3: residual = 4.4e+05
+  iteration 4: residual = 49
+  cpu time for load step = 54 sec., cumulative cpu time = 2e+02 sec.
+
+Load step 4, initial time = 0.05, final time = 0.067, convergence criterion = 1e+05
+  iteration 1: residual = 4.5e+10
+  iteration 2: residual = 3.8e+08
+  iteration 3: residual = 3.1e+05
+  iteration 4: residual = 21
+  cpu time for load step = 48 sec., cumulative cpu time = 2.4e+02 sec.
+
+Load step 5, initial time = 0.067, final time = 0.083, convergence criterion = 1e+05
+  iteration 1: residual = 4.6e+10
+  iteration 2: residual = 2.5e+08
+  iteration 3: residual = 1.9e+05
+  iteration 4: residual = 6.9
+  cpu time for load step = 48 sec., cumulative cpu time = 2.9e+02 sec.
+
+Load step 6, initial time = 0.083, final time = 0.1, convergence criterion = 1e+05
+  iteration 1: residual = 4.6e+10
+  iteration 2: residual = 2.9e+08
+  iteration 3: residual = 2.6e+05
+  iteration 4: residual = 6
+  cpu time for load step = 49 sec., cumulative cpu time = 3.4e+02 sec.
+
+Load step 7, initial time = 0.1, final time = 0.12, convergence criterion = 1e+05
+  iteration 1: residual = 4.6e+10
+  iteration 2: residual = 2.2e+08
+  iteration 3: residual = 1.7e+05
+  iteration 4: residual = 3.2
+  cpu time for load step = 48 sec., cumulative cpu time = 3.9e+02 sec.
+
+Load step 8, initial time = 0.12, final time = 0.13, convergence criterion = 1e+05
+  iteration 1: residual = 4.6e+10
+  iteration 2: residual = 2.9e+06
+  iteration 3: residual = 3.5e+02
+  cpu time for load step = 23 sec., cumulative cpu time = 4.1e+02 sec.
+
+Load step 9, initial time = 0.13, final time = 0.15, convergence criterion = 1e+05
+  iteration 1: residual = 4.6e+10
+  iteration 2: residual = 2.8e+06
+  iteration 3: residual = 5.3e+02
+  cpu time for load step = 22 sec., cumulative cpu time = 4.3e+02 sec.
+
+Load step 10, initial time = 0.15, final time = 0.17, convergence criterion = 1e+05
+  iteration 1: residual = 4.6e+10
+  iteration 2: residual = 2.8e+06
+  iteration 3: residual = 4.5e+02
+  cpu time for load step = 22 sec., cumulative cpu time = 4.6e+02 sec.
+
+Load step 11, initial time = 0.17, final time = 0.18, convergence criterion = 1e+05
+  iteration 1: residual = 4.6e+10
+  iteration 2: residual = 2.8e+06
+  iteration 3: residual = 4.8e+02
+  cpu time for load step = 21 sec., cumulative cpu time = 4.8e+02 sec.
+
+Load step 12, initial time = 0.18, final time = 0.2, convergence criterion = 1e+05
+  iteration 1: residual = 4.6e+10
+  iteration 2: residual = 2.8e+06
+  iteration 3: residual = 4.4e+02
+  cpu time for load step = 21 sec., cumulative cpu time = 5e+02 sec.
+
+Load step 13, initial time = 0.2, final time = 0.22, convergence criterion = 1e+05
+  iteration 1: residual = 4.6e+10
+  iteration 2: residual = 2.7e+06
+  iteration 3: residual = 3.7e+02
+  cpu time for load step = 20 sec., cumulative cpu time = 5.2e+02 sec.
+
+Load step 14, initial time = 0.22, final time = 0.23, convergence criterion = 1e+05
+  iteration 1: residual = 4.6e+10
+  iteration 2: residual = 2.7e+06
+  iteration 3: residual = 4.7e+02
+  cpu time for load step = 19 sec., cumulative cpu time = 5.4e+02 sec.
+
+Load step 15, initial time = 0.23, final time = 0.25, convergence criterion = 1e+05
+  iteration 1: residual = 4.6e+10
+  iteration 2: residual = 2.7e+06
+  iteration 3: residual = 3.8e+02
+  cpu time for load step = 19 sec., cumulative cpu time = 5.6e+02 sec.
+
+Load step 16, initial time = 0.25, final time = 0.27, convergence criterion = 1e+05
+  iteration 1: residual = 4.6e+10
+  iteration 2: residual = 2.7e+06
+  iteration 3: residual = 3.8e+02
+  cpu time for load step = 19 sec., cumulative cpu time = 5.8e+02 sec.
+
+Load step 17, initial time = 0.27, final time = 0.28, convergence criterion = 1e+05
+  iteration 1: residual = 4.6e+10
+  iteration 2: residual = 2.7e+06
+  iteration 3: residual = 4.3e+02
+  cpu time for load step = 18 sec., cumulative cpu time = 5.9e+02 sec.
+
+Load step 18, initial time = 0.28, final time = 0.3, convergence criterion = 1e+05
+  iteration 1: residual = 4.7e+10
+  iteration 2: residual = 2.7e+06
+  iteration 3: residual = 4.3e+02
+  cpu time for load step = 18 sec., cumulative cpu time = 6.1e+02 sec.
+
+Load step 19, initial time = 0.3, final time = 0.32, convergence criterion = 1e+05
+  iteration 1: residual = 4.7e+10
+  iteration 2: residual = 2.7e+06
+  iteration 3: residual = 5.5e+02
+  cpu time for load step = 19 sec., cumulative cpu time = 6.3e+02 sec.
+
+Load step 20, initial time = 0.32, final time = 0.33, convergence criterion = 1e+05
+  iteration 1: residual = 4.7e+10
+  iteration 2: residual = 2.7e+06
+  iteration 3: residual = 6.7e+02
+  cpu time for load step = 19 sec., cumulative cpu time = 6.5e+02 sec.
+
+Load step 21, initial time = 0.33, final time = 0.35, convergence criterion = 1e+05
+  iteration 1: residual = 4.7e+10
+  iteration 2: residual = 2.7e+06
+  iteration 3: residual = 6.4e+02
+  cpu time for load step = 18 sec., cumulative cpu time = 6.7e+02 sec.
+
+Load step 22, initial time = 0.35, final time = 0.37, convergence criterion = 1e+05
+  iteration 1: residual = 4.7e+10
+  iteration 2: residual = 2.7e+06
+  iteration 3: residual = 6.3e+02
+  cpu time for load step = 18 sec., cumulative cpu time = 6.9e+02 sec.
+
+Load step 23, initial time = 0.37, final time = 0.38, convergence criterion = 1e+05
+  iteration 1: residual = 4.7e+10
+  iteration 2: residual = 2.7e+06
+  iteration 3: residual = 2.8e+02
+  cpu time for load step = 18 sec., cumulative cpu time = 7e+02 sec.
+
+Load step 24, initial time = 0.38, final time = 0.4, convergence criterion = 1e+05
+  iteration 1: residual = 4.7e+10
+  iteration 2: residual = 2.6e+06
+  iteration 3: residual = 2.9e+02
+  cpu time for load step = 17 sec., cumulative cpu time = 7.2e+02 sec.
+
+Load step 25, initial time = 0.4, final time = 0.42, convergence criterion = 1e+05
+  iteration 1: residual = 4.7e+10
+  iteration 2: residual = 2.6e+06
+  iteration 3: residual = 4e+02
+  cpu time for load step = 17 sec., cumulative cpu time = 7.4e+02 sec.
+
+Load step 26, initial time = 0.42, final time = 0.43, convergence criterion = 1e+05
+  iteration 1: residual = 4.7e+10
+  iteration 2: residual = 2.6e+06
+  iteration 3: residual = 4.5e+02
+  cpu time for load step = 17 sec., cumulative cpu time = 7.6e+02 sec.
+
+Load step 27, initial time = 0.43, final time = 0.45, convergence criterion = 1e+05
+  iteration 1: residual = 4.7e+10
+  iteration 2: residual = 2.6e+06
+  iteration 3: residual = 5.5e+02
+  cpu time for load step = 16 sec., cumulative cpu time = 7.7e+02 sec.
+
+Load step 28, initial time = 0.45, final time = 0.47, convergence criterion = 1e+05
+  iteration 1: residual = 4.7e+10
+  iteration 2: residual = 2.6e+06
+  iteration 3: residual = 4.5e+02
+  cpu time for load step = 17 sec., cumulative cpu time = 7.9e+02 sec.
+
+Load step 29, initial time = 0.47, final time = 0.48, convergence criterion = 1e+05
+  iteration 1: residual = 4.7e+10
+  iteration 2: residual = 2.6e+06
+  iteration 3: residual = 4.5e+02
+  cpu time for load step = 16 sec., cumulative cpu time = 8e+02 sec.
+
+Load step 30, initial time = 0.48, final time = 0.5, convergence criterion = 1e+05
+  iteration 1: residual = 4.7e+10
+  iteration 2: residual = 2.6e+06
+  iteration 3: residual = 4.2e+02
+  cpu time for load step = 16 sec., cumulative cpu time = 8.2e+02 sec.
+
+Load step 31, initial time = 0.5, final time = 0.52, convergence criterion = 1e+05
+  iteration 1: residual = 4.7e+10
+  iteration 2: residual = 2.6e+06
+  iteration 3: residual = 2.9e+02
+  cpu time for load step = 16 sec., cumulative cpu time = 8.4e+02 sec.
+
+Load step 32, initial time = 0.52, final time = 0.53, convergence criterion = 1e+05
+  iteration 1: residual = 4.8e+10
+  iteration 2: residual = 2.6e+06
+  iteration 3: residual = 3.8e+02
+  cpu time for load step = 16 sec., cumulative cpu time = 8.5e+02 sec.
+
+Load step 33, initial time = 0.53, final time = 0.55, convergence criterion = 1e+05
+  iteration 1: residual = 4.8e+10
+  iteration 2: residual = 2.6e+06
+  iteration 3: residual = 5.6e+02
+  cpu time for load step = 16 sec., cumulative cpu time = 8.7e+02 sec.
+
+Load step 34, initial time = 0.55, final time = 0.57, convergence criterion = 1e+05
+  iteration 1: residual = 4.8e+10
+  iteration 2: residual = 2.6e+06
+  iteration 3: residual = 4.1e+02
+  cpu time for load step = 16 sec., cumulative cpu time = 8.9e+02 sec.
+
+Load step 35, initial time = 0.57, final time = 0.58, convergence criterion = 1e+05
+  iteration 1: residual = 4.8e+10
+  iteration 2: residual = 2.6e+06
+  iteration 3: residual = 3.8e+02
+  cpu time for load step = 16 sec., cumulative cpu time = 9e+02 sec.
+
+Load step 36, initial time = 0.58, final time = 0.6, convergence criterion = 1e+05
+  iteration 1: residual = 4.8e+10
+  iteration 2: residual = 2.6e+06
+  iteration 3: residual = 4.3e+02
+  cpu time for load step = 16 sec., cumulative cpu time = 9.2e+02 sec.
+
+Load step 37, initial time = 0.6, final time = 0.62, convergence criterion = 1e+05
+  iteration 1: residual = 4.8e+10
+  iteration 2: residual = 2.6e+06
+  iteration 3: residual = 4.4e+02
+  cpu time for load step = 16 sec., cumulative cpu time = 9.3e+02 sec.
+
+Load step 38, initial time = 0.62, final time = 0.63, convergence criterion = 1e+05
+  iteration 1: residual = 4.8e+10
+  iteration 2: residual = 2.6e+06
+  iteration 3: residual = 4.9e+02
+  cpu time for load step = 16 sec., cumulative cpu time = 9.5e+02 sec.
+
+Load step 39, initial time = 0.63, final time = 0.65, convergence criterion = 1e+05
+  iteration 1: residual = 4.8e+10
+  iteration 2: residual = 2.6e+06
+  iteration 3: residual = 3.9e+02
+  cpu time for load step = 16 sec., cumulative cpu time = 9.7e+02 sec.
+
+Load step 40, initial time = 0.65, final time = 0.67, convergence criterion = 1e+05
+  iteration 1: residual = 4.8e+10
+  iteration 2: residual = 2.6e+06
+  iteration 3: residual = 4.2e+02
+  cpu time for load step = 16 sec., cumulative cpu time = 9.8e+02 sec.
+
+Load step 41, initial time = 0.67, final time = 0.68, convergence criterion = 1e+05
+  iteration 1: residual = 4.8e+10
+  iteration 2: residual = 2.6e+06
+  iteration 3: residual = 2.9e+02
+  cpu time for load step = 16 sec., cumulative cpu time = 1e+03 sec.
+
+Load step 42, initial time = 0.68, final time = 0.7, convergence criterion = 1e+05
+  iteration 1: residual = 4.8e+10
+  iteration 2: residual = 2.6e+06
+  iteration 3: residual = 3.9e+02
+  cpu time for load step = 16 sec., cumulative cpu time = 1e+03 sec.
+
+Load step 43, initial time = 0.7, final time = 0.72, convergence criterion = 1e+05
+  iteration 1: residual = 4.8e+10
+  iteration 2: residual = 2.6e+06
+  iteration 3: residual = 3.8e+02
+  cpu time for load step = 16 sec., cumulative cpu time = 1e+03 sec.
+
+Load step 44, initial time = 0.72, final time = 0.73, convergence criterion = 1e+05
+  iteration 1: residual = 4.8e+10
+  iteration 2: residual = 2.5e+06
+  iteration 3: residual = 4.1e+02
+  cpu time for load step = 16 sec., cumulative cpu time = 1e+03 sec.
+
+Load step 45, initial time = 0.73, final time = 0.75, convergence criterion = 1e+05
+  iteration 1: residual = 4.9e+10
+  iteration 2: residual = 2.5e+06
+  iteration 3: residual = 3.9e+02
+  cpu time for load step = 16 sec., cumulative cpu time = 1.1e+03 sec.
+
+Load step 46, initial time = 0.75, final time = 0.77, convergence criterion = 1e+05
+  iteration 1: residual = 4.9e+10
+  iteration 2: residual = 2.5e+06
+  iteration 3: residual = 5.1e+02
+  cpu time for load step = 16 sec., cumulative cpu time = 1.1e+03 sec.
+
+Load step 47, initial time = 0.77, final time = 0.78, convergence criterion = 1e+05
+  iteration 1: residual = 4.9e+10
+  iteration 2: residual = 2.5e+06
+  iteration 3: residual = 3.6e+02
+  cpu time for load step = 16 sec., cumulative cpu time = 1.1e+03 sec.
+
+Load step 48, initial time = 0.78, final time = 0.8, convergence criterion = 1e+05
+  iteration 1: residual = 4.9e+10
+  iteration 2: residual = 2.5e+06
+  iteration 3: residual = 3.8e+02
+  cpu time for load step = 16 sec., cumulative cpu time = 1.1e+03 sec.
+
+Load step 49, initial time = 0.8, final time = 0.82, convergence criterion = 1e+05
+  iteration 1: residual = 4.9e+10
+  iteration 2: residual = 2.5e+06
+  iteration 3: residual = 4.5e+02
+  cpu time for load step = 16 sec., cumulative cpu time = 1.1e+03 sec.
+
+Load step 50, initial time = 0.82, final time = 0.83, convergence criterion = 1e+05
+  iteration 1: residual = 4.9e+10
+  iteration 2: residual = 2.5e+06
+  iteration 3: residual = 3e+02
+  cpu time for load step = 16 sec., cumulative cpu time = 1.1e+03 sec.
+
+Load step 51, initial time = 0.83, final time = 0.85, convergence criterion = 1e+05
+  iteration 1: residual = 4.9e+10
+  iteration 2: residual = 2.5e+06
+  iteration 3: residual = 4.3e+02
+  cpu time for load step = 16 sec., cumulative cpu time = 1.2e+03 sec.
+
+Load step 52, initial time = 0.85, final time = 0.87, convergence criterion = 1e+05
+  iteration 1: residual = 4.9e+10
+  iteration 2: residual = 2.5e+06
+  iteration 3: residual = 4.2e+02
+  cpu time for load step = 16 sec., cumulative cpu time = 1.2e+03 sec.
+
+Load step 53, initial time = 0.87, final time = 0.88, convergence criterion = 1e+05
+  iteration 1: residual = 4.9e+10
+  iteration 2: residual = 2.5e+06
+  iteration 3: residual = 2.7e+02
+  cpu time for load step = 16 sec., cumulative cpu time = 1.2e+03 sec.
+
+Load step 54, initial time = 0.88, final time = 0.9, convergence criterion = 1e+05
+  iteration 1: residual = 4.9e+10
+  iteration 2: residual = 2.5e+06
+  iteration 3: residual = 2.9e+02
+  cpu time for load step = 16 sec., cumulative cpu time = 1.2e+03 sec.
+
+Load step 55, initial time = 0.9, final time = 0.92, convergence criterion = 1e+05
+  iteration 1: residual = 4.9e+10
+  iteration 2: residual = 2.5e+06
+  iteration 3: residual = 3.2e+02
+  cpu time for load step = 16 sec., cumulative cpu time = 1.2e+03 sec.
+
+Load step 56, initial time = 0.92, final time = 0.93, convergence criterion = 1e+05
+  iteration 1: residual = 4.9e+10
+  iteration 2: residual = 2.5e+06
+  iteration 3: residual = 3.6e+02
+  cpu time for load step = 16 sec., cumulative cpu time = 1.2e+03 sec.
+
+Load step 57, initial time = 0.93, final time = 0.95, convergence criterion = 1e+05
+  iteration 1: residual = 4.9e+10
+  iteration 2: residual = 2.5e+06
+  iteration 3: residual = 6.6e+02
+  cpu time for load step = 16 sec., cumulative cpu time = 1.3e+03 sec.
+
+Load step 58, initial time = 0.95, final time = 0.97, convergence criterion = 1e+05
+  iteration 1: residual = 4.9e+10
+  iteration 2: residual = 2.5e+06
+  iteration 3: residual = 4.2e+02
+  cpu time for load step = 16 sec., cumulative cpu time = 1.3e+03 sec.
+
+Load step 59, initial time = 0.97, final time = 0.98, convergence criterion = 1e+05
+  iteration 1: residual = 5e+10
+  iteration 2: residual = 2.5e+06
+  iteration 3: residual = 2.6e+02
+  cpu time for load step = 15 sec., cumulative cpu time = 1.3e+03 sec.
+
+Load step 60, initial time = 0.98, final time = 1, convergence criterion = 1e+05
+  iteration 1: residual = 5e+10
+  iteration 2: residual = 2.5e+06
+  iteration 3: residual = 4.1e+02
+  cpu time for load step = 15 sec., cumulative cpu time = 1.3e+03 sec.
+
+
+Memory Usage (Heap Alloc MB):
+  Allocated Jacobian                 7.1e+02
+  Post Execute                         4e+02
+  Zoltan Search Tree                      10
+
+Wallclock Time (seconds):
+  Total                              1.3e+03
+  Solve Linear System                6.4e+02
+  Output                                0.16
+  Line Search                             12
+  Internal Force                          13
+  Gather/Scatter                        0.31
+  Evaluate Jacobian                    5e+02
+  Compute Residual                        14
+  Apply Kinematic B.C.                  0.04
+  Apply Initial Conditions           0.00015
+  Apply Boundary Conditions          1.5e+02
+  Apply Body Forces                  0.00055
+  Allocate Global Tangent                 10
+

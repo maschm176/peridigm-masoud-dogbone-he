@@ -1,0 +1,33 @@
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE0_sfc3_d1_sweep.dat'
+
+method
+  list_parameter_study
+    # D1 sweep, holding D2/D3 at the SFC3 paper's values (2.5/3.0) to
+    # preserve their strong triaxiality-sensitivity (floor/ceiling epsF
+    # ratio) and the smooth, spatially-localized softening it produces.
+    # Paper's own D1=0.04 gave fracture at 18.26% vs real 15.37% (see
+    # forward_runs/HE0_sfc3_damage_params) -- stepping D1 down should pull
+    # fracture earlier since D1 is the high-triaxiality "floor" epsF.
+    list_of_points = 0.03  0.02  0.015  0.01
+
+variables
+  continuous_design = 1
+    descriptors 'DamageParameter1'
+  continuous_state = 7
+    descriptors      'DamageParameter2'  'DamageParameter3'  'ThresholdDamage'  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'
+    initial_state     2.5                 3.0                 0.97               9.77e9                 1.35e10                 22.0                   2.0e8
+
+interface
+  analysis_drivers = 'driver_HE0_voce_hypoelastic_d1_sweep.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+  asynchronous evaluation_concurrency = 2
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

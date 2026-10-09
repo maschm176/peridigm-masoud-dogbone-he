@@ -103,6 +103,7 @@ namespace PeridigmNS {
     int m_bondLevelVonMisesStressFieldId;
     int m_bondLevelEquivalentPlasticStrainFieldId;
     int m_bondLevelStressTriaxialityFieldId;
+    int m_bondLevelMaxPrincipalStressFieldId;
 
   };
 }

@@ -1,0 +1,34 @@
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE30_brozzo_threshold_sweep.dat'
+
+method
+  list_parameter_study
+    # ThresholdDamage sweep for HE_30, d1=3.5/d2=0.99 fixed (the best
+    # surviving point from the stalled joint polish). 0.85 (HE_0's value,
+    # used throughout every HE_30 run so far) is already known:
+    # obj=0.1840, fracture_strain=15.40% vs real target 13.27% (see
+    # dakota_tabular_HE30_brozzo_d1d2_polish.dat eval 1) -- not re-run here.
+    # Testing lower values to see whether widening the damage ramp shifts
+    # fracture earlier and/or changes stability, bracketing down from there.
+    list_of_points = 0.75  0.65  0.5
+
+variables
+  continuous_design = 1
+    descriptors 'ThresholdDamage'
+  continuous_state = 6
+    descriptors      'DamageParameter1'  'DamageParameter2'  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'
+    initial_state     3.5                 0.99                1.027e10              1.35e10                 22.0                   2.0e8
+
+interface
+  analysis_drivers = 'driver_HE30_brozzo_threshold_sweep.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+    asynchronous evaluation_concurrency = 2
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

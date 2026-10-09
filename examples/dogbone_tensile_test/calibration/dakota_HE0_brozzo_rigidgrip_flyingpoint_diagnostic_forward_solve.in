@@ -1,0 +1,25 @@
+environment
+
+method
+  list_parameter_study
+    # Single evaluation: HE_0's locked-in Brozzo parameters, rigid-grip BC,
+    # plain ramp mode. Not an optimization -- a one-off diagnostic run adding
+    # Broken_Bond_Volume_Averaged and Flying_Point_Flag to the output, to
+    # check whether natural damage accumulation ever approaches the existing
+    # flying-point threshold.
+    list_of_points =  9.77e9  1.35e10  22.0  2.0e8  3.5  0.99  0.85
+
+variables
+  continuous_design = 7
+    descriptors  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'  'DamageParameter1'  'DamageParameter2'  'ThresholdDamage'
+
+interface
+  analysis_drivers = 'driver_HE0_brozzo_rigidgrip_flyingpoint_diagnostic_forward_solve.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

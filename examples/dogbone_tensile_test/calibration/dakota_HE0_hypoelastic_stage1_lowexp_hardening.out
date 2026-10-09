@@ -1,0 +1,880 @@
+Dakota version 6.24 released May 15 2026.
+Repository revision 1ab1c9924 (2026-05-11) built May 11 2026 11:08:44.
+Running MPI Dakota executable in serial mode.
+Start time: Mon Sep 14 14:01:45 2026
+
+------------------
+Begin Dakota input
+------------------
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE0_hypoelastic_stage1_lowexp.dat'
+
+method
+  coliny_pattern_search
+    max_function_evaluations = 30
+
+variables
+  # Re-run of Stage 1 targeting the LOW hardening-exponent regime (see
+  # driver_HE0_hypoelastic_stage1_lowexp_hardening.sh for the full
+  # rationale). HardeningExponent is bounded to [0.15, 0.40], centered on
+  # the Considere-criterion estimate of 0.28 for necking onset near the
+  # real 15.37% fracture strain -- deliberately excluding the original
+  # Stage 1's unconstrained optimum (~0.44), which doesn't neck until
+  # ~35% strain. YieldStress and HardeningCharacteristicStrain stay free
+  # (similar wide bounds to the original Stage 1) to find the best
+  # achievable pre-peak fit within that exponent constraint -- YieldStress
+  # in particular may need to rise to partially compensate for the lower
+  # exponent's reduced overall hardening (visible as an undershoot in
+  # hypoelastic_lowexp_necking_test_fit.png).
+  continuous_design = 3
+    descriptors                    'YieldStress'  'HardeningCharacteristicStrain'  'HardeningExponent'
+    initial_point                   1.0455332647e10  1.3609018823e-01                2.8e-01
+    lower_bounds                    5.0e9            8.0e-2                          1.5e-1
+    upper_bounds                    2.0e10           2.0e-1                          4.0e-1
+  continuous_state = 4
+    descriptors                    'DamageParameter1'  'DamageParameter2'  'DamageParameter3'  'ThresholdDamage'
+    initial_state                   5.0                 0.0                 0.0                 0.9
+
+interface
+  analysis_drivers = 'driver_HE0_hypoelastic_stage1_lowexp_hardening.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+  asynchronous evaluation_concurrency = 2
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians
+
+----------------
+End Dakota input
+----------------
+
+Using Dakota parser: standard
+Writing new restart file 'dakota_HE0_hypoelastic_stage1_lowexp_hardening.rst'.
+
+Seed (system-generated) = 1789412505
+
+>>>>> Executing environment.
+
+>>>>> Running coliny_pattern_search iterator.
+
+---------------------
+Begin Evaluation    1
+---------------------
+Parameters for evaluation 1:
+                      1.0455332647e+10 YieldStress
+                      1.3609018823e-01 HardeningCharacteristicStrain
+                      2.8000000000e-01 HardeningExponent
+                      5.0000000000e+00 DamageParameter1
+                      0.0000000000e+00 DamageParameter2
+                      0.0000000000e+00 DamageParameter3
+                      9.0000000000e-01 ThresholdDamage
+
+blocking fork: driver_HE0_hypoelastic_stage1_lowexp_hardening.sh params.in.1 results.out.1
+
+Active response data for evaluation 1:
+Active set vector = { 1 }
+                      7.3712006727e-02 obj_fn_1
+
+
+
+---------------------
+Begin Evaluation    2
+---------------------
+Parameters for evaluation 2:
+                      1.1955332647e+10 YieldStress
+                      1.3609018823e-01 HardeningCharacteristicStrain
+                      2.8000000000e-01 HardeningExponent
+                      5.0000000000e+00 DamageParameter1
+                      0.0000000000e+00 DamageParameter2
+                      0.0000000000e+00 DamageParameter3
+                      9.0000000000e-01 ThresholdDamage
+
+(Asynchronous job 2 added to queue)
+
+---------------------
+Begin Evaluation    3
+---------------------
+Parameters for evaluation 3:
+                      1.0455332647e+10 YieldStress
+                      1.4809018823e-01 HardeningCharacteristicStrain
+                      2.8000000000e-01 HardeningExponent
+                      5.0000000000e+00 DamageParameter1
+                      0.0000000000e+00 DamageParameter2
+                      0.0000000000e+00 DamageParameter3
+                      9.0000000000e-01 ThresholdDamage
+
+(Asynchronous job 3 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 2
+nonblocking fork: driver_HE0_hypoelastic_stage1_lowexp_hardening.sh params.in.2 results.out.2
+Initiating evaluation 3
+nonblocking fork: driver_HE0_hypoelastic_stage1_lowexp_hardening.sh params.in.3 results.out.3
+Waiting on completed jobs
+Evaluation 2 has completed
+Evaluation 3 has completed
+
+Active response data for evaluation 2:
+Active set vector = { 1 }
+                      9.5342263476e-02 obj_fn_1
+
+
+Active response data for evaluation 3:
+Active set vector = { 1 }
+                      7.8061881074e-02 obj_fn_1
+
+
+---------------------
+Begin Evaluation    4
+---------------------
+Parameters for evaluation 4:
+                      1.0455332647e+10 YieldStress
+                      1.3609018823e-01 HardeningCharacteristicStrain
+                      3.0500000000e-01 HardeningExponent
+                      5.0000000000e+00 DamageParameter1
+                      0.0000000000e+00 DamageParameter2
+                      0.0000000000e+00 DamageParameter3
+                      9.0000000000e-01 ThresholdDamage
+
+(Asynchronous job 4 added to queue)
+
+---------------------
+Begin Evaluation    5
+---------------------
+Parameters for evaluation 5:
+                      8.9553326470e+09 YieldStress
+                      1.3609018823e-01 HardeningCharacteristicStrain
+                      2.8000000000e-01 HardeningExponent
+                      5.0000000000e+00 DamageParameter1
+                      0.0000000000e+00 DamageParameter2
+                      0.0000000000e+00 DamageParameter3
+                      9.0000000000e-01 ThresholdDamage
+
+(Asynchronous job 5 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 4
+nonblocking fork: driver_HE0_hypoelastic_stage1_lowexp_hardening.sh params.in.4 results.out.4
+Initiating evaluation 5
+nonblocking fork: driver_HE0_hypoelastic_stage1_lowexp_hardening.sh params.in.5 results.out.5
+Waiting on completed jobs
+Evaluation 5 has completed
+Waiting on completed jobs
+Evaluation 4 has completed
+
+Active response data for evaluation 4:
+Active set vector = { 1 }
+                      6.7860845335e-02 obj_fn_1
+
+
+Active response data for evaluation 5:
+Active set vector = { 1 }
+                      1.6490871200e-01 obj_fn_1
+
+
+---------------------
+Begin Evaluation    6
+---------------------
+Parameters for evaluation 6:
+                      1.0455332647e+10 YieldStress
+                      1.2409018823e-01 HardeningCharacteristicStrain
+                      2.8000000000e-01 HardeningExponent
+                      5.0000000000e+00 DamageParameter1
+                      0.0000000000e+00 DamageParameter2
+                      0.0000000000e+00 DamageParameter3
+                      9.0000000000e-01 ThresholdDamage
+
+(Asynchronous job 6 added to queue)
+
+---------------------
+Begin Evaluation    7
+---------------------
+Parameters for evaluation 7:
+                      1.0455332647e+10 YieldStress
+                      1.3609018823e-01 HardeningCharacteristicStrain
+                      2.5500000000e-01 HardeningExponent
+                      5.0000000000e+00 DamageParameter1
+                      0.0000000000e+00 DamageParameter2
+                      0.0000000000e+00 DamageParameter3
+                      9.0000000000e-01 ThresholdDamage
+
+(Asynchronous job 7 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 6
+nonblocking fork: driver_HE0_hypoelastic_stage1_lowexp_hardening.sh params.in.6 results.out.6
+Initiating evaluation 7
+nonblocking fork: driver_HE0_hypoelastic_stage1_lowexp_hardening.sh params.in.7 results.out.7
+Waiting on completed jobs
+Evaluation 7 has completed
+Waiting on completed jobs
+Evaluation 6 has completed
+
+Active response data for evaluation 6:
+Active set vector = { 1 }
+                      6.8516071085e-02 obj_fn_1
+
+
+Active response data for evaluation 7:
+Active set vector = { 1 }
+                      7.9366969883e-02 obj_fn_1
+
+
+---------------------
+Begin Evaluation    8
+---------------------
+Parameters for evaluation 8:
+                      1.1205332647e+10 YieldStress
+                      1.3609018823e-01 HardeningCharacteristicStrain
+                      2.8000000000e-01 HardeningExponent
+                      5.0000000000e+00 DamageParameter1
+                      0.0000000000e+00 DamageParameter2
+                      0.0000000000e+00 DamageParameter3
+                      9.0000000000e-01 ThresholdDamage
+
+(Asynchronous job 8 added to queue)
+
+---------------------
+Begin Evaluation    9
+---------------------
+Parameters for evaluation 9:
+                      1.0455332647e+10 YieldStress
+                      1.4209018823e-01 HardeningCharacteristicStrain
+                      2.8000000000e-01 HardeningExponent
+                      5.0000000000e+00 DamageParameter1
+                      0.0000000000e+00 DamageParameter2
+                      0.0000000000e+00 DamageParameter3
+                      9.0000000000e-01 ThresholdDamage
+
+(Asynchronous job 9 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 8
+nonblocking fork: driver_HE0_hypoelastic_stage1_lowexp_hardening.sh params.in.8 results.out.8
+Initiating evaluation 9
+nonblocking fork: driver_HE0_hypoelastic_stage1_lowexp_hardening.sh params.in.9 results.out.9
+Waiting on completed jobs
+Evaluation 8 has completed
+Waiting on completed jobs
+Evaluation 9 has completed
+
+Active response data for evaluation 8:
+Active set vector = { 1 }
+                      5.2400823216e-02 obj_fn_1
+
+
+Active response data for evaluation 9:
+Active set vector = { 1 }
+                      7.5641907947e-02 obj_fn_1
+
+
+---------------------
+Begin Evaluation   10
+---------------------
+Parameters for evaluation 10:
+                      1.0455332647e+10 YieldStress
+                      1.3609018823e-01 HardeningCharacteristicStrain
+                      2.9250000000e-01 HardeningExponent
+                      5.0000000000e+00 DamageParameter1
+                      0.0000000000e+00 DamageParameter2
+                      0.0000000000e+00 DamageParameter3
+                      9.0000000000e-01 ThresholdDamage
+
+(Asynchronous job 10 added to queue)
+
+---------------------
+Begin Evaluation   11
+---------------------
+Parameters for evaluation 11:
+                      9.7053326470e+09 YieldStress
+                      1.3609018823e-01 HardeningCharacteristicStrain
+                      2.8000000000e-01 HardeningExponent
+                      5.0000000000e+00 DamageParameter1
+                      0.0000000000e+00 DamageParameter2
+                      0.0000000000e+00 DamageParameter3
+                      9.0000000000e-01 ThresholdDamage
+
+(Asynchronous job 11 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 10
+nonblocking fork: driver_HE0_hypoelastic_stage1_lowexp_hardening.sh params.in.10 results.out.10
+Initiating evaluation 11
+nonblocking fork: driver_HE0_hypoelastic_stage1_lowexp_hardening.sh params.in.11 results.out.11
+Waiting on completed jobs
+Evaluation 10 has completed
+Evaluation 11 has completed
+
+Active response data for evaluation 10:
+Active set vector = { 1 }
+                      7.0696431551e-02 obj_fn_1
+
+
+Active response data for evaluation 11:
+Active set vector = { 1 }
+                      1.1435408451e-01 obj_fn_1
+
+
+---------------------
+Begin Evaluation   12
+---------------------
+Parameters for evaluation 12:
+                      1.0455332647e+10 YieldStress
+                      1.3009018823e-01 HardeningCharacteristicStrain
+                      2.8000000000e-01 HardeningExponent
+                      5.0000000000e+00 DamageParameter1
+                      0.0000000000e+00 DamageParameter2
+                      0.0000000000e+00 DamageParameter3
+                      9.0000000000e-01 ThresholdDamage
+
+(Asynchronous job 12 added to queue)
+
+---------------------
+Begin Evaluation   13
+---------------------
+Parameters for evaluation 13:
+                      1.0455332647e+10 YieldStress
+                      1.3609018823e-01 HardeningCharacteristicStrain
+                      2.6750000000e-01 HardeningExponent
+                      5.0000000000e+00 DamageParameter1
+                      0.0000000000e+00 DamageParameter2
+                      0.0000000000e+00 DamageParameter3
+                      9.0000000000e-01 ThresholdDamage
+
+(Asynchronous job 13 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 12
+nonblocking fork: driver_HE0_hypoelastic_stage1_lowexp_hardening.sh params.in.12 results.out.12
+Initiating evaluation 13
+nonblocking fork: driver_HE0_hypoelastic_stage1_lowexp_hardening.sh params.in.13 results.out.13
+Waiting on completed jobs
+Evaluation 13 has completed
+Waiting on completed jobs
+Evaluation 12 has completed
+
+Active response data for evaluation 12:
+Active set vector = { 1 }
+                      7.1179491153e-02 obj_fn_1
+
+
+Active response data for evaluation 13:
+Active set vector = { 1 }
+                      7.6662239576e-02 obj_fn_1
+
+
+---------------------
+Begin Evaluation   14
+---------------------
+Parameters for evaluation 14:
+                      1.1205332647e+10 YieldStress
+                      1.4209018823e-01 HardeningCharacteristicStrain
+                      2.8000000000e-01 HardeningExponent
+                      5.0000000000e+00 DamageParameter1
+                      0.0000000000e+00 DamageParameter2
+                      0.0000000000e+00 DamageParameter3
+                      9.0000000000e-01 ThresholdDamage
+
+(Asynchronous job 14 added to queue)
+
+---------------------
+Begin Evaluation   15
+---------------------
+Parameters for evaluation 15:
+                      1.1205332647e+10 YieldStress
+                      1.3609018823e-01 HardeningCharacteristicStrain
+                      2.9250000000e-01 HardeningExponent
+                      5.0000000000e+00 DamageParameter1
+                      0.0000000000e+00 DamageParameter2
+                      0.0000000000e+00 DamageParameter3
+                      9.0000000000e-01 ThresholdDamage
+
+(Asynchronous job 15 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 14
+nonblocking fork: driver_HE0_hypoelastic_stage1_lowexp_hardening.sh params.in.14 results.out.14
+Initiating evaluation 15
+nonblocking fork: driver_HE0_hypoelastic_stage1_lowexp_hardening.sh params.in.15 results.out.15
+Waiting on completed jobs
+Evaluation 14 has completed
+Waiting on completed jobs
+Evaluation 15 has completed
+
+Active response data for evaluation 14:
+Active set vector = { 1 }
+                      5.2770896328e-02 obj_fn_1
+
+
+Active response data for evaluation 15:
+Active set vector = { 1 }
+                      5.1150907605e-02 obj_fn_1
+
+
+---------------------
+Begin Evaluation   16
+---------------------
+Parameters for evaluation 16:
+                      1.1205332647e+10 YieldStress
+                      1.3009018823e-01 HardeningCharacteristicStrain
+                      2.8000000000e-01 HardeningExponent
+                      5.0000000000e+00 DamageParameter1
+                      0.0000000000e+00 DamageParameter2
+                      0.0000000000e+00 DamageParameter3
+                      9.0000000000e-01 ThresholdDamage
+
+(Asynchronous job 16 added to queue)
+
+---------------------
+Begin Evaluation   17
+---------------------
+Parameters for evaluation 17:
+                      1.1205332647e+10 YieldStress
+                      1.3609018823e-01 HardeningCharacteristicStrain
+                      2.6750000000e-01 HardeningExponent
+                      5.0000000000e+00 DamageParameter1
+                      0.0000000000e+00 DamageParameter2
+                      0.0000000000e+00 DamageParameter3
+                      9.0000000000e-01 ThresholdDamage
+
+(Asynchronous job 17 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 16
+nonblocking fork: driver_HE0_hypoelastic_stage1_lowexp_hardening.sh params.in.16 results.out.16
+Initiating evaluation 17
+nonblocking fork: driver_HE0_hypoelastic_stage1_lowexp_hardening.sh params.in.17 results.out.17
+Waiting on completed jobs
+Evaluation 17 has completed
+Waiting on completed jobs
+Evaluation 16 has completed
+
+Active response data for evaluation 16:
+Active set vector = { 1 }
+                      5.1373586129e-02 obj_fn_1
+
+
+Active response data for evaluation 17:
+Active set vector = { 1 }
+                      5.2818153790e-02 obj_fn_1
+
+
+---------------------
+Begin Evaluation   18
+---------------------
+Parameters for evaluation 18:
+                      1.1580332647e+10 YieldStress
+                      1.3609018823e-01 HardeningCharacteristicStrain
+                      2.8000000000e-01 HardeningExponent
+                      5.0000000000e+00 DamageParameter1
+                      0.0000000000e+00 DamageParameter2
+                      0.0000000000e+00 DamageParameter3
+                      9.0000000000e-01 ThresholdDamage
+
+(Asynchronous job 18 added to queue)
+
+---------------------
+Begin Evaluation   19
+---------------------
+Parameters for evaluation 19:
+                      1.1205332647e+10 YieldStress
+                      1.3909018823e-01 HardeningCharacteristicStrain
+                      2.8000000000e-01 HardeningExponent
+                      5.0000000000e+00 DamageParameter1
+                      0.0000000000e+00 DamageParameter2
+                      0.0000000000e+00 DamageParameter3
+                      9.0000000000e-01 ThresholdDamage
+
+(Asynchronous job 19 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 18
+nonblocking fork: driver_HE0_hypoelastic_stage1_lowexp_hardening.sh params.in.18 results.out.18
+Initiating evaluation 19
+nonblocking fork: driver_HE0_hypoelastic_stage1_lowexp_hardening.sh params.in.19 results.out.19
+Waiting on completed jobs
+Evaluation 18 has completed
+Waiting on completed jobs
+Evaluation 19 has completed
+
+Active response data for evaluation 18:
+Active set vector = { 1 }
+                      6.8734811368e-02 obj_fn_1
+
+
+Active response data for evaluation 19:
+Active set vector = { 1 }
+                      5.2627096986e-02 obj_fn_1
+
+
+---------------------
+Begin Evaluation   20
+---------------------
+Parameters for evaluation 20:
+                      1.1205332647e+10 YieldStress
+                      1.3609018823e-01 HardeningCharacteristicStrain
+                      2.8625000000e-01 HardeningExponent
+                      5.0000000000e+00 DamageParameter1
+                      0.0000000000e+00 DamageParameter2
+                      0.0000000000e+00 DamageParameter3
+                      9.0000000000e-01 ThresholdDamage
+
+(Asynchronous job 20 added to queue)
+
+---------------------
+Begin Evaluation   21
+---------------------
+Parameters for evaluation 21:
+                      1.0830332647e+10 YieldStress
+                      1.3609018823e-01 HardeningCharacteristicStrain
+                      2.8000000000e-01 HardeningExponent
+                      5.0000000000e+00 DamageParameter1
+                      0.0000000000e+00 DamageParameter2
+                      0.0000000000e+00 DamageParameter3
+                      9.0000000000e-01 ThresholdDamage
+
+(Asynchronous job 21 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 20
+nonblocking fork: driver_HE0_hypoelastic_stage1_lowexp_hardening.sh params.in.20 results.out.20
+Initiating evaluation 21
+nonblocking fork: driver_HE0_hypoelastic_stage1_lowexp_hardening.sh params.in.21 results.out.21
+Waiting on completed jobs
+Evaluation 21 has completed
+Waiting on completed jobs
+Evaluation 20 has completed
+
+Active response data for evaluation 20:
+Active set vector = { 1 }
+                      5.1929408201e-02 obj_fn_1
+
+
+Active response data for evaluation 21:
+Active set vector = { 1 }
+                      6.0034629515e-02 obj_fn_1
+
+
+---------------------
+Begin Evaluation   22
+---------------------
+Parameters for evaluation 22:
+                      1.1205332647e+10 YieldStress
+                      1.3309018823e-01 HardeningCharacteristicStrain
+                      2.8000000000e-01 HardeningExponent
+                      5.0000000000e+00 DamageParameter1
+                      0.0000000000e+00 DamageParameter2
+                      0.0000000000e+00 DamageParameter3
+                      9.0000000000e-01 ThresholdDamage
+
+(Asynchronous job 22 added to queue)
+
+---------------------
+Begin Evaluation   23
+---------------------
+Parameters for evaluation 23:
+                      1.1205332647e+10 YieldStress
+                      1.3609018823e-01 HardeningCharacteristicStrain
+                      2.7375000000e-01 HardeningExponent
+                      5.0000000000e+00 DamageParameter1
+                      0.0000000000e+00 DamageParameter2
+                      0.0000000000e+00 DamageParameter3
+                      9.0000000000e-01 ThresholdDamage
+
+(Asynchronous job 23 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 22
+nonblocking fork: driver_HE0_hypoelastic_stage1_lowexp_hardening.sh params.in.22 results.out.22
+Initiating evaluation 23
+nonblocking fork: driver_HE0_hypoelastic_stage1_lowexp_hardening.sh params.in.23 results.out.23
+Waiting on completed jobs
+Evaluation 22 has completed
+Evaluation 23 has completed
+
+Active response data for evaluation 22:
+Active set vector = { 1 }
+                      5.2015961439e-02 obj_fn_1
+
+
+Active response data for evaluation 23:
+Active set vector = { 1 }
+                      5.2617700446e-02 obj_fn_1
+
+
+---------------------
+Begin Evaluation   24
+---------------------
+Parameters for evaluation 24:
+                      1.1392832647e+10 YieldStress
+                      1.3609018823e-01 HardeningCharacteristicStrain
+                      2.8000000000e-01 HardeningExponent
+                      5.0000000000e+00 DamageParameter1
+                      0.0000000000e+00 DamageParameter2
+                      0.0000000000e+00 DamageParameter3
+                      9.0000000000e-01 ThresholdDamage
+
+(Asynchronous job 24 added to queue)
+
+---------------------
+Begin Evaluation   25
+---------------------
+Parameters for evaluation 25:
+                      1.1205332647e+10 YieldStress
+                      1.3759018823e-01 HardeningCharacteristicStrain
+                      2.8000000000e-01 HardeningExponent
+                      5.0000000000e+00 DamageParameter1
+                      0.0000000000e+00 DamageParameter2
+                      0.0000000000e+00 DamageParameter3
+                      9.0000000000e-01 ThresholdDamage
+
+(Asynchronous job 25 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 24
+nonblocking fork: driver_HE0_hypoelastic_stage1_lowexp_hardening.sh params.in.24 results.out.24
+Initiating evaluation 25
+nonblocking fork: driver_HE0_hypoelastic_stage1_lowexp_hardening.sh params.in.25 results.out.25
+Waiting on completed jobs
+Evaluation 25 has completed
+Waiting on completed jobs
+Evaluation 24 has completed
+
+Active response data for evaluation 24:
+Active set vector = { 1 }
+                      5.4789408222e-02 obj_fn_1
+
+
+Active response data for evaluation 25:
+Active set vector = { 1 }
+                      5.2518411584e-02 obj_fn_1
+
+
+---------------------
+Begin Evaluation   26
+---------------------
+Parameters for evaluation 26:
+                      1.1205332647e+10 YieldStress
+                      1.3609018823e-01 HardeningCharacteristicStrain
+                      2.8312500000e-01 HardeningExponent
+                      5.0000000000e+00 DamageParameter1
+                      0.0000000000e+00 DamageParameter2
+                      0.0000000000e+00 DamageParameter3
+                      9.0000000000e-01 ThresholdDamage
+
+(Asynchronous job 26 added to queue)
+
+---------------------
+Begin Evaluation   27
+---------------------
+Parameters for evaluation 27:
+                      1.1017832647e+10 YieldStress
+                      1.3609018823e-01 HardeningCharacteristicStrain
+                      2.8000000000e-01 HardeningExponent
+                      5.0000000000e+00 DamageParameter1
+                      0.0000000000e+00 DamageParameter2
+                      0.0000000000e+00 DamageParameter3
+                      9.0000000000e-01 ThresholdDamage
+
+(Asynchronous job 27 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 26
+nonblocking fork: driver_HE0_hypoelastic_stage1_lowexp_hardening.sh params.in.26 results.out.26
+Initiating evaluation 27
+nonblocking fork: driver_HE0_hypoelastic_stage1_lowexp_hardening.sh params.in.27 results.out.27
+Waiting on completed jobs
+Evaluation 27 has completed
+Waiting on completed jobs
+Evaluation 26 has completed
+
+Active response data for evaluation 26:
+Active set vector = { 1 }
+                      5.2226196743e-02 obj_fn_1
+
+
+Active response data for evaluation 27:
+Active set vector = { 1 }
+                      5.3627931478e-02 obj_fn_1
+
+
+---------------------
+Begin Evaluation   28
+---------------------
+Parameters for evaluation 28:
+                      1.1205332647e+10 YieldStress
+                      1.3459018823e-01 HardeningCharacteristicStrain
+                      2.8000000000e-01 HardeningExponent
+                      5.0000000000e+00 DamageParameter1
+                      0.0000000000e+00 DamageParameter2
+                      0.0000000000e+00 DamageParameter3
+                      9.0000000000e-01 ThresholdDamage
+
+(Asynchronous job 28 added to queue)
+
+---------------------
+Begin Evaluation   29
+---------------------
+Parameters for evaluation 29:
+                      1.1205332647e+10 YieldStress
+                      1.3609018823e-01 HardeningCharacteristicStrain
+                      2.7687500000e-01 HardeningExponent
+                      5.0000000000e+00 DamageParameter1
+                      0.0000000000e+00 DamageParameter2
+                      0.0000000000e+00 DamageParameter3
+                      9.0000000000e-01 ThresholdDamage
+
+(Asynchronous job 29 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 28
+nonblocking fork: driver_HE0_hypoelastic_stage1_lowexp_hardening.sh params.in.28 results.out.28
+Initiating evaluation 29
+nonblocking fork: driver_HE0_hypoelastic_stage1_lowexp_hardening.sh params.in.29 results.out.29
+Waiting on completed jobs
+Evaluation 28 has completed
+Evaluation 29 has completed
+
+Active response data for evaluation 28:
+Active set vector = { 1 }
+                      5.2227508710e-02 obj_fn_1
+
+
+Active response data for evaluation 29:
+Active set vector = { 1 }
+                      5.2521487968e-02 obj_fn_1
+
+
+---------------------
+Begin Evaluation   30
+---------------------
+Parameters for evaluation 30:
+                      1.1392832647e+10 YieldStress
+                      1.3609018823e-01 HardeningCharacteristicStrain
+                      2.8312500000e-01 HardeningExponent
+                      5.0000000000e+00 DamageParameter1
+                      0.0000000000e+00 DamageParameter2
+                      0.0000000000e+00 DamageParameter3
+                      9.0000000000e-01 ThresholdDamage
+
+(Asynchronous job 30 added to queue)
+
+---------------------
+Begin Evaluation   31
+---------------------
+Parameters for evaluation 31:
+                      1.1205332647e+10 YieldStress
+                      1.3759018823e-01 HardeningCharacteristicStrain
+                      2.8312500000e-01 HardeningExponent
+                      5.0000000000e+00 DamageParameter1
+                      0.0000000000e+00 DamageParameter2
+                      0.0000000000e+00 DamageParameter3
+                      9.0000000000e-01 ThresholdDamage
+
+(Asynchronous job 31 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 30
+nonblocking fork: driver_HE0_hypoelastic_stage1_lowexp_hardening.sh params.in.30 results.out.30
+Initiating evaluation 31
+nonblocking fork: driver_HE0_hypoelastic_stage1_lowexp_hardening.sh params.in.31 results.out.31
+Waiting on completed jobs
+Evaluation 30 has completed
+Evaluation 31 has completed
+
+Active response data for evaluation 30:
+Active set vector = { 1 }
+                      5.5715614709e-02 obj_fn_1
+
+
+Active response data for evaluation 31:
+Active set vector = { 1 }
+                      5.2400517678e-02 obj_fn_1
+
+
+---------------------
+Begin Evaluation   32
+---------------------
+Parameters for evaluation 32:
+                      1.1017832647e+10 YieldStress
+                      1.3609018823e-01 HardeningCharacteristicStrain
+                      2.8312500000e-01 HardeningExponent
+                      5.0000000000e+00 DamageParameter1
+                      0.0000000000e+00 DamageParameter2
+                      0.0000000000e+00 DamageParameter3
+                      9.0000000000e-01 ThresholdDamage
+
+(Asynchronous job 32 added to queue)
+
+---------------------
+Begin Evaluation   33
+---------------------
+Parameters for evaluation 33:
+                      1.1205332647e+10 YieldStress
+                      1.3459018823e-01 HardeningCharacteristicStrain
+                      2.8312500000e-01 HardeningExponent
+                      5.0000000000e+00 DamageParameter1
+                      0.0000000000e+00 DamageParameter2
+                      0.0000000000e+00 DamageParameter3
+                      9.0000000000e-01 ThresholdDamage
+
+(Asynchronous job 33 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 32
+nonblocking fork: driver_HE0_hypoelastic_stage1_lowexp_hardening.sh params.in.32 results.out.32
+Initiating evaluation 33
+nonblocking fork: driver_HE0_hypoelastic_stage1_lowexp_hardening.sh params.in.33 results.out.33
+Waiting on completed jobs
+Evaluation 32 has completed
+Evaluation 33 has completed
+
+Active response data for evaluation 32:
+Active set vector = { 1 }
+                      5.3518204998e-02 obj_fn_1
+
+
+Active response data for evaluation 33:
+Active set vector = { 1 }
+                      5.1983745364e-02 obj_fn_1
+
+<<<<< Function evaluation summary: 33 total (33 new, 0 duplicate)
+<<<<< Best parameters          =
+                      1.1205332647e+10 YieldStress
+                      1.3609018823e-01 HardeningCharacteristicStrain
+                      2.8625000000e-01 HardeningExponent
+                      5.0000000000e+00 DamageParameter1
+                      0.0000000000e+00 DamageParameter2
+                      0.0000000000e+00 DamageParameter3
+                      9.0000000000e-01 ThresholdDamage
+<<<<< Best objective function  =
+                      5.1929408201e-02
+<<<<< Best evaluation ID: 20
+
+
+<<<<< Iterator coliny_pattern_search completed.
+<<<<< Environment execution completed.
+DAKOTA execution time in seconds:
+  Total CPU        =    70.0387 [parent =    70.0387, child =     -2e-06]
+  Total wall clock =     172940

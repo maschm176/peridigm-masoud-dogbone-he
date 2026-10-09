@@ -1,0 +1,212 @@
+Dakota version 6.24 released May 15 2026.
+Repository revision 1ab1c9924 (2026-05-11) built May 11 2026 11:08:44.
+Running MPI Dakota executable in serial mode.
+Start time: Thu Oct  1 13:20:19 2026
+
+------------------
+Begin Dakota input
+------------------
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE30_brozzo_d1d2_polish.dat'
+
+method
+  coliny_pattern_search
+    max_function_evaluations = 10
+
+variables
+  # Joint d1/d2 polish for HE_30, warm-started at the best surviving point
+  # from the two d1-only sweeps (d1=3.5, d2=0.99 fixed, obj frac=15.40% vs
+  # real target 13.27%). d1 upper bound capped at 5.0 -- the confirmed last
+  # safe value, since 5.5/6.0 both crashed (NaN returned by force
+  # evaluation). d2 bounds mirror the exact window used for HE_0's own
+  # joint polish (0.75-1.15 around ~0.95-0.99).
+  continuous_design = 2
+    descriptors                    'DamageParameter1'  'DamageParameter2'
+    initial_point                   3.5                 0.99
+    lower_bounds                    2.0                 0.75
+    upper_bounds                    5.0                 1.15
+  continuous_state = 5
+    descriptors                    'ThresholdDamage'  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'
+    initial_state                   0.85               1.027e10              1.35e10                 22.0                   2.0e8
+
+interface
+  analysis_drivers = 'driver_HE30_brozzo_d1d2_polish.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+    asynchronous evaluation_concurrency = 2
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians
+
+----------------
+End Dakota input
+----------------
+
+Using Dakota parser: standard
+Writing new restart file 'dakota.rst'.
+
+Seed (system-generated) = 1790878819
+
+>>>>> Executing environment.
+
+>>>>> Running coliny_pattern_search iterator.
+
+---------------------
+Begin Evaluation    1
+---------------------
+Parameters for evaluation 1:
+                      3.5000000000e+00 DamageParameter1
+                      9.9000000000e-01 DamageParameter2
+                      8.5000000000e-01 ThresholdDamage
+                      1.0270000000e+10 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+
+blocking fork: driver_HE30_brozzo_d1d2_polish.sh params.in.1 results.out.1
+
+Active response data for evaluation 1:
+Active set vector = { 1 }
+                      1.8396528485e-01 obj_fn_1
+
+
+
+---------------------
+Begin Evaluation    2
+---------------------
+Parameters for evaluation 2:
+                      3.8000000000e+00 DamageParameter1
+                      9.9000000000e-01 DamageParameter2
+                      8.5000000000e-01 ThresholdDamage
+                      1.0270000000e+10 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+
+(Asynchronous job 2 added to queue)
+
+---------------------
+Begin Evaluation    3
+---------------------
+Parameters for evaluation 3:
+                      3.5000000000e+00 DamageParameter1
+                      1.0300000000e+00 DamageParameter2
+                      8.5000000000e-01 ThresholdDamage
+                      1.0270000000e+10 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+
+(Asynchronous job 3 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 2
+nonblocking fork: driver_HE30_brozzo_d1d2_polish.sh params.in.2 results.out.2
+Initiating evaluation 3
+nonblocking fork: driver_HE30_brozzo_d1d2_polish.sh params.in.3 results.out.3
+Waiting on completed jobs
+Evaluation 3 has completed
+Waiting on completed jobs
+Evaluation 2 has completed
+
+Active response data for evaluation 2:
+Active set vector = { 1 }
+                      3.4022022881e-01 obj_fn_1
+
+
+Active response data for evaluation 3:
+Active set vector = { 1 }
+                      1.8132487631e-01 obj_fn_1
+
+
+---------------------
+Begin Evaluation    4
+---------------------
+Parameters for evaluation 4:
+                      3.2000000000e+00 DamageParameter1
+                      9.9000000000e-01 DamageParameter2
+                      8.5000000000e-01 ThresholdDamage
+                      1.0270000000e+10 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+
+(Asynchronous job 4 added to queue)
+
+---------------------
+Begin Evaluation    5
+---------------------
+Parameters for evaluation 5:
+                      3.5000000000e+00 DamageParameter1
+                      9.5000000000e-01 DamageParameter2
+                      8.5000000000e-01 ThresholdDamage
+                      1.0270000000e+10 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+
+(Asynchronous job 5 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 4
+nonblocking fork: driver_HE30_brozzo_d1d2_polish.sh params.in.4 results.out.4
+Initiating evaluation 5
+nonblocking fork: driver_HE30_brozzo_d1d2_polish.sh params.in.5 results.out.5
+Waiting on completed jobs
+Evaluation 4 has completed
+Evaluation 5 has completed
+
+Active response data for evaluation 4:
+Active set vector = { 1 }
+                      2.1793412456e-01 obj_fn_1
+
+
+Active response data for evaluation 5:
+Active set vector = { 1 }
+                      1.8636788754e-01 obj_fn_1
+
+
+---------------------
+Begin Evaluation    6
+---------------------
+Parameters for evaluation 6:
+                      3.6500000000e+00 DamageParameter1
+                      9.9000000000e-01 DamageParameter2
+                      8.5000000000e-01 ThresholdDamage
+                      1.0270000000e+10 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+
+(Asynchronous job 6 added to queue)
+
+---------------------
+Begin Evaluation    7
+---------------------
+Parameters for evaluation 7:
+                      3.5000000000e+00 DamageParameter1
+                      1.0100000000e+00 DamageParameter2
+                      8.5000000000e-01 ThresholdDamage
+                      1.0270000000e+10 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+
+(Asynchronous job 7 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 6
+nonblocking fork: driver_HE30_brozzo_d1d2_polish.sh params.in.6 results.out.6
+Initiating evaluation 7
+nonblocking fork: driver_HE30_brozzo_d1d2_polish.sh params.in.7 results.out.7
+Waiting on completed jobs
+
+Dakota caught signal 15

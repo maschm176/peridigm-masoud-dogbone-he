@@ -1,0 +1,38 @@
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE60_brozzo_narrowramp_test.dat'
+
+method
+  list_parameter_study
+    # Three (DamageParameter1, ThresholdDamage) pairs testing progressively
+    # narrower ramps with correspondingly larger d1 (rough linear scaling
+    # off the locked-in wide-ramp point: d1=3.5, ThresholdDamage=0.19).
+    # Pair order matches the descriptors order below (DamageParameter1 then
+    # ThresholdDamage), flattened: d1_1 th_1 d1_2 th_2 d1_3 th_3.
+    #   (6.4, 0.35) -- modest step, same cap as every prior joint polish
+    #   (9.2, 0.50) -- matches HE_30's own locked-in threshold
+    #   (12.9, 0.70) -- aggressive, likely crash-boundary probe
+    list_of_points = 6.4  0.35
+                      9.2  0.50
+                      12.9 0.70
+
+variables
+  continuous_design = 2
+    descriptors 'DamageParameter1'  'ThresholdDamage'
+  continuous_state = 5
+    descriptors      'DamageParameter2'  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'
+    initial_state     0.99                9.77e9                1.35e10                 22.0                   2.0e8
+
+interface
+  # Serial (no concurrency) -- see the concurrency lesson learned during
+  # HE_30's joint polish (CLAUDE.md).
+  analysis_drivers = 'driver_HE60_brozzo_narrowramp_test.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

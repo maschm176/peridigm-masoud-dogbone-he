@@ -145,6 +145,8 @@ PeridigmNS::BondAssociatedCorrespondenceMaterial::BondAssociatedCorrespondenceMa
     m_bondLevelDeformationGradientInvZYFieldId(-1),
     m_bondLevelDeformationGradientInvZZFieldId(-1),
     m_bondLevelJacobianDeterminantFieldId(-1),
+    m_jacobianDeterminantFieldId(-1),
+    m_undamagedWeightedVolumeFieldId(-1),
     m_stressIntegralFieldId(-1)
 {
   //! \todo Add meaningful asserts on material properties.
@@ -256,7 +258,17 @@ PeridigmNS::BondAssociatedCorrespondenceMaterial::BondAssociatedCorrespondenceMa
   m_bondLevelDeformationGradientInvZXFieldId     = fieldManager.getFieldId(PeridigmField::BOND, PeridigmField::SCALAR, PeridigmField::CONSTANT, "Deformation_Gradient_Inv_ZX");
   m_bondLevelDeformationGradientInvZYFieldId     = fieldManager.getFieldId(PeridigmField::BOND, PeridigmField::SCALAR, PeridigmField::CONSTANT, "Deformation_Gradient_Inv_ZY");
   m_bondLevelDeformationGradientInvZZFieldId     = fieldManager.getFieldId(PeridigmField::BOND, PeridigmField::SCALAR, PeridigmField::CONSTANT, "Deformation_Gradient_Inv_ZZ");
-  m_bondLevelJacobianDeterminantFieldId          = fieldManager.getFieldId(PeridigmField::BOND, PeridigmField::SCALAR, PeridigmField::CONSTANT, "Jacobian_Determinant");
+  m_bondLevelJacobianDeterminantFieldId          = fieldManager.getFieldId(PeridigmField::BOND, PeridigmField::SCALAR, PeridigmField::CONSTANT, "Bond_Jacobian_Determinant");
+  // Point-level Jacobian determinant (volume-weighted average of this point's own
+  // bond-level values, computed in precompute() below). Registered under the same
+  // label/spec that JohnsonCookDamageModel and VonMisesStressDamageModel expect
+  // (previously unpopulated when paired with this material -- see precompute()).
+  m_jacobianDeterminantFieldId                   = fieldManager.getFieldId(PeridigmField::ELEMENT, PeridigmField::SCALAR, PeridigmField::TWO_STEP, "Jacobian_Determinant");
+  // Same story as m_jacobianDeterminantFieldId above: JohnsonCookDamageModel
+  // (and VonMisesStressDamageModel) read this but only HypoelasticCorrespondenceMaterial
+  // ever wrote it -- computed here the same way Hypoelastic does, via
+  // CORRESPONDENCE::computeUndamagedWeightedVolume() in precompute().
+  m_undamagedWeightedVolumeFieldId               = fieldManager.getFieldId(PeridigmField::ELEMENT, PeridigmField::SCALAR, PeridigmField::CONSTANT, "Undamaged_Weighted_Volume");
   m_stressIntegralFieldId                        = fieldManager.getFieldId(PeridigmField::ELEMENT, PeridigmField::FULL_TENSOR, PeridigmField::CONSTANT, "Stress_Integral");
 
   m_fieldIds.push_back(m_horizonFieldId);
@@ -351,6 +363,8 @@ PeridigmNS::BondAssociatedCorrespondenceMaterial::BondAssociatedCorrespondenceMa
   m_fieldIds.push_back(m_bondLevelDeformationGradientInvZYFieldId);
   m_fieldIds.push_back(m_bondLevelDeformationGradientInvZZFieldId);
   m_fieldIds.push_back(m_bondLevelJacobianDeterminantFieldId);
+  m_fieldIds.push_back(m_jacobianDeterminantFieldId);
+  m_fieldIds.push_back(m_undamagedWeightedVolumeFieldId);
   m_fieldIds.push_back(m_stressIntegralFieldId);
 }
 
@@ -513,6 +527,9 @@ PeridigmNS::BondAssociatedCorrespondenceMaterial::initialize(const double dt,
   dataManager.getData(m_bondLevelDeformationGradientInvZZFieldId, PeridigmField::STEP_NONE)->PutScalar(1.0);
 
   dataManager.getData(m_bondLevelJacobianDeterminantFieldId, PeridigmField::STEP_NONE)->PutScalar(1.0);
+  dataManager.getData(m_jacobianDeterminantFieldId, PeridigmField::STEP_N)->PutScalar(1.0);
+  dataManager.getData(m_jacobianDeterminantFieldId, PeridigmField::STEP_NP1)->PutScalar(1.0);
+  dataManager.getData(m_undamagedWeightedVolumeFieldId, PeridigmField::STEP_NONE)->PutScalar(0.0);
 
   dataManager.getData(m_stressIntegralFieldId, PeridigmField::STEP_NONE)->PutScalar(0.0);
   dataManager.getData(m_weightedVolumeFieldId, PeridigmField::STEP_NONE)->PutScalar(0.0);
@@ -1039,18 +1056,21 @@ void PeridigmNS::BondAssociatedCorrespondenceMaterial::precompute(const double d
   dataManager.getData(m_deformationGradientDotYFieldId, PeridigmField::STEP_NONE)->PutScalar(0.0);
   dataManager.getData(m_deformationGradientDotZFieldId, PeridigmField::STEP_NONE)->PutScalar(0.0);
 
-  double *horizon, *volume; 
-  double *weightedVolume;
-  double *modelCoordinates, *displacements, *velocities;
+  double *horizon, *volume;
+  double *weightedVolume, *undamagedWeightedVolume;
+  double *modelCoordinates, *coordinates, *displacements, *velocities;
   double *gradientWeightX, *gradientWeightY, *gradientWeightZ;
   double *deformationGradientX, *deformationGradientY, *deformationGradientZ;
   double *deformationGradientDotX, *deformationGradientDotY, *deformationGradientDotZ;
   double *gradientWeightEvaluationFlag;
   double *damageN, *damageNP1, *bondDamage, *influenceState;
+  double *bondLevelJacobianDeterminant, *jacobianDeterminant, *jacobianDeterminantN;
   dataManager.getData(m_horizonFieldId, PeridigmField::STEP_NONE)->ExtractView(&horizon);
   dataManager.getData(m_volumeFieldId, PeridigmField::STEP_NONE)->ExtractView(&volume);
   dataManager.getData(m_weightedVolumeFieldId, PeridigmField::STEP_NONE)->ExtractView(&weightedVolume);
+  dataManager.getData(m_undamagedWeightedVolumeFieldId, PeridigmField::STEP_NONE)->ExtractView(&undamagedWeightedVolume);
   dataManager.getData(m_modelCoordinatesFieldId, PeridigmField::STEP_NONE)->ExtractView(&modelCoordinates);
+  dataManager.getData(m_coordinatesFieldId, PeridigmField::STEP_NP1)->ExtractView(&coordinates);
   dataManager.getData(m_displacementsFieldId, PeridigmField::STEP_NP1)->ExtractView(&displacements);
   dataManager.getData(m_velocitiesFieldId, PeridigmField::STEP_NP1)->ExtractView(&velocities);
   dataManager.getData(m_gradientWeightXFieldId, PeridigmField::STEP_NONE)->ExtractView(&gradientWeightX);
@@ -1067,6 +1087,9 @@ void PeridigmNS::BondAssociatedCorrespondenceMaterial::precompute(const double d
   dataManager.getData(m_damageFieldId, PeridigmField::STEP_NP1)->ExtractView(&damageNP1);
   dataManager.getData(m_bondDamageFieldId, PeridigmField::STEP_NP1)->ExtractView(&bondDamage);
   dataManager.getData(m_influenceStateFieldId, PeridigmField::STEP_NONE)->ExtractView(&influenceState);
+  dataManager.getData(m_bondLevelJacobianDeterminantFieldId, PeridigmField::STEP_NONE)->ExtractView(&bondLevelJacobianDeterminant);
+  dataManager.getData(m_jacobianDeterminantFieldId, PeridigmField::STEP_NP1)->ExtractView(&jacobianDeterminant);
+  dataManager.getData(m_jacobianDeterminantFieldId, PeridigmField::STEP_N)->ExtractView(&jacobianDeterminantN);
 
   // Identify points with growing damage
   CORRESPONDENCE::updateGradientWeightEvaluationFlag(damageN,
@@ -1108,4 +1131,48 @@ void PeridigmNS::BondAssociatedCorrespondenceMaterial::precompute(const double d
                                              deformationGradientDotZ,
                                              neighborhoodList,
                                              numOwnedPoints);
+
+  // Point-level Jacobian determinant, for damage models (e.g. Johnson Cook, Von
+  // Mises Stress) that expect a per-point volume ratio rather than this
+  // material's own per-bond values. Computed as a volume-weighted average of
+  // this point's bond-level Jacobian determinants (bondLevelJacobianDeterminant),
+  // using the same omega*neighborVolume weighting as computeWeightedVolume()
+  // above, so the normalizing sum is exactly weightedVolume. Lags one step
+  // behind (bondLevelJacobianDeterminant here holds the end-of-previous-step
+  // values, since this material only recomputes them during computeForce,
+  // which runs after precompute()) -- an acceptable approximation for this
+  // bookkeeping/visualization role given how small an explicit time step is.
+  {
+    double* jacobianDeterminantPtr = jacobianDeterminant;
+    const double* weightedVolumePtr = weightedVolume;
+    const double* omega = influenceState;
+    const double* bondJ = bondLevelJacobianDeterminant;
+    const int* neighborListPtr = neighborhoodList;
+    int numNeighbors, neighborIndex;
+
+    for(int iID = 0; iID < numOwnedPoints; ++iID, ++jacobianDeterminantPtr, ++weightedVolumePtr){
+      double weightedJacobianDeterminant = 0.0;
+      numNeighbors = *neighborListPtr; neighborListPtr++;
+      for(int n = 0; n < numNeighbors; n++, neighborListPtr++, omega++, bondJ++){
+        neighborIndex = *neighborListPtr;
+        weightedJacobianDeterminant += *omega * volume[neighborIndex] * (*bondJ);
+      }
+      *jacobianDeterminantPtr = (*weightedVolumePtr > 0.0) ? weightedJacobianDeterminant / (*weightedVolumePtr) : 1.0;
+    }
+  }
+
+  // Undamaged_Weighted_Volume: same story as Jacobian_Determinant above --
+  // JohnsonCookDamageModel divides by this (damageParameterNP1 * omega /
+  // undamagedWeightedVolume) and only HypoelasticCorrespondenceMaterial used
+  // to populate it, so it was silently staying at 0.0 here, turning that
+  // division into 0/0 = NaN from the very first step. Computed the same way
+  // Hypoelastic does, using jacobianDeterminantN (this step's starting value,
+  // from the previous step's precompute) for the deformed neighbor volumes.
+  CORRESPONDENCE::computeUndamagedWeightedVolume(volume,
+                                                 undamagedWeightedVolume,
+                                                 jacobianDeterminantN,
+                                                 horizon,
+                                                 coordinates,
+                                                 neighborhoodList,
+                                                 numOwnedPoints);
 }

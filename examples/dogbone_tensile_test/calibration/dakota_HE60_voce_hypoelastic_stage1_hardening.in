@@ -1,0 +1,45 @@
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE60_voce_hypoelastic_stage1.dat'
+
+method
+  coliny_pattern_search
+    max_function_evaluations = 25
+
+variables
+  # Same methodology as HE_0/HE_30's own Stage 1 (hardening only, damage
+  # disabled, STRESS_ONLY drops the fracture-strain term). CONCENTRATION=60
+  # selects calibration_{stress,strain}_data_HE_60.txt via
+  # driver_HE60_voce_hypoelastic_stage1_hardening.sh.
+  #
+  # Warm-started from HE_30's own Stage 1 result (InitialYieldStress=1.027e10,
+  # SaturatedYieldStress=1.35e10, ExponentialConstant=22.0,
+  # LinearConstant=2.0e8) -- the nearest known concentration along the
+  # embrittlement trend -- rather than HE_0's, since real HE_60 data tracks
+  # HE_30 at least as closely as HE_0 through the elastic/early-plastic
+  # region. Bounds kept identical and wide to every prior Stage 1 in this
+  # project ("wide box costs nothing" lesson from the HE_30 staging saga).
+  #
+  # Damage fixed via continuous_state so it never triggers: Threshold Damage
+  # 0.9 (below the template's fixed Critical Damage = 0.999), Damage
+  # Parameter 1 set far above any local plastic strain this run will reach.
+  continuous_design = 4
+    descriptors                    'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'
+    initial_point                   1.027e10               1.35e10                 22.0                   2.0e8
+    lower_bounds                    5.0e9                  1.0e10                  10.0                   0.0
+    upper_bounds                    1.5e10                 1.5e10                  150.0                  2.0e9
+  continuous_state = 4
+    descriptors                    'DamageParameter1'  'DamageParameter2'  'DamageParameter3'  'ThresholdDamage'
+    initial_state                   5.0                 0.0                 0.0                 0.9
+
+interface
+  analysis_drivers = 'driver_HE60_voce_hypoelastic_stage1_hardening.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

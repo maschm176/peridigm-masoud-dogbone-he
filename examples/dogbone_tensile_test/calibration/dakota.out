@@ -1,0 +1,647 @@
+Dakota version 6.24 released May 15 2026.
+Repository revision 1ab1c9924 (2026-05-11) built May 11 2026 11:08:44.
+Running MPI Dakota executable in serial mode.
+Start time: Mon Aug 31 12:54:27 2026
+
+------------------
+Begin Dakota input
+------------------
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular.dat'
+
+method
+  coliny_pattern_search
+    max_function_evaluations = 25
+
+variables
+  continuous_design = 5
+    descriptors                    'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'  'CriticalStretch'
+    initial_point                   9.27e9                 1.3e10                  36.0                   2.0e8             0.15
+    lower_bounds                    5.0e9                  1.0e10                  10.0                   0.0               0.12
+    upper_bounds                    1.5e10                 1.5e10                  150.0                  2.0e9             0.29
+
+interface
+  analysis_drivers = 'driver.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+  asynchronous evaluation_concurrency = 2
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians
+
+----------------
+End Dakota input
+----------------
+
+Using Dakota parser: standard
+Writing new restart file 'dakota.rst'.
+
+Seed (system-generated) = 1788198867
+
+>>>>> Executing environment.
+
+>>>>> Running coliny_pattern_search iterator.
+
+---------------------
+Begin Evaluation    1
+---------------------
+Parameters for evaluation 1:
+                      9.2700000000e+09 InitialYieldStress
+                      1.3000000000e+10 SaturatedYieldStress
+                      3.6000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      1.5000000000e-01 CriticalStretch
+
+blocking fork: driver.sh params.in.1 results.out.1
+
+Active response data for evaluation 1:
+Active set vector = { 1 }
+                      2.4634984199e-01 obj_fn_1
+
+
+
+---------------------
+Begin Evaluation    2
+---------------------
+Parameters for evaluation 2:
+                      1.0270000000e+10 InitialYieldStress
+                      1.3000000000e+10 SaturatedYieldStress
+                      3.6000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      1.5000000000e-01 CriticalStretch
+
+(Asynchronous job 2 added to queue)
+
+---------------------
+Begin Evaluation    3
+---------------------
+Parameters for evaluation 3:
+                      9.2700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      3.6000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      1.5000000000e-01 CriticalStretch
+
+(Asynchronous job 3 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 2
+nonblocking fork: driver.sh params.in.2 results.out.2
+Initiating evaluation 3
+nonblocking fork: driver.sh params.in.3 results.out.3
+Waiting on completed jobs
+Evaluation 3 has completed
+Waiting on completed jobs
+Evaluation 2 has completed
+
+Active response data for evaluation 2:
+Active set vector = { 1 }
+                      2.9197529247e-01 obj_fn_1
+
+
+Active response data for evaluation 3:
+Active set vector = { 1 }
+                      2.3042137160e-01 obj_fn_1
+
+
+---------------------
+Begin Evaluation    4
+---------------------
+Parameters for evaluation 4:
+                      9.2700000000e+09 InitialYieldStress
+                      1.3000000000e+10 SaturatedYieldStress
+                      5.0000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      1.5000000000e-01 CriticalStretch
+
+(Asynchronous job 4 added to queue)
+
+---------------------
+Begin Evaluation    5
+---------------------
+Parameters for evaluation 5:
+                      9.2700000000e+09 InitialYieldStress
+                      1.3000000000e+10 SaturatedYieldStress
+                      3.6000000000e+01 ExponentialConstant
+                      4.0000000000e+08 LinearConstant
+                      1.5000000000e-01 CriticalStretch
+
+(Asynchronous job 5 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 4
+nonblocking fork: driver.sh params.in.4 results.out.4
+Initiating evaluation 5
+nonblocking fork: driver.sh params.in.5 results.out.5
+Waiting on completed jobs
+Evaluation 5 has completed
+Waiting on completed jobs
+Evaluation 4 has completed
+
+Active response data for evaluation 4:
+Active set vector = { 1 }
+                      3.5763849610e-01 obj_fn_1
+
+
+Active response data for evaluation 5:
+Active set vector = { 1 }
+                      2.4005063819e-01 obj_fn_1
+
+
+---------------------
+Begin Evaluation    6
+---------------------
+Parameters for evaluation 6:
+                      9.2700000000e+09 InitialYieldStress
+                      1.3000000000e+10 SaturatedYieldStress
+                      3.6000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      1.6700000000e-01 CriticalStretch
+
+(Asynchronous job 6 added to queue)
+
+---------------------
+Begin Evaluation    7
+---------------------
+Parameters for evaluation 7:
+                      8.2700000000e+09 InitialYieldStress
+                      1.3000000000e+10 SaturatedYieldStress
+                      3.6000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      1.5000000000e-01 CriticalStretch
+
+(Asynchronous job 7 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 6
+nonblocking fork: driver.sh params.in.6 results.out.6
+Initiating evaluation 7
+nonblocking fork: driver.sh params.in.7 results.out.7
+Waiting on completed jobs
+Evaluation 6 has completed
+Waiting on completed jobs
+Evaluation 7 has completed
+
+Active response data for evaluation 6:
+Active set vector = { 1 }
+                      2.0543189161e-01 obj_fn_1
+
+
+Active response data for evaluation 7:
+Active set vector = { 1 }
+                      2.0914365454e-01 obj_fn_1
+
+
+---------------------
+Begin Evaluation    8
+---------------------
+Parameters for evaluation 8:
+                      9.2700000000e+09 InitialYieldStress
+                      1.2500000000e+10 SaturatedYieldStress
+                      3.6000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      1.5000000000e-01 CriticalStretch
+
+(Asynchronous job 8 added to queue)
+
+---------------------
+Begin Evaluation    9
+---------------------
+Parameters for evaluation 9:
+                      9.2700000000e+09 InitialYieldStress
+                      1.3000000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      1.5000000000e-01 CriticalStretch
+
+(Asynchronous job 9 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 8
+nonblocking fork: driver.sh params.in.8 results.out.8
+Initiating evaluation 9
+nonblocking fork: driver.sh params.in.9 results.out.9
+Waiting on completed jobs
+Evaluation 8 has completed
+Waiting on completed jobs
+Evaluation 9 has completed
+
+Active response data for evaluation 8:
+Active set vector = { 1 }
+                      2.7770148956e-01 obj_fn_1
+
+
+Active response data for evaluation 9:
+Active set vector = { 1 }
+                      1.1946700749e-01 obj_fn_1
+
+
+---------------------
+Begin Evaluation   10
+---------------------
+Parameters for evaluation 10:
+                      9.2700000000e+09 InitialYieldStress
+                      1.3000000000e+10 SaturatedYieldStress
+                      3.6000000000e+01 ExponentialConstant
+                      0.0000000000e+00 LinearConstant
+                      1.5000000000e-01 CriticalStretch
+
+(Asynchronous job 10 added to queue)
+
+---------------------
+Begin Evaluation   11
+---------------------
+Parameters for evaluation 11:
+                      9.2700000000e+09 InitialYieldStress
+                      1.3000000000e+10 SaturatedYieldStress
+                      3.6000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      1.3300000000e-01 CriticalStretch
+
+(Asynchronous job 11 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 10
+nonblocking fork: driver.sh params.in.10 results.out.10
+Initiating evaluation 11
+nonblocking fork: driver.sh params.in.11 results.out.11
+Waiting on completed jobs
+Evaluation 11 has completed
+Waiting on completed jobs
+Evaluation 10 has completed
+
+Active response data for evaluation 10:
+Active set vector = { 1 }
+                      2.4925536247e-01 obj_fn_1
+
+
+Active response data for evaluation 11:
+Active set vector = { 1 }
+                      2.9364771827e-01 obj_fn_1
+
+
+---------------------
+Begin Evaluation   12
+---------------------
+Parameters for evaluation 12:
+                      1.0270000000e+10 InitialYieldStress
+                      1.3000000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      1.5000000000e-01 CriticalStretch
+
+(Asynchronous job 12 added to queue)
+
+---------------------
+Begin Evaluation   13
+---------------------
+Parameters for evaluation 13:
+                      9.2700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      1.5000000000e-01 CriticalStretch
+
+(Asynchronous job 13 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 12
+nonblocking fork: driver.sh params.in.12 results.out.12
+Initiating evaluation 13
+nonblocking fork: driver.sh params.in.13 results.out.13
+Waiting on completed jobs
+Evaluation 12 has completed
+Waiting on completed jobs
+Evaluation 13 has completed
+
+Active response data for evaluation 12:
+Active set vector = { 1 }
+                      2.2312447851e-01 obj_fn_1
+
+
+Active response data for evaluation 13:
+Active set vector = { 1 }
+                      1.0344731984e-01 obj_fn_1
+
+
+---------------------
+Begin Evaluation   14
+---------------------
+Parameters for evaluation 14:
+                      9.2700000000e+09 InitialYieldStress
+                      1.3000000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      4.0000000000e+08 LinearConstant
+                      1.5000000000e-01 CriticalStretch
+
+(Asynchronous job 14 added to queue)
+
+---------------------
+Begin Evaluation   15
+---------------------
+Parameters for evaluation 15:
+                      9.2700000000e+09 InitialYieldStress
+                      1.3000000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      1.6700000000e-01 CriticalStretch
+
+(Asynchronous job 15 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 14
+nonblocking fork: driver.sh params.in.14 results.out.14
+Initiating evaluation 15
+nonblocking fork: driver.sh params.in.15 results.out.15
+Waiting on completed jobs
+Evaluation 14 has completed
+Waiting on completed jobs
+Evaluation 15 has completed
+
+Active response data for evaluation 14:
+Active set vector = { 1 }
+                      1.3739141056e-01 obj_fn_1
+
+
+Active response data for evaluation 15:
+Active set vector = { 1 }
+                      1.0538427330e-01 obj_fn_1
+
+
+---------------------
+Begin Evaluation   16
+---------------------
+Parameters for evaluation 16:
+                      8.2700000000e+09 InitialYieldStress
+                      1.3000000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      1.5000000000e-01 CriticalStretch
+
+(Asynchronous job 16 added to queue)
+
+---------------------
+Begin Evaluation   17
+---------------------
+Parameters for evaluation 17:
+                      9.2700000000e+09 InitialYieldStress
+                      1.2500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      1.5000000000e-01 CriticalStretch
+
+(Asynchronous job 17 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 16
+nonblocking fork: driver.sh params.in.16 results.out.16
+Initiating evaluation 17
+nonblocking fork: driver.sh params.in.17 results.out.17
+Waiting on completed jobs
+Evaluation 17 has completed
+Waiting on completed jobs
+Evaluation 16 has completed
+
+Active response data for evaluation 16:
+Active set vector = { 1 }
+                      1.3250195529e-01 obj_fn_1
+
+
+Active response data for evaluation 17:
+Active set vector = { 1 }
+                      1.7902453255e-01 obj_fn_1
+
+
+---------------------
+Begin Evaluation   18
+---------------------
+Parameters for evaluation 18:
+                      9.2700000000e+09 InitialYieldStress
+                      1.3000000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      0.0000000000e+00 LinearConstant
+                      1.5000000000e-01 CriticalStretch
+
+(Asynchronous job 18 added to queue)
+
+---------------------
+Begin Evaluation   19
+---------------------
+Parameters for evaluation 19:
+                      9.2700000000e+09 InitialYieldStress
+                      1.3000000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      1.3300000000e-01 CriticalStretch
+
+(Asynchronous job 19 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 18
+nonblocking fork: driver.sh params.in.18 results.out.18
+Initiating evaluation 19
+nonblocking fork: driver.sh params.in.19 results.out.19
+Waiting on completed jobs
+Evaluation 18 has completed
+Waiting on completed jobs
+Evaluation 19 has completed
+
+Active response data for evaluation 18:
+Active set vector = { 1 }
+                      1.2850909205e-01 obj_fn_1
+
+
+Active response data for evaluation 19:
+Active set vector = { 1 }
+                      1.6739990005e-01 obj_fn_1
+
+
+---------------------
+Begin Evaluation   20
+---------------------
+Parameters for evaluation 20:
+                      1.0270000000e+10 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      1.5000000000e-01 CriticalStretch
+
+(Asynchronous job 20 added to queue)
+
+---------------------
+Begin Evaluation   21
+---------------------
+Parameters for evaluation 21:
+                      9.2700000000e+09 InitialYieldStress
+                      1.4000000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      1.5000000000e-01 CriticalStretch
+
+(Asynchronous job 21 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 20
+nonblocking fork: driver.sh params.in.20 results.out.20
+Initiating evaluation 21
+nonblocking fork: driver.sh params.in.21 results.out.21
+Waiting on completed jobs
+Evaluation 21 has completed
+Waiting on completed jobs
+Evaluation 20 has completed
+
+Active response data for evaluation 20:
+Active set vector = { 1 }
+                      1.6842621685e-01 obj_fn_1
+
+
+Active response data for evaluation 21:
+Active set vector = { 1 }
+                      7.1767367335e-02 obj_fn_1
+
+
+---------------------
+Begin Evaluation   22
+---------------------
+Parameters for evaluation 22:
+                      9.2700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      4.0000000000e+08 LinearConstant
+                      1.5000000000e-01 CriticalStretch
+
+(Asynchronous job 22 added to queue)
+
+---------------------
+Begin Evaluation   23
+---------------------
+Parameters for evaluation 23:
+                      9.2700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      1.6700000000e-01 CriticalStretch
+
+(Asynchronous job 23 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 22
+nonblocking fork: driver.sh params.in.22 results.out.22
+Initiating evaluation 23
+nonblocking fork: driver.sh params.in.23 results.out.23
+Waiting on completed jobs
+Evaluation 22 has completed
+Waiting on completed jobs
+Evaluation 23 has completed
+
+Active response data for evaluation 22:
+Active set vector = { 1 }
+                      1.0987756094e-01 obj_fn_1
+
+
+Active response data for evaluation 23:
+Active set vector = { 1 }
+                      6.0438581426e-02 obj_fn_1
+
+
+---------------------
+Begin Evaluation   24
+---------------------
+Parameters for evaluation 24:
+                      8.2700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      1.5000000000e-01 CriticalStretch
+
+(Asynchronous job 24 added to queue)
+
+---------------------
+Begin Evaluation   25
+---------------------
+Parameters for evaluation 25:
+                      9.2700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      0.0000000000e+00 LinearConstant
+                      1.5000000000e-01 CriticalStretch
+
+(Asynchronous job 25 added to queue)
+
+Blocking synchronize of 2 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 24
+nonblocking fork: driver.sh params.in.24 results.out.24
+Initiating evaluation 25
+nonblocking fork: driver.sh params.in.25 results.out.25
+Waiting on completed jobs
+Evaluation 25 has completed
+Waiting on completed jobs
+Evaluation 24 has completed
+
+Active response data for evaluation 24:
+Active set vector = { 1 }
+                      1.1236770983e-01 obj_fn_1
+
+
+Active response data for evaluation 25:
+Active set vector = { 1 }
+                      1.1053326076e-01 obj_fn_1
+
+
+---------------------
+Begin Evaluation   26
+---------------------
+Parameters for evaluation 26:
+                      9.2700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      1.3300000000e-01 CriticalStretch
+
+(Asynchronous job 26 added to queue)
+
+Blocking synchronize of 1 asynchronous evaluations
+First pass: initiating 1 local asynchronous jobs
+Initiating evaluation 26
+nonblocking fork: driver.sh params.in.26 results.out.26
+Waiting on completed jobs
+Evaluation 26 has completed
+
+Active response data for evaluation 26:
+Active set vector = { 1 }
+                      1.3014122484e-01 obj_fn_1
+
+<<<<< Function evaluation summary: 26 total (26 new, 0 duplicate)
+<<<<< Best parameters          =
+                      9.2700000000e+09 InitialYieldStress
+                      1.3500000000e+10 SaturatedYieldStress
+                      2.2000000000e+01 ExponentialConstant
+                      2.0000000000e+08 LinearConstant
+                      1.6700000000e-01 CriticalStretch
+<<<<< Best objective function  =
+                      6.0438581426e-02
+<<<<< Best evaluation ID: 23
+
+
+<<<<< Iterator coliny_pattern_search completed.
+<<<<< Environment execution completed.
+DAKOTA execution time in seconds:
+  Total CPU        =    25.7208 [parent =    25.7208, child =     -3e-06]
+  Total wall clock =    43389.7

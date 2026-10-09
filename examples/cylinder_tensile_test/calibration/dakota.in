@@ -1,0 +1,26 @@
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular.dat'
+
+method
+  coliny_pattern_search
+    max_function_evaluations = 3
+
+variables
+  continuous_design = 2
+    descriptors      'YieldStress'  'HardeningModulus'
+    initial_point     3.0e8          8.0e8
+    lower_bounds       1.0e8          5.0e8
+    upper_bounds       5.0e8          2.0e9
+
+interface
+  analysis_drivers = 'driver.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

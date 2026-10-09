@@ -1,0 +1,31 @@
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE30_brozzo_d1_sweep2.dat'
+
+method
+  list_parameter_study
+    # Tighter d1 sweep for HE_30, probing the narrow window between the best
+    # surviving point from the coarse sweep (d1=5.0, frac=15.72%) and the
+    # known crash boundary (d1=7.0 crashed). d2=0.99, ThresholdDamage=0.85,
+    # hardening fixed as before.
+    list_of_points = 5.5  6.0  6.5
+
+variables
+  continuous_design = 1
+    descriptors 'DamageParameter1'
+  continuous_state = 6
+    descriptors      'DamageParameter2'  'ThresholdDamage'  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'
+    initial_state     0.99                0.85               1.027e10              1.35e10                 22.0                   2.0e8
+
+interface
+  analysis_drivers = 'driver_HE30_brozzo_d1_sweep2.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+    asynchronous evaluation_concurrency = 2
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

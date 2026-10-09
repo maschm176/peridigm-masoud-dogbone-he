@@ -1,0 +1,102 @@
+
+-- Peridigm
+-- version 1.5.0 (Dev)
+
+Allocating global tangent matrix...
+  number of rows = 37875
+  number of nonzeros = 30378033
+
+Load step 1, initial time = 0, final time = 0.1, convergence criterion = 100000
+  iteration 1: residual = 3.03118e+11
+  iteration 2: residual = 3.68108e+10
+  iteration 3: residual = 2.42095e+09
+  iteration 4: residual = 1.71068e+07
+  iteration 5: residual = 2233.98
+  cpu time for load step = 76 sec., cumulative cpu time = 76 sec.
+
+Load step 2, initial time = 0.1, final time = 0.2, convergence criterion = 1e+05
+  iteration 1: residual = 3.4e+11
+  iteration 2: residual = 5.9e+09
+Warning:  Belos linear solver aborted with Belos::CGIterateFailure.
+  --switching nonlinear solver to damped Newton and deactivating preconditioner--
+  iteration 3: residual = 5.1e+07
+  iteration 4: residual = 4.1e+05
+  iteration 5: residual = 2.6e+05
+  iteration 6: residual = 1.8e+05
+  iteration 7: residual = 5.9e+04
+  cpu time for load step = 78 sec., cumulative cpu time = 1.5e+02 sec.
+
+Load step 3, initial time = 0.2, final time = 0.3, convergence criterion = 1e+05
+  iteration 1: residual = 3.4e+11
+  iteration 2: residual = 3.3e+09
+  iteration 3: residual = 1.6e+07
+  iteration 4: residual = 2.2e+03
+  cpu time for load step = 44 sec., cumulative cpu time = 2e+02 sec.
+
+Load step 4, initial time = 0.3, final time = 0.4, convergence criterion = 1e+05
+  iteration 1: residual = 3.5e+11
+  iteration 2: residual = 2.3e+09
+  iteration 3: residual = 1.1e+07
+  iteration 4: residual = 6.6e+02
+  cpu time for load step = 44 sec., cumulative cpu time = 2.4e+02 sec.
+
+Load step 5, initial time = 0.4, final time = 0.5, convergence criterion = 1e+05
+  iteration 1: residual = 3.5e+11
+  iteration 2: residual = 1.5e+09
+  iteration 3: residual = 7e+06
+  iteration 4: residual = 2.8e+02
+  cpu time for load step = 42 sec., cumulative cpu time = 2.8e+02 sec.
+
+Load step 6, initial time = 0.5, final time = 0.6, convergence criterion = 1e+05
+  iteration 1: residual = 3.5e+11
+  iteration 2: residual = 1.7e+09
+  iteration 3: residual = 8.9e+06
+  iteration 4: residual = 4.1e+02
+  cpu time for load step = 37 sec., cumulative cpu time = 3.2e+02 sec.
+
+Load step 7, initial time = 0.6, final time = 0.7, convergence criterion = 1e+05
+  iteration 1: residual = 3.5e+11
+  iteration 2: residual = 1.3e+09
+  iteration 3: residual = 6.2e+06
+  iteration 4: residual = 2.1e+02
+  cpu time for load step = 36 sec., cumulative cpu time = 3.6e+02 sec.
+
+Load step 8, initial time = 0.7, final time = 0.8, convergence criterion = 1e+05
+  iteration 1: residual = 3.6e+11
+  iteration 2: residual = 9.4e+07
+  iteration 3: residual = 2.3e+04
+  cpu time for load step = 16 sec., cumulative cpu time = 3.7e+02 sec.
+
+Load step 9, initial time = 0.8, final time = 0.9, convergence criterion = 1e+05
+  iteration 1: residual = 3.6e+11
+  iteration 2: residual = 9.2e+07
+  iteration 3: residual = 1.7e+04
+  cpu time for load step = 16 sec., cumulative cpu time = 3.9e+02 sec.
+
+Load step 10, initial time = 0.9, final time = 1, convergence criterion = 1e+05
+  iteration 1: residual = 3.6e+11
+  iteration 2: residual = 9.1e+07
+  iteration 3: residual = 1.9e+04
+  cpu time for load step = 15 sec., cumulative cpu time = 4e+02 sec.
+
+
+Memory Usage (Heap Alloc MB):
+  Allocated Jacobian                 7.1e+02
+  Post Execute                         4e+02
+  Zoltan Search Tree                      10
+
+Wallclock Time (seconds):
+  Total                              4.1e+02
+  Solve Linear System                2.2e+02
+  Output                               0.056
+  Line Search                            2.9
+  Internal Force                         3.2
+  Gather/Scatter                       0.073
+  Evaluate Jacobian                  1.4e+02
+  Compute Residual                       3.4
+  Apply Kinematic B.C.                0.0072
+  Apply Initial Conditions           6.3e-05
+  Apply Boundary Conditions               42
+  Apply Body Forces                  0.00018
+  Allocate Global Tangent                9.7
+

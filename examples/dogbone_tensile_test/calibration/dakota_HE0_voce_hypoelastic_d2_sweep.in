@@ -1,0 +1,32 @@
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE0_sfc3_d2_sweep.dat'
+
+method
+  list_parameter_study
+    # D2 sweep, holding D1=0.02 (the floor found in the D1 sweep -- below
+    # this D1 stopped mattering) and D3=3.0 (paper's value, preserving
+    # localization sharpness) fixed. D1 sweep saturated at ~17.45% fracture
+    # strain vs real 15.37% -- scaling D2 down should shrink the dominant
+    # D2*exp(-D3*triaxiality) term directly and pull fracture earlier.
+    list_of_points = 1.5  1.0  0.5  0.25
+
+variables
+  continuous_design = 1
+    descriptors 'DamageParameter2'
+  continuous_state = 7
+    descriptors      'DamageParameter1'  'DamageParameter3'  'ThresholdDamage'  'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'
+    initial_state     0.02                3.0                 0.97               9.77e9                 1.35e10                 22.0                   2.0e8
+
+interface
+  analysis_drivers = 'driver_HE0_voce_hypoelastic_d2_sweep.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+  asynchronous evaluation_concurrency = 2
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians

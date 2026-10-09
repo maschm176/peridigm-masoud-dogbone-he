@@ -1,0 +1,40 @@
+
+-- Peridigm
+-- version 1.5.0 (Dev)
+
+Allocating global tangent matrix...
+  number of rows = 37875
+  number of nonzeros = 30378033
+
+Load step 1, initial time = 0, final time = 0.2, convergence criterion = 100000
+  iteration 1: residual = 7.11896e+11
+  iteration 2: residual = 3.74298e+11
+Warning:  Belos linear solver aborted with Belos::CGIterateFailure.
+  --switching nonlinear solver to damped Newton and deactivating preconditioner--
+Warning:  Belos linear solver aborted with Belos::CGIterateFailure.
+
+Error:  Belos linear solver failed to converge.
+
+Error:  Aborting analysis.
+
+
+Memory Usage (Heap Alloc MB):
+  Allocated Jacobian                 711.759
+  Post Execute                       398.934
+  Zoltan Search Tree                 10.0923
+
+Wallclock Time (seconds):
+  Total                                   37
+  Solve Linear System                    6.5
+  Output                               0.046
+  Line Search                          0.098
+  Internal Force                        0.12
+  Gather/Scatter                      0.0035
+  Evaluate Jacobian                       15
+  Compute Residual                      0.13
+  Apply Kinematic B.C.                0.0011
+  Apply Initial Conditions           6.3e-05
+  Apply Boundary Conditions              4.5
+  Apply Body Forces                  7.4e-05
+  Allocate Global Tangent                 11
+

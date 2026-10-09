@@ -1,0 +1,52 @@
+
+-- Peridigm
+-- version 1.5.0 (Dev)
+
+Allocating global tangent matrix...
+  number of rows = 37875
+  number of nonzeros = 30378033
+
+Load step 1, initial time = 0, final time = 0.333333, convergence criterion = 100000
+  iteration 1: residual = 1.2378e+12
+  iteration 2: residual = 8.98962e+10
+  iteration 3: residual = 1.08587e+10
+  iteration 4: residual = 3.32331e+09
+  iteration 5: residual = 2.00228e+09
+  iteration 6: residual = 1.61529e+09
+  iteration 7: residual = 1.45376e+09
+  iteration 8: residual = 1.30838e+09
+  iteration 9: residual = 1.30576e+09
+  --line search unable to reduce residual, attempting to increase residual by 10% in hopes of escaping local minimum--
+  --selecting alpha = 0.2, increasing residual by 0.402706--
+  iteration 10: residual = 1.8316e+09
+  iteration 11: residual = 1.74005e+09
+  iteration 12: residual = 1.73309e+09
+Warning:  Belos linear solver aborted with Belos::CGIterateFailure.
+  --switching nonlinear solver to damped Newton and deactivating preconditioner--
+Warning:  Belos linear solver aborted with Belos::CGIterateFailure.
+
+Error:  Belos linear solver failed to converge.
+
+Error:  Aborting analysis.
+
+
+Memory Usage (Heap Alloc MB):
+  Allocated Jacobian                 711.759
+  Post Execute                       398.933
+  Zoltan Search Tree                 10.0925
+
+Wallclock Time (seconds):
+  Total                              2.2e+02
+  Solve Linear System                  1e+02
+  Output                               0.035
+  Line Search                            3.1
+  Internal Force                         3.1
+  Gather/Scatter                       0.067
+  Evaluate Jacobian                       85
+  Compute Residual                       3.2
+  Apply Kinematic B.C.               0.00099
+  Apply Initial Conditions           6.1e-05
+  Apply Boundary Conditions               26
+  Apply Body Forces                  7.7e-05
+  Allocate Global Tangent                9.6
+

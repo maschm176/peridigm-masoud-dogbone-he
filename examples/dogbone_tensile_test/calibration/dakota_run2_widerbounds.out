@@ -1,0 +1,913 @@
+Dakota version 6.24 released May 15 2026.
+Repository revision 1ab1c9924 (2026-05-11) built May 11 2026 11:08:44.
+Running MPI Dakota executable in serial mode.
+Start time: Sun Aug 23 20:35:17 2026
+
+------------------
+Begin Dakota input
+------------------
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular.dat'
+
+method
+  efficient_global
+    seed = 987654
+    initial_samples = 10
+    max_iterations = 20
+
+variables
+  continuous_design = 3
+    descriptors                    'YieldStress'  'HardeningCharacteristicStrain'  'HardeningExponent'
+    initial_point                   1.0e10         0.05                             0.235
+    lower_bounds                    5.0e8          0.0005                           0.1
+    upper_bounds                    2.0e10         0.15                             2.0
+
+interface
+  analysis_drivers = 'driver.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+  asynchronous evaluation_concurrency = 2
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians
+
+----------------
+End Dakota input
+----------------
+
+Using Dakota parser: standard
+Writing new restart file 'dakota.rst'.
+
+>>>>> Executing environment.
+
+>>>>> Running efficient_global iterator.
+
+>>>>> Building global_kriging approximations.
+
+NonD lhs Samples = 10 Seed (user-specified) = 987654
+
+---------------------
+Begin Evaluation    1
+---------------------
+Parameters for evaluation 1:
+                      3.3682213378e+09 YieldStress
+                      7.2041178965e-02 HardeningCharacteristicStrain
+                      1.9407703664e+00 HardeningExponent
+
+(Asynchronous job 1 added to queue)
+
+---------------------
+Begin Evaluation    2
+---------------------
+Parameters for evaluation 2:
+                      1.2527933742e+10 YieldStress
+                      1.7069096932e-02 HardeningCharacteristicStrain
+                      1.2763361663e+00 HardeningExponent
+
+(Asynchronous job 2 added to queue)
+
+---------------------
+Begin Evaluation    3
+---------------------
+Parameters for evaluation 3:
+                      1.5385180205e+10 YieldStress
+                      8.0668798682e-02 HardeningCharacteristicStrain
+                      2.4549976567e-01 HardeningExponent
+
+(Asynchronous job 3 added to queue)
+
+---------------------
+Begin Evaluation    4
+---------------------
+Parameters for evaluation 4:
+                      1.7043083686e+10 YieldStress
+                      1.4985406077e-01 HardeningCharacteristicStrain
+                      7.9718481722e-01 HardeningExponent
+
+(Asynchronous job 4 added to queue)
+
+---------------------
+Begin Evaluation    5
+---------------------
+Parameters for evaluation 5:
+                      5.2412011759e+09 YieldStress
+                      5.9951672720e-02 HardeningCharacteristicStrain
+                      4.7085272129e-01 HardeningExponent
+
+(Asynchronous job 5 added to queue)
+
+---------------------
+Begin Evaluation    6
+---------------------
+Parameters for evaluation 6:
+                      7.7913225205e+09 YieldStress
+                      1.1188740611e-02 HardeningCharacteristicStrain
+                      5.4645119614e-01 HardeningExponent
+
+(Asynchronous job 6 added to queue)
+
+---------------------
+Begin Evaluation    7
+---------------------
+Parameters for evaluation 7:
+                      8.5962528376e+08 YieldStress
+                      1.3162772528e-01 HardeningCharacteristicStrain
+                      1.1922098892e+00 HardeningExponent
+
+(Asynchronous job 7 added to queue)
+
+---------------------
+Begin Evaluation    8
+---------------------
+Parameters for evaluation 8:
+                      1.9971667163e+10 YieldStress
+                      3.5600628117e-02 HardeningCharacteristicStrain
+                      1.7464467765e+00 HardeningExponent
+
+(Asynchronous job 8 added to queue)
+
+---------------------
+Begin Evaluation    9
+---------------------
+Parameters for evaluation 9:
+                      9.6554631778e+09 YieldStress
+                      1.1517486387e-01 HardeningCharacteristicStrain
+                      1.4459574969e+00 HardeningExponent
+
+(Asynchronous job 9 added to queue)
+
+---------------------
+Begin Evaluation   10
+---------------------
+Parameters for evaluation 10:
+                      1.1992791860e+10 YieldStress
+                      9.5081407299e-02 HardeningCharacteristicStrain
+                      9.0054736438e-01 HardeningExponent
+
+(Asynchronous job 10 added to queue)
+
+Blocking synchronize of 10 asynchronous evaluations
+First pass: initiating 2 local asynchronous jobs
+Initiating evaluation 1
+nonblocking fork: driver.sh params.in.1 results.out.1
+Initiating evaluation 2
+nonblocking fork: driver.sh params.in.2 results.out.2
+Second pass: scheduling 8 remaining local asynchronous jobs
+Waiting on completed jobs
+Evaluation 2 has completed
+Initiating evaluation 3
+nonblocking fork: driver.sh params.in.3 results.out.3
+Waiting on completed jobs
+Evaluation 1 has completed
+Initiating evaluation 4
+nonblocking fork: driver.sh params.in.4 results.out.4
+Waiting on completed jobs
+Evaluation 3 has completed
+Initiating evaluation 5
+nonblocking fork: driver.sh params.in.5 results.out.5
+Waiting on completed jobs
+Evaluation 4 has completed
+Initiating evaluation 6
+nonblocking fork: driver.sh params.in.6 results.out.6
+Waiting on completed jobs
+Evaluation 5 has completed
+Initiating evaluation 7
+nonblocking fork: driver.sh params.in.7 results.out.7
+Waiting on completed jobs
+Evaluation 6 has completed
+Initiating evaluation 8
+nonblocking fork: driver.sh params.in.8 results.out.8
+Waiting on completed jobs
+Evaluation 7 has completed
+Initiating evaluation 9
+nonblocking fork: driver.sh params.in.9 results.out.9
+Waiting on completed jobs
+Evaluation 8 has completed
+Initiating evaluation 10
+nonblocking fork: driver.sh params.in.10 results.out.10
+Waiting on completed jobs
+Evaluation 9 has completed
+Waiting on completed jobs
+Evaluation 10 has completed
+
+Active response data for evaluation 1:
+Active set vector = { 1 }
+                      3.3867530706e-01 obj_fn_1
+
+
+Active response data for evaluation 2:
+Active set vector = { 1 }
+                      2.5945124697e+00 obj_fn_1
+
+
+Active response data for evaluation 3:
+Active set vector = { 1 }
+                      4.1970837613e-01 obj_fn_1
+
+
+Active response data for evaluation 4:
+Active set vector = { 1 }
+                      6.6629734293e-01 obj_fn_1
+
+
+Active response data for evaluation 5:
+Active set vector = { 1 }
+                      3.9998276034e-01 obj_fn_1
+
+
+Active response data for evaluation 6:
+Active set vector = { 1 }
+                      5.4708911842e-01 obj_fn_1
+
+
+Active response data for evaluation 7:
+Active set vector = { 1 }
+                      8.7758921868e-01 obj_fn_1
+
+
+Active response data for evaluation 8:
+Active set vector = { 1 }
+                      3.1297045020e+00 obj_fn_1
+
+
+Active response data for evaluation 9:
+Active set vector = { 1 }
+                      3.9210002875e-01 obj_fn_1
+
+
+Active response data for evaluation 10:
+Active set vector = { 1 }
+                      4.3830199827e-01 obj_fn_1
+
+
+>>>>> Appending 10 points to global_kriging approximations.
+
+<<<<< global_kriging approximation updates completed.
+Constructing global approximations with no anchor, 10 DACE samples, and 0 reused points.
+
+<<<<< global_kriging approximation builds completed.
+
+>>>>> Initiating global iteration 1 (acquisition batch 1)
+Beginning Approximate Fn Evaluations...
+NCSU DIRECT succeeded with code 1
+(maximum function evaluations exceeded)
+
+Results of EGO iteration:
+Final point =
+                      5.0005503904e+08 YieldStress
+                      5.0042196594e-04 HardeningCharacteristicStrain
+                      1.0000536278e-01 HardeningExponent
+Expected Improvement    =
+                      1.7616813249e+00
+
+---------------------
+Begin Evaluation   11
+---------------------
+Parameters for evaluation 11:
+                      5.0005503904e+08 YieldStress
+                      5.0042196594e-04 HardeningCharacteristicStrain
+                      1.0000536278e-01 HardeningExponent
+
+blocking fork: driver.sh params.in.11 results.out.11
+
+Active response data for evaluation 11:
+Active set vector = { 1 }
+                      9.1822541609e-01 obj_fn_1
+
+
+
+>>>>> Appending to global_kriging approximations.
+
+<<<<< global_kriging approximation updates completed.
+
+>>>>> Initiating global iteration 2 (acquisition batch 1)
+NCSU DIRECT succeeded with code 1
+(maximum function evaluations exceeded)
+
+Results of EGO iteration:
+Final point =
+                      1.0665434639e+10 YieldStress
+                      1.4999873410e-01 HardeningCharacteristicStrain
+                      1.0001608833e-01 HardeningExponent
+Expected Improvement    =
+                      1.1344795532e+00
+
+---------------------
+Begin Evaluation   12
+---------------------
+Parameters for evaluation 12:
+                      1.0665434639e+10 YieldStress
+                      1.4999873410e-01 HardeningCharacteristicStrain
+                      1.0001608833e-01 HardeningExponent
+
+blocking fork: driver.sh params.in.12 results.out.12
+
+Active response data for evaluation 12:
+Active set vector = { 1 }
+                      2.5816321707e-01 obj_fn_1
+
+
+
+>>>>> Appending to global_kriging approximations.
+
+<<<<< global_kriging approximation updates completed.
+
+>>>>> Initiating global iteration 3 (acquisition batch 1)
+NCSU DIRECT succeeded with code 1
+(maximum function evaluations exceeded)
+
+Results of EGO iteration:
+Final point =
+                      8.6067545598e+09 YieldStress
+                      1.4999873410e-01 HardeningCharacteristicStrain
+                      1.9999839117e+00 HardeningExponent
+Expected Improvement    =
+                      1.5788843303e+00
+
+---------------------
+Begin Evaluation   13
+---------------------
+Parameters for evaluation 13:
+                      8.6067545598e+09 YieldStress
+                      1.4999873410e-01 HardeningCharacteristicStrain
+                      1.9999839117e+00 HardeningExponent
+
+blocking fork: driver.sh params.in.13 results.out.13
+
+Active response data for evaluation 13:
+Active set vector = { 1 }
+                      3.6433397883e-01 obj_fn_1
+
+
+
+>>>>> Appending to global_kriging approximations.
+
+<<<<< global_kriging approximation updates completed.
+
+>>>>> Initiating global iteration 4 (acquisition batch 1)
+NCSU DIRECT succeeded with code 1
+(maximum function evaluations exceeded)
+
+Results of EGO iteration:
+Final point =
+                      7.1299471625e+09 YieldStress
+                      1.0262883791e-01 HardeningCharacteristicStrain
+                      1.9999839117e+00 HardeningExponent
+Expected Improvement    =
+                      3.2970807573e-01
+
+---------------------
+Begin Evaluation   14
+---------------------
+Parameters for evaluation 14:
+                      7.1299471625e+09 YieldStress
+                      1.0262883791e-01 HardeningCharacteristicStrain
+                      1.9999839117e+00 HardeningExponent
+
+blocking fork: driver.sh params.in.14 results.out.14
+
+Active response data for evaluation 14:
+Active set vector = { 1 }
+                      4.3809396527e-01 obj_fn_1
+
+
+
+>>>>> Appending to global_kriging approximations.
+
+<<<<< global_kriging approximation updates completed.
+
+>>>>> Initiating global iteration 5 (acquisition batch 1)
+NCSU DIRECT succeeded with code 1
+(maximum function evaluations exceeded)
+
+Results of EGO iteration:
+Final point =
+                      9.2384926078e+09 YieldStress
+                      4.8299035547e-02 HardeningCharacteristicStrain
+                      1.0001608833e-01 HardeningExponent
+Expected Improvement    =
+                      3.7551337556e-01
+
+---------------------
+Begin Evaluation   15
+---------------------
+Parameters for evaluation 15:
+                      9.2384926078e+09 YieldStress
+                      4.8299035547e-02 HardeningCharacteristicStrain
+                      1.0001608833e-01 HardeningExponent
+
+blocking fork: driver.sh params.in.15 results.out.15
+
+Active response data for evaluation 15:
+Active set vector = { 1 }
+                      2.2957223047e-01 obj_fn_1
+
+
+
+>>>>> Appending to global_kriging approximations.
+
+<<<<< global_kriging approximation updates completed.
+
+>>>>> Initiating global iteration 6 (acquisition batch 1)
+NCSU DIRECT succeeded with code 1
+(maximum function evaluations exceeded)
+
+Results of EGO iteration:
+Final point =
+                      1.3323159579e+10 YieldStress
+                      1.1612077681e-01 HardeningCharacteristicStrain
+                      1.0004826500e-01 HardeningExponent
+Expected Improvement    =
+                      3.0720120190e-01
+
+---------------------
+Begin Evaluation   16
+---------------------
+Parameters for evaluation 16:
+                      1.3323159579e+10 YieldStress
+                      1.1612077681e-01 HardeningCharacteristicStrain
+                      1.0004826500e-01 HardeningExponent
+
+blocking fork: driver.sh params.in.16 results.out.16
+
+Active response data for evaluation 16:
+Active set vector = { 1 }
+                      1.9290474752e-01 obj_fn_1
+
+
+
+>>>>> Appending to global_kriging approximations.
+
+<<<<< global_kriging approximation updates completed.
+
+>>>>> Initiating global iteration 7 (acquisition batch 1)
+NCSU DIRECT succeeded with code 1
+(maximum function evaluations exceeded)
+
+Results of EGO iteration:
+Final point =
+                      9.9607148301e+09 YieldStress
+                      1.4999620231e-01 HardeningCharacteristicStrain
+                      9.6206116954e-01 HardeningExponent
+Expected Improvement    =
+                      2.0031381882e-01
+
+---------------------
+Begin Evaluation   17
+---------------------
+Parameters for evaluation 17:
+                      9.9607148301e+09 YieldStress
+                      1.4999620231e-01 HardeningCharacteristicStrain
+                      9.6206116954e-01 HardeningExponent
+
+blocking fork: driver.sh params.in.17 results.out.17
+
+Active response data for evaluation 17:
+Active set vector = { 1 }
+                      1.7948477706e-01 obj_fn_1
+
+
+
+>>>>> Appending to global_kriging approximations.
+
+<<<<< global_kriging approximation updates completed.
+
+>>>>> Initiating global iteration 8 (acquisition batch 1)
+NCSU DIRECT succeeded with code 1
+(maximum function evaluations exceeded)
+
+Results of EGO iteration:
+Final point =
+                      5.8423639689e+09 YieldStress
+                      5.0042196594e-04 HardeningCharacteristicStrain
+                      1.0000536278e-01 HardeningExponent
+Expected Improvement    =
+                      8.1307452173e-02
+
+---------------------
+Begin Evaluation   18
+---------------------
+Parameters for evaluation 18:
+                      5.8423639689e+09 YieldStress
+                      5.0042196594e-04 HardeningCharacteristicStrain
+                      1.0000536278e-01 HardeningExponent
+
+blocking fork: driver.sh params.in.18 results.out.18
+
+Active response data for evaluation 18:
+Active set vector = { 1 }
+                      2.4593165107e-01 obj_fn_1
+
+
+
+>>>>> Appending to global_kriging approximations.
+
+<<<<< global_kriging approximation updates completed.
+
+>>>>> Initiating global iteration 9 (acquisition batch 1)
+NCSU DIRECT succeeded with code 1
+(maximum function evaluations exceeded)
+
+Results of EGO iteration:
+Final point =
+                      3.4742544328e+09 YieldStress
+                      1.2693660773e-01 HardeningCharacteristicStrain
+                      1.9999839117e+00 HardeningExponent
+Expected Improvement    =
+                      8.9359424458e-02
+
+---------------------
+Begin Evaluation   19
+---------------------
+Parameters for evaluation 19:
+                      3.4742544328e+09 YieldStress
+                      1.2693660773e-01 HardeningCharacteristicStrain
+                      1.9999839117e+00 HardeningExponent
+
+blocking fork: driver.sh params.in.19 results.out.19
+
+Active response data for evaluation 19:
+Active set vector = { 1 }
+                      4.1893374851e-01 obj_fn_1
+
+
+
+>>>>> Appending to global_kriging approximations.
+
+<<<<< global_kriging approximation updates completed.
+
+>>>>> Initiating global iteration 10 (acquisition batch 1)
+NCSU DIRECT succeeded with code 1
+(maximum function evaluations exceeded)
+
+Results of EGO iteration:
+Final point =
+                      1.6486096293e+09 YieldStress
+                      5.0042196594e-04 HardeningCharacteristicStrain
+                      1.9999946372e+00 HardeningExponent
+Expected Improvement    =
+                      7.0391313652e-02
+
+---------------------
+Begin Evaluation   20
+---------------------
+Parameters for evaluation 20:
+                      1.6486096293e+09 YieldStress
+                      5.0042196594e-04 HardeningCharacteristicStrain
+                      1.9999946372e+00 HardeningExponent
+
+blocking fork: driver.sh params.in.20 results.out.20
+
+Active response data for evaluation 20:
+Active set vector = { 1 }
+                      6.3843466459e+00 obj_fn_1
+
+
+
+>>>>> Appending to global_kriging approximations.
+
+<<<<< global_kriging approximation updates completed.
+
+>>>>> Initiating global iteration 11 (acquisition batch 1)
+NCSU DIRECT succeeded with code 1
+(maximum function evaluations exceeded)
+
+Results of EGO iteration:
+Final point =
+                      9.7179926840e+09 YieldStress
+                      1.6089531575e-02 HardeningCharacteristicStrain
+                      1.0001608833e-01 HardeningExponent
+Expected Improvement    =
+                      4.7007049062e-01
+
+---------------------
+Begin Evaluation   21
+---------------------
+Parameters for evaluation 21:
+                      9.7179926840e+09 YieldStress
+                      1.6089531575e-02 HardeningCharacteristicStrain
+                      1.0001608833e-01 HardeningExponent
+
+blocking fork: driver.sh params.in.21 results.out.21
+
+Active response data for evaluation 21:
+Active set vector = { 1 }
+                      1.5964061794e-01 obj_fn_1
+
+
+
+>>>>> Appending to global_kriging approximations.
+
+<<<<< global_kriging approximation updates completed.
+
+>>>>> Initiating global iteration 12 (acquisition batch 1)
+NCSU DIRECT succeeded with code 1
+(maximum function evaluations exceeded)
+
+Results of EGO iteration:
+Final point =
+                      9.2394833105e+09 YieldStress
+                      7.1672572779e-02 HardeningCharacteristicStrain
+                      1.5860310928e+00 HardeningExponent
+Expected Improvement    =
+                      1.8637833533e-01
+
+---------------------
+Begin Evaluation   22
+---------------------
+Parameters for evaluation 22:
+                      9.2394833105e+09 YieldStress
+                      7.1672572779e-02 HardeningCharacteristicStrain
+                      1.5860310928e+00 HardeningExponent
+
+blocking fork: driver.sh params.in.22 results.out.22
+
+Active response data for evaluation 22:
+Active set vector = { 1 }
+                      7.0742047738e-01 obj_fn_1
+
+
+
+>>>>> Appending to global_kriging approximations.
+
+<<<<< global_kriging approximation updates completed.
+
+>>>>> Initiating global iteration 13 (acquisition batch 1)
+NCSU DIRECT succeeded with code 1
+(maximum function evaluations exceeded)
+
+Results of EGO iteration:
+Final point =
+                      6.3050221003e+09 YieldStress
+                      2.1011342275e-02 HardeningCharacteristicStrain
+                      1.0004826500e-01 HardeningExponent
+Expected Improvement    =
+                      1.7368746506e-01
+
+---------------------
+Begin Evaluation   23
+---------------------
+Parameters for evaluation 23:
+                      6.3050221003e+09 YieldStress
+                      2.1011342275e-02 HardeningCharacteristicStrain
+                      1.0004826500e-01 HardeningExponent
+
+blocking fork: driver.sh params.in.23 results.out.23
+
+Active response data for evaluation 23:
+Active set vector = { 1 }
+                      3.7691871130e-01 obj_fn_1
+
+
+
+>>>>> Appending to global_kriging approximations.
+
+<<<<< global_kriging approximation updates completed.
+
+>>>>> Initiating global iteration 14 (acquisition batch 1)
+NCSU DIRECT succeeded with code 1
+(maximum function evaluations exceeded)
+
+Results of EGO iteration:
+Final point =
+                      7.4413580247e+09 YieldStress
+                      9.1435769446e-02 HardeningCharacteristicStrain
+                      1.0004826500e-01 HardeningExponent
+Expected Improvement    =
+                      2.6063846039e-01
+
+---------------------
+Begin Evaluation   24
+---------------------
+Parameters for evaluation 24:
+                      7.4413580247e+09 YieldStress
+                      9.1435769446e-02 HardeningCharacteristicStrain
+                      1.0004826500e-01 HardeningExponent
+
+blocking fork: driver.sh params.in.24 results.out.24
+
+Active response data for evaluation 24:
+Active set vector = { 1 }
+                      3.5568966823e-01 obj_fn_1
+
+
+
+>>>>> Appending to global_kriging approximations.
+
+<<<<< global_kriging approximation updates completed.
+
+>>>>> Initiating global iteration 15 (acquisition batch 1)
+NCSU DIRECT succeeded with code 1
+(maximum function evaluations exceeded)
+
+Results of EGO iteration:
+Final point =
+                      1.0018175583e+10 YieldStress
+                      1.3996269624e-01 HardeningCharacteristicStrain
+                      1.5941396129e+00 HardeningExponent
+Expected Improvement    =
+                      1.6196063753e-01
+
+---------------------
+Begin Evaluation   25
+---------------------
+Parameters for evaluation 25:
+                      1.0018175583e+10 YieldStress
+                      1.3996269624e-01 HardeningCharacteristicStrain
+                      1.5941396129e+00 HardeningExponent
+
+blocking fork: driver.sh params.in.25 results.out.25
+
+Active response data for evaluation 25:
+Active set vector = { 1 }
+                      3.9325017983e-01 obj_fn_1
+
+
+
+>>>>> Appending to global_kriging approximations.
+
+<<<<< global_kriging approximation updates completed.
+
+>>>>> Initiating global iteration 16 (acquisition batch 1)
+NCSU DIRECT succeeded with code 1
+(maximum function evaluations exceeded)
+
+Results of EGO iteration:
+Final point =
+                      8.2544581619e+08 YieldStress
+                      8.7873532998e-02 HardeningCharacteristicStrain
+                      1.7183737235e+00 HardeningExponent
+Expected Improvement    =
+                      2.5693464767e-01
+
+---------------------
+Begin Evaluation   26
+---------------------
+Parameters for evaluation 26:
+                      8.2544581619e+08 YieldStress
+                      8.7873532998e-02 HardeningCharacteristicStrain
+                      1.7183737235e+00 HardeningExponent
+
+blocking fork: driver.sh params.in.26 results.out.26
+
+Active response data for evaluation 26:
+Active set vector = { 1 }
+                      8.3332346757e-01 obj_fn_1
+
+
+
+>>>>> Appending to global_kriging approximations.
+
+<<<<< global_kriging approximation updates completed.
+
+>>>>> Initiating global iteration 17 (acquisition batch 1)
+NCSU DIRECT succeeded with code 1
+(maximum function evaluations exceeded)
+
+Results of EGO iteration:
+Final point =
+                      1.0267832647e+10 YieldStress
+                      1.2861518823e-01 HardeningCharacteristicStrain
+                      5.3800487731e-01 HardeningExponent
+Expected Improvement    =
+                      1.8623110932e-01
+
+---------------------
+Begin Evaluation   27
+---------------------
+Parameters for evaluation 27:
+                      1.0267832647e+10 YieldStress
+                      1.2861518823e-01 HardeningCharacteristicStrain
+                      5.3800487731e-01 HardeningExponent
+
+blocking fork: driver.sh params.in.27 results.out.27
+
+Active response data for evaluation 27:
+Active set vector = { 1 }
+                      1.1583391799e-01 obj_fn_1
+
+
+
+>>>>> Appending to global_kriging approximations.
+
+<<<<< global_kriging approximation updates completed.
+
+>>>>> Initiating global iteration 18 (acquisition batch 1)
+NCSU DIRECT succeeded with code 1
+(maximum function evaluations exceeded)
+
+Results of EGO iteration:
+Final point =
+                      1.0796537621e+10 YieldStress
+                      5.0126589781e-04 HardeningCharacteristicStrain
+                      1.2421294179e-01 HardeningExponent
+Expected Improvement    =
+                      5.7338596425e-02
+
+---------------------
+Begin Evaluation   28
+---------------------
+Parameters for evaluation 28:
+                      1.0796537621e+10 YieldStress
+                      5.0126589781e-04 HardeningCharacteristicStrain
+                      1.2421294179e-01 HardeningExponent
+
+blocking fork: driver.sh params.in.28 results.out.28
+
+Active response data for evaluation 28:
+Active set vector = { 1 }
+                      4.8767261928e-01 obj_fn_1
+
+
+
+>>>>> Appending to global_kriging approximations.
+
+<<<<< global_kriging approximation updates completed.
+
+>>>>> Initiating global iteration 19 (acquisition batch 1)
+NCSU DIRECT succeeded with code 1
+(maximum function evaluations exceeded)
+
+Results of EGO iteration:
+Final point =
+                      1.1935185185e+10 YieldStress
+                      4.7701531779e-02 HardeningCharacteristicStrain
+                      4.3606919677e-01 HardeningExponent
+Expected Improvement    =
+                      9.0427644082e-02
+
+---------------------
+Begin Evaluation   29
+---------------------
+Parameters for evaluation 29:
+                      1.1935185185e+10 YieldStress
+                      4.7701531779e-02 HardeningCharacteristicStrain
+                      4.3606919677e-01 HardeningExponent
+
+blocking fork: driver.sh params.in.29 results.out.29
+
+Active response data for evaluation 29:
+Active set vector = { 1 }
+                      3.4898072958e-01 obj_fn_1
+
+
+
+>>>>> Appending to global_kriging approximations.
+
+<<<<< global_kriging approximation updates completed.
+
+>>>>> Initiating global iteration 20 (acquisition batch 1)
+NCSU DIRECT succeeded with code 1
+(maximum function evaluations exceeded)
+
+Results of EGO iteration:
+Final point =
+                      5.3638545953e+09 YieldStress
+                      8.7531740588e-02 HardeningCharacteristicStrain
+                      1.3170019814e+00 HardeningExponent
+Expected Improvement    =
+                      4.2405772524e-01
+
+---------------------
+Begin Evaluation   30
+---------------------
+Parameters for evaluation 30:
+                      5.3638545953e+09 YieldStress
+                      8.7531740588e-02 HardeningCharacteristicStrain
+                      1.3170019814e+00 HardeningExponent
+
+blocking fork: driver.sh params.in.30 results.out.30
+
+Active response data for evaluation 30:
+Active set vector = { 1 }
+                      2.2324384053e-01 obj_fn_1
+
+
+
+>>>>> Appending to global_kriging approximations.
+
+<<<<< global_kriging approximation updates completed.
+
+Stopping criteria not met: distConvergenceCntr (0) < distConvergenceLimit (1)
+Stopping criteria not met: eifConvergenceCntr (0) < eifConvergenceLimit (2)
+Stopping criteria met:     globalIterCount (20) >= maxIterations (20)
+<<<<< Function evaluation summary: 30 total (30 new, 0 duplicate)
+<<<<< Best parameters          =
+                      1.0267832647e+10 YieldStress
+                      1.2861518823e-01 HardeningCharacteristicStrain
+                      5.3800487731e-01 HardeningExponent
+<<<<< Best objective function  =
+                      1.1583391799e-01
+<<<<< Best evaluation ID: 27
+
+
+<<<<< Iterator efficient_global completed.
+<<<<< Environment execution completed.
+DAKOTA execution time in seconds:
+  Total CPU        =     9.5468 [parent =    9.54686, child =   -5.9e-05]
+  Total wall clock =    75377.8

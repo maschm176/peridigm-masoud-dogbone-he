@@ -1,0 +1,41 @@
+environment
+  tabular_data
+    tabular_data_file = 'dakota_tabular_HE30_voce_hypoelastic_stage2_sfc3style.dat'
+
+method
+  coliny_pattern_search
+    max_function_evaluations = 10
+
+variables
+  # SFC3-style joint D1/D2/D3 search for HE_30 Stage 2, narrow bounds
+  # informed by the manual D2 sweeps already done (see
+  # dakota_HE30_sfc3_d2_sweep*.in): D2 below ~0.3 (D1=0.02, D3=3.0 fixed)
+  # causes a non-physical specimen collapse (strain plateaus ~7-9%, never
+  # reaches genuine fracture); D2=0.35 gives a well-behaved result (fracture
+  # 14.59% vs real 13.27%, obj=0.133). D2's lower bound is kept safely above
+  # that collapse cliff. D1 and D3 are opened up (not fixed at HE_0's exact
+  # values) since HE_30's own Stage 1 hardening differs from HE_0's (higher
+  # InitialYieldStress, same Saturated/Exponential/Linear constants),
+  # meaning the same D1/D3 don't necessarily produce the same
+  # triaxiality-vs-strain relationship in HE_30's neck.
+  continuous_design = 3
+    descriptors                    'DamageParameter1'  'DamageParameter2'  'DamageParameter3'
+    initial_point                   0.02                0.35                3.0
+    lower_bounds                    0.01                0.32                2.0
+    upper_bounds                    0.04                0.50                4.0
+  continuous_state = 5
+    descriptors                    'InitialYieldStress'  'SaturatedYieldStress'  'ExponentialConstant'  'LinearConstant'  'ThresholdDamage'
+    initial_state                   1.027e10               1.35e10                 22.0                   2.0e8             0.97
+
+interface
+  analysis_drivers = 'driver_HE30_voce_hypoelastic_stage2_sfc3style.sh'
+  fork
+    parameters_file = 'params.in'
+    results_file    = 'results.out'
+    file_tag
+  asynchronous evaluation_concurrency = 2
+
+responses
+  objective_functions = 1
+  no_gradients
+  no_hessians
