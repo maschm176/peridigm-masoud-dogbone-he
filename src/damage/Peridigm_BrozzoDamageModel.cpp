@@ -69,6 +69,11 @@ PeridigmNS::BrozzoDamageModel::BrozzoDamageModel(const Teuchos::ParameterList& p
     m_bondCleanupOnFlyingPoint(false),
     m_geometricStretchCutoffEnabled(false),
     m_geometricCriticalStretch(0.0),
+    m_connectivitySeveranceEnabled(false),
+    m_connectivityAsymmetryThreshold(0.0),
+    m_symmetricSeverancePropagationEnabled(false),
+    m_symmetricSeverancePropagationRate(1.0),
+    m_bondCleanupRate(1.0),
     m_damageFieldId(-1),
     m_flyingPointFlagFieldId(-1),
     m_bondDamageFieldId(-1),
@@ -78,6 +83,8 @@ PeridigmNS::BrozzoDamageModel::BrozzoDamageModel(const Teuchos::ParameterList& p
     m_bondLevelMaxPrincipalStressFieldId(-1),
     m_bondLevelDamageParameterFieldId(-1),
     m_brokenBondVolumeAveragedFieldId(-1),
+    m_connectivityAsymmetryFieldId(-1),
+    m_connectivityAsymmetryBaselineFieldId(-1),
     m_horizonFieldId(-1),
     m_volumeFieldId(-1),
     m_coordinatesFieldId(-1),
@@ -118,12 +125,28 @@ PeridigmNS::BrozzoDamageModel::BrozzoDamageModel(const Teuchos::ParameterList& p
   TEUCHOS_TEST_FOR_EXCEPT_MSG(m_geometricStretchCutoffEnabled && !params.isParameter("Geometric Critical Stretch"),
     "**** Error: Enable Geometric Stretch Cutoff requires Geometric Critical Stretch to be set");
 
+  if(params.isParameter("Enable Connectivity Severance"))
+    m_connectivitySeveranceEnabled = params.get<bool>("Enable Connectivity Severance"); // default is false
+  if(params.isParameter("Connectivity Asymmetry Threshold"))
+    m_connectivityAsymmetryThreshold = params.get<double>("Connectivity Asymmetry Threshold");
+  TEUCHOS_TEST_FOR_EXCEPT_MSG(m_connectivitySeveranceEnabled && !params.isParameter("Connectivity Asymmetry Threshold"),
+    "**** Error: Enable Connectivity Severance requires Connectivity Asymmetry Threshold to be set");
+
+  if(params.isParameter("Enable Symmetric Severance Propagation"))
+    m_symmetricSeverancePropagationEnabled = params.get<bool>("Enable Symmetric Severance Propagation"); // default is false
+  if(params.isParameter("Symmetric Severance Propagation Rate"))
+    m_symmetricSeverancePropagationRate = params.get<double>("Symmetric Severance Propagation Rate"); // default is 1.0 (instant)
+  if(params.isParameter("Bond Cleanup Rate"))
+    m_bondCleanupRate = params.get<double>("Bond Cleanup Rate"); // default is 1.0 (instant)
+
   PeridigmNS::FieldManager& fieldManager = PeridigmNS::FieldManager::self();
 
   m_damageFieldId                                  = fieldManager.getFieldId(PeridigmField::ELEMENT, PeridigmField::SCALAR, PeridigmField::TWO_STEP, "Damage");
   m_flyingPointFlagFieldId                         = fieldManager.getFieldId(PeridigmField::ELEMENT, PeridigmField::SCALAR, PeridigmField::TWO_STEP, "Flying_Point_Flag");
   m_bondDamageFieldId                              = fieldManager.getFieldId(PeridigmField::BOND, PeridigmField::SCALAR, PeridigmField::TWO_STEP, "Bond_Damage");
   m_brokenBondVolumeAveragedFieldId                = fieldManager.getFieldId(PeridigmField::ELEMENT, PeridigmField::SCALAR, PeridigmField::TWO_STEP, "Broken_Bond_Volume_Averaged");
+  m_connectivityAsymmetryFieldId                   = fieldManager.getFieldId(PeridigmField::ELEMENT, PeridigmField::SCALAR, PeridigmField::TWO_STEP, "Connectivity_Asymmetry");
+  m_connectivityAsymmetryBaselineFieldId           = fieldManager.getFieldId(PeridigmField::ELEMENT, PeridigmField::SCALAR, PeridigmField::CONSTANT, "Connectivity_Asymmetry_Baseline");
   m_horizonFieldId                                 = fieldManager.getFieldId(PeridigmField::ELEMENT, PeridigmField::SCALAR, PeridigmField::CONSTANT, "Horizon");
   m_volumeFieldId                                  = fieldManager.getFieldId(PeridigmField::ELEMENT, PeridigmField::SCALAR, PeridigmField::CONSTANT, "Volume");
   m_coordinatesFieldId                             = fieldManager.getFieldId(PeridigmField::NODE,    PeridigmField::VECTOR, PeridigmField::TWO_STEP, "Coordinates");
@@ -135,6 +158,8 @@ PeridigmNS::BrozzoDamageModel::BrozzoDamageModel(const Teuchos::ParameterList& p
   m_fieldIds.push_back(m_flyingPointFlagFieldId);
   m_fieldIds.push_back(m_bondDamageFieldId);
   m_fieldIds.push_back(m_brokenBondVolumeAveragedFieldId);
+  m_fieldIds.push_back(m_connectivityAsymmetryFieldId);
+  m_fieldIds.push_back(m_connectivityAsymmetryBaselineFieldId);
   m_fieldIds.push_back(m_horizonFieldId);
   m_fieldIds.push_back(m_volumeFieldId);
   m_fieldIds.push_back(m_coordinatesFieldId);
@@ -172,6 +197,60 @@ PeridigmNS::BrozzoDamageModel::initialize(const double dt,
   dataManager.getData(m_bondLevelDamageParameterFieldId, PeridigmField::STEP_NP1)->PutScalar(0.0);
   dataManager.getData(m_brokenBondVolumeAveragedFieldId, PeridigmField::STEP_N)->PutScalar(0.0);
   dataManager.getData(m_brokenBondVolumeAveragedFieldId, PeridigmField::STEP_NP1)->PutScalar(0.0);
+  dataManager.getData(m_connectivityAsymmetryFieldId, PeridigmField::STEP_N)->PutScalar(0.0);
+  dataManager.getData(m_connectivityAsymmetryFieldId, PeridigmField::STEP_NP1)->PutScalar(0.0);
+
+  // Connectivity Severance baseline (see header comment): computed once,
+  // here, from the undeformed reference geometry with zero damage assumed
+  // everywhere (true at this point in the simulation) -- captures the
+  // purely-geometric resultant asymmetry a healthy point has just from
+  // being near a free surface, so computeDamage() can later subtract it
+  // out and isolate the damage-induced component.
+  double *modelCoordinates, *horizon, *volume, *connectivityAsymmetryBaseline;
+  dataManager.getData(m_modelCoordinatesFieldId, PeridigmField::STEP_NONE)->ExtractView(&modelCoordinates);
+  dataManager.getData(m_horizonFieldId, PeridigmField::STEP_NONE)->ExtractView(&horizon);
+  dataManager.getData(m_volumeFieldId, PeridigmField::STEP_NONE)->ExtractView(&volume);
+  dataManager.getData(m_connectivityAsymmetryBaselineFieldId, PeridigmField::STEP_NONE)->ExtractView(&connectivityAsymmetryBaseline);
+
+  const double* coord = modelCoordinates;
+  const double* delta = horizon;
+  const int* neighborListPtr = neighborhoodList;
+
+  for(int iID=0 ; iID<numOwnedPoints ; ++iID, coord+=3, ++delta, ++connectivityAsymmetryBaseline){
+
+    int numNeighbors = *neighborListPtr; neighborListPtr++;
+
+    double sumWeightedDirX = 0.0, sumWeightedDirY = 0.0, sumWeightedDirZ = 0.0, sumWeight = 0.0;
+
+    for(int n=0; n<numNeighbors; n++, neighborListPtr++){
+      int neighborIndex = *neighborListPtr;
+      const double* neighborCoord = modelCoordinates + 3*neighborIndex;
+
+      double bondX = *(neighborCoord)   - *(coord);
+      double bondY = *(neighborCoord+1) - *(coord+1);
+      double bondZ = *(neighborCoord+2) - *(coord+2);
+      double bondLength = sqrt(bondX*bondX + bondY*bondY + bondZ*bondZ);
+
+      if(bondLength > 0.0){
+        double omega = MATERIAL_EVALUATION::scalarInfluenceFunction(bondLength, *delta);
+        double weight = omega * volume[neighborIndex];
+        sumWeight += weight;
+        sumWeightedDirX += weight * bondX / bondLength;
+        sumWeightedDirY += weight * bondY / bondLength;
+        sumWeightedDirZ += weight * bondZ / bondLength;
+      }
+    }
+
+    if(sumWeight > 0.0){
+      double resultantMag = sqrt(sumWeightedDirX*sumWeightedDirX +
+                                 sumWeightedDirY*sumWeightedDirY +
+                                 sumWeightedDirZ*sumWeightedDirZ);
+      *connectivityAsymmetryBaseline = resultantMag / sumWeight;
+    }
+    else{
+      *connectivityAsymmetryBaseline = 0.0;
+    }
+  }
 }
 
 void
@@ -184,10 +263,22 @@ PeridigmNS::BrozzoDamageModel::computeDamage(const double dt,
   //NOTE: this fixes the inter-processor and inter-block double counting problem
   dataManager.getData(m_damageFieldId, PeridigmField::STEP_NP1)->PutScalar(0.0);
 
-  double *damageN, *damageNP1, *brokenBondVolumeAveragedNP1;
+  double *damageN, *damageNP1, *brokenBondVolumeAveragedNP1, *connectivityAsymmetryNP1, *connectivityAsymmetryBaseline;
   dataManager.getData(m_damageFieldId, PeridigmField::STEP_N)->ExtractView(&damageN);
   dataManager.getData(m_damageFieldId, PeridigmField::STEP_NP1)->ExtractView(&damageNP1);
   dataManager.getData(m_brokenBondVolumeAveragedFieldId, PeridigmField::STEP_NP1)->ExtractView(&brokenBondVolumeAveragedNP1);
+  dataManager.getData(m_connectivityAsymmetryFieldId, PeridigmField::STEP_NP1)->ExtractView(&connectivityAsymmetryNP1);
+  dataManager.getData(m_connectivityAsymmetryBaselineFieldId, PeridigmField::STEP_NONE)->ExtractView(&connectivityAsymmetryBaseline);
+
+  // Stable base pointers (never advanced), needed below by the Symmetric
+  // Severance Propagation second pass, which re-visits every point and
+  // must be able to index any point's aggregate fields directly by its
+  // local ID -- unlike the main loop below, which consumes these same
+  // Extracted pointers via per-point/per-bond pointer arithmetic.
+  double* damageNP1Base = damageNP1;
+  double* brokenBondVolumeAveragedNP1Base = brokenBondVolumeAveragedNP1;
+  double* connectivityAsymmetryNP1Base = connectivityAsymmetryNP1;
+  double* connectivityAsymmetryBaselineBase = connectivityAsymmetryBaseline;
 
   double *horizon, *volume, *coordinates, *modelCoordinates;
   double *undamagedWeightedVolume, *jacobianDeterminant;
@@ -197,6 +288,8 @@ PeridigmNS::BrozzoDamageModel::computeDamage(const double dt,
   dataManager.getData(m_modelCoordinatesFieldId, PeridigmField::STEP_NONE)->ExtractView(&modelCoordinates);
   dataManager.getData(m_undamagedWeightedVolumeFieldId, PeridigmField::STEP_NONE)->ExtractView(&undamagedWeightedVolume);
   dataManager.getData(m_jacobianDeterminantFieldId, PeridigmField::STEP_N)->ExtractView(&jacobianDeterminant);
+
+  double* undamagedWeightedVolumeBase = undamagedWeightedVolume;
 
   double* coord = coordinates;
   double* neighborCoord;
@@ -218,6 +311,15 @@ PeridigmNS::BrozzoDamageModel::computeDamage(const double dt,
   double *bondDamage, *flyingPointFlag;
   dataManager.getData(m_flyingPointFlagFieldId, PeridigmField::STEP_NP1)->ExtractView(&flyingPointFlag);
   dataManager.getData(m_bondDamageFieldId, PeridigmField::STEP_NP1)->ExtractView(&bondDamage);
+
+  // Stable base pointers for the Symmetric Severance Propagation second
+  // pass (see below): flyingPointFlagBase is indexed by LOCAL ID (owned or
+  // ghost -- same convention already used for "coordinates + 3*neighborIndex"
+  // elsewhere in this file), and bondDamageBase/damageParameterNP1Base are
+  // indexed by a running bond offset that mirrors the main loop's own
+  // per-bond traversal order.
+  double* flyingPointFlagBase = flyingPointFlag;
+  double* bondDamageBase = bondDamage;
 
   // Set the bond damage to the previous value
   *(dataManager.getData(m_bondDamageFieldId, PeridigmField::STEP_NP1)) = *(dataManager.getData(m_bondDamageFieldId, PeridigmField::STEP_N));
@@ -263,14 +365,23 @@ PeridigmNS::BrozzoDamageModel::computeDamage(const double dt,
   dataManager.getData(m_bondLevelDamageParameterFieldId, PeridigmField::STEP_NP1)->ExtractView(&damageParameterNP1);
   dataManager.getData(m_brokenBondVolumeAveragedFieldId, PeridigmField::STEP_N)->ExtractView(&brokenBondVolumeAveragedN);
 
+  double* damageParameterNP1Base = damageParameterNP1;
+
   for(int iID=0 ; iID<numOwnedPoints ; ++iID, ++damageN, ++damageNP1,
         ++flyingPointFlag, ++delta, ++undamagedWeightedVolume, coord+=3,
-        ++brokenBondVolumeAveragedN, ++brokenBondVolumeAveragedNP1)
+        ++brokenBondVolumeAveragedN, ++brokenBondVolumeAveragedNP1,
+        ++connectivityAsymmetryNP1, ++connectivityAsymmetryBaseline)
   {
     if(*flyingPointFlag < 0.0){
       // damage = volume-average of broken bonds
       *damageNP1 = 0.0;
       *brokenBondVolumeAveragedNP1 = 0.0;
+      *connectivityAsymmetryNP1 = 0.0;
+
+      // Connectivity Severance accumulators (see header comment): the
+      // volume/influence-weighted resultant of this point's SURVIVING bond
+      // directions, built up alongside the existing per-bond loop below.
+      double sumWeightedDirX = 0.0, sumWeightedDirY = 0.0, sumWeightedDirZ = 0.0, sumIntactWeight = 0.0;
 
       // Loop over the neighbors and compute bond damage
       numNeighbors = *neighborListPtr; neighborListPtr++;
@@ -398,9 +509,43 @@ PeridigmNS::BrozzoDamageModel::computeDamage(const double dt,
 
         *damageNP1 += *damageParameterNP1 * omega / *undamagedWeightedVolume * neighborVolume;
         *brokenBondVolumeAveragedNP1 += *bondDamage * omega / *undamagedWeightedVolume * neighborVolume;
+
+        // Connectivity Severance accumulation (see header comment): weight
+        // this bond's contribution to the resultant direction by how
+        // INTACT it still is (1-bondDamage), same omega/volume weighting
+        // as everything else here. A bond already fully broken
+        // (bondDamage=1) contributes nothing, exactly as it should --
+        // only surviving bonds should pull the resultant in their
+        // direction.
+        if(deformedBondLength > 0.0){
+          double intactWeight = (1.0 - *bondDamage) * omega * neighborVolume;
+          sumIntactWeight += intactWeight;
+          sumWeightedDirX += intactWeight * deformedBondX / deformedBondLength;
+          sumWeightedDirY += intactWeight * deformedBondY / deformedBondLength;
+          sumWeightedDirZ += intactWeight * deformedBondZ / deformedBondLength;
+        }
       }
 
-      if(*brokenBondVolumeAveragedNP1 > m_criticalDamageToNeglectMaterialPoint){ // to prevent cases that only a couple of bonds are left, causing instability issues.
+      // Connectivity Severance (opt-in, see header comment): 0 when
+      // surviving bonds are still spread roughly symmetrically in all
+      // directions relative to this point's own undamaged baseline
+      // (healthy), approaching 1 as they become concentrated in one
+      // direction only (lost connectivity to the other side). The
+      // baseline subtraction is essential -- see header comment -- a
+      // point near the specimen's free surface has a nonzero raw
+      // resultant even with zero damage, purely from mesh geometry.
+      if(sumIntactWeight > 0.0){
+        double resultantMag = sqrt(sumWeightedDirX*sumWeightedDirX +
+                                   sumWeightedDirY*sumWeightedDirY +
+                                   sumWeightedDirZ*sumWeightedDirZ);
+        double rawAsymmetry = resultantMag / sumIntactWeight;
+        *connectivityAsymmetryNP1 = std::max(0.0, rawAsymmetry - *connectivityAsymmetryBaseline);
+      }
+
+      bool shouldGoFlying = (*brokenBondVolumeAveragedNP1 > m_criticalDamageToNeglectMaterialPoint) || // to prevent cases that only a couple of bonds are left, causing instability issues.
+                            (m_connectivitySeveranceEnabled && *connectivityAsymmetryNP1 > m_connectivityAsymmetryThreshold);
+
+      if(shouldGoFlying){
         *flyingPointFlag = 1.0;
 
         // Bond cleanup on flying point (opt-in, see header comment): this
@@ -412,11 +557,21 @@ PeridigmNS::BrozzoDamageModel::computeDamage(const double dt,
         // under-threshold bonds dangling indefinitely.
         if(m_bondCleanupOnFlyingPoint){
           for(int n=0; n<numNeighborsForThisPoint; n++){
-            bondDamageStartForThisPoint[n] = 1.0;
-            damageParameterNP1StartForThisPoint[n] = 1.0;
+            if(damageParameterNP1StartForThisPoint[n] < 1.0){
+              // Rate-limited cleanup (see header comment): ramp this
+              // lagging bond's own damage parameter by the configured
+              // rate instead of snapping it straight to full failure.
+              damageParameterNP1StartForThisPoint[n] = std::min(1.0, damageParameterNP1StartForThisPoint[n] + m_bondCleanupRate);
+              if(damageParameterNP1StartForThisPoint[n] > m_thresholdDamage){
+                bondDamageStartForThisPoint[n] = m_hardCutoff ? 1.0 : (damageParameterNP1StartForThisPoint[n] - m_thresholdDamage) / (1.0 - m_thresholdDamage);
+              }
+            }
           }
-          *brokenBondVolumeAveragedNP1 = 1.0;
-          *damageNP1 = 1.0;
+          if(m_bondCleanupRate >= 1.0){
+            *brokenBondVolumeAveragedNP1 = 1.0;
+            *damageNP1 = 1.0;
+            *connectivityAsymmetryNP1 = 1.0;
+          }
         }
       }
     }
@@ -424,6 +579,7 @@ PeridigmNS::BrozzoDamageModel::computeDamage(const double dt,
       // for the visualization purposes
       *damageNP1 = *damageN;
       *brokenBondVolumeAveragedNP1 = *brokenBondVolumeAveragedN;
+      *connectivityAsymmetryNP1 = 1.0;
 
       // adjust the neighborhood pointer for the next point
       numNeighbors = *neighborListPtr;
@@ -437,6 +593,126 @@ PeridigmNS::BrozzoDamageModel::computeDamage(const double dt,
       maxPrincipalStress += numNeighbors;
       damageParameterN += numNeighbors;
       damageParameterNP1 += numNeighbors;
+    }
+  }
+
+  // Symmetric Severance Propagation (opt-in, see header comment): every
+  // point above decided Flying_Point_Flag using only its OWN bonds' damage
+  // state. This second pass gives each point visibility into whether its
+  // NEIGHBORS independently reached that same conclusion, and if so,
+  // mirrors that decision onto this point's own copy of the connecting
+  // bond -- closing the one-sided-bookkeeping gap described in the header
+  // comment. Flying_Point_Flag is an ELEMENT field and is NOT among the
+  // handful of fields the core solver auto-syncs every step (unlike
+  // Coordinates/Displacement/Velocity), so an explicit sync is required
+  // before ghost-owned neighbors' flags can be read correctly here.
+  if(m_symmetricSeverancePropagationEnabled){
+
+    dataManager.scatterToGhosts();
+
+    const int* neighborListPtr2 = neighborhoodList;
+    int bondOffset = 0;
+
+    for(int iID=0 ; iID<numOwnedPoints ; ++iID){
+
+      int numNeighbors2 = *neighborListPtr2; neighborListPtr2++;
+
+      if(flyingPointFlagBase[iID] < 0.0){
+
+        bool anyNewKill = false;
+        for(int n=0; n<numNeighbors2; n++){
+          int neighborIndex2 = neighborListPtr2[n];
+          int idx = bondOffset + n;
+          if(flyingPointFlagBase[neighborIndex2] > 0.0 && damageParameterNP1Base[idx] < 1.0){
+            // Rate-limited mirroring (see header comment): instead of
+            // snapping straight to full failure, add only the configured
+            // rate's worth of damage this step, reusing the same
+            // ramp/Hard-Cutoff formula ordinary Brozzo accumulation uses,
+            // so a bond takes ~1/rate steps of sustained neighbor exposure
+            // to fully die rather than one.
+            damageParameterNP1Base[idx] = std::min(1.0, damageParameterNP1Base[idx] + m_symmetricSeverancePropagationRate);
+            if(damageParameterNP1Base[idx] > m_thresholdDamage){
+              bondDamageBase[idx] = m_hardCutoff ? 1.0 : (damageParameterNP1Base[idx] - m_thresholdDamage) / (1.0 - m_thresholdDamage);
+            }
+            anyNewKill = true;
+          }
+        }
+
+        if(anyNewKill){
+          // Recompute this point's aggregates from the now-updated
+          // bondDamage, exactly mirroring the formulas in the main loop
+          // above, then re-check whether it should now go flying too --
+          // this is what allows a genuine multi-step cascade to emerge.
+          double newDamage = 0.0, newBrokenBondVolumeAveraged = 0.0;
+          double sumWeightedDirX2 = 0.0, sumWeightedDirY2 = 0.0, sumWeightedDirZ2 = 0.0, sumIntactWeight2 = 0.0;
+          const double* myCoord2 = coordinates + 3*iID;
+          double myDelta2 = horizon[iID];
+
+          for(int n=0; n<numNeighbors2; n++){
+            int neighborIndex2 = neighborListPtr2[n];
+            int idx = bondOffset + n;
+            double bd = bondDamageBase[idx];
+            double nVol2 = jacobianDeterminant[neighborIndex2] * volume[neighborIndex2];
+            const double* nCoord2 = coordinates + 3*neighborIndex2;
+            double dx2 = nCoord2[0] - myCoord2[0];
+            double dy2 = nCoord2[1] - myCoord2[1];
+            double dz2 = nCoord2[2] - myCoord2[2];
+            double len2 = sqrt(dx2*dx2 + dy2*dy2 + dz2*dz2);
+            double omega2 = MATERIAL_EVALUATION::scalarInfluenceFunction(len2, myDelta2);
+
+            newDamage += damageParameterNP1Base[idx] * omega2 / undamagedWeightedVolumeBase[iID] * nVol2;
+            newBrokenBondVolumeAveraged += bd * omega2 / undamagedWeightedVolumeBase[iID] * nVol2;
+
+            if(len2 > 0.0){
+              double intactWeight2 = (1.0 - bd) * omega2 * nVol2;
+              sumIntactWeight2 += intactWeight2;
+              sumWeightedDirX2 += intactWeight2 * dx2 / len2;
+              sumWeightedDirY2 += intactWeight2 * dy2 / len2;
+              sumWeightedDirZ2 += intactWeight2 * dz2 / len2;
+            }
+          }
+
+          damageNP1Base[iID] = newDamage;
+          brokenBondVolumeAveragedNP1Base[iID] = newBrokenBondVolumeAveraged;
+
+          double newAsymmetry = 0.0;
+          if(sumIntactWeight2 > 0.0){
+            double resultantMag2 = sqrt(sumWeightedDirX2*sumWeightedDirX2 +
+                                        sumWeightedDirY2*sumWeightedDirY2 +
+                                        sumWeightedDirZ2*sumWeightedDirZ2);
+            newAsymmetry = std::max(0.0, resultantMag2 / sumIntactWeight2 - connectivityAsymmetryBaselineBase[iID]);
+          }
+          connectivityAsymmetryNP1Base[iID] = newAsymmetry;
+
+          bool shouldGoFlyingNow = (newBrokenBondVolumeAveraged > m_criticalDamageToNeglectMaterialPoint) ||
+                                    (m_connectivitySeveranceEnabled && newAsymmetry > m_connectivityAsymmetryThreshold);
+
+          if(shouldGoFlyingNow){
+            flyingPointFlagBase[iID] = 1.0;
+            if(m_bondCleanupOnFlyingPoint){
+              for(int n=0; n<numNeighbors2; n++){
+                int cleanupIdx = bondOffset+n;
+                if(damageParameterNP1Base[cleanupIdx] < 1.0){
+                  // Rate-limited cleanup (see header comment), same as the
+                  // main loop's equivalent block above.
+                  damageParameterNP1Base[cleanupIdx] = std::min(1.0, damageParameterNP1Base[cleanupIdx] + m_bondCleanupRate);
+                  if(damageParameterNP1Base[cleanupIdx] > m_thresholdDamage){
+                    bondDamageBase[cleanupIdx] = m_hardCutoff ? 1.0 : (damageParameterNP1Base[cleanupIdx] - m_thresholdDamage) / (1.0 - m_thresholdDamage);
+                  }
+                }
+              }
+              if(m_bondCleanupRate >= 1.0){
+                brokenBondVolumeAveragedNP1Base[iID] = 1.0;
+                damageNP1Base[iID] = 1.0;
+                connectivityAsymmetryNP1Base[iID] = 1.0;
+              }
+            }
+          }
+        }
+      }
+
+      bondOffset += numNeighbors2;
+      neighborListPtr2 += numNeighbors2;
     }
   }
 }

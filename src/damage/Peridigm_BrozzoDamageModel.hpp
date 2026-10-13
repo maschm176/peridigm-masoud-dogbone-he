@@ -124,6 +124,111 @@ namespace PeridigmNS {
   //! Brozzo's own D_dot (see CLAUDE.md's flying-point diagnostic finding --
   //! Broken_Bond_Volume_Averaged plateaus around 0.855 under the
   //! unmodified damage law and never reaches the flying-point threshold).
+  //!
+  //! Optional "Enable Connectivity Severance" mechanism (default false):
+  //! replaces/supplements the existing "Critical Damage To Neglect
+  //! Material Point" trigger (a volume-weighted AVERAGE of ALL a point's
+  //! bond-damage values, which empirically plateaus around 0.7-0.86 and
+  //! essentially never reaches its 0.95 threshold -- see CLAUDE.md's
+  //! flying-point diagnostic and geometric-stretch sweep findings) with a
+  //! DIRECTIONAL criterion. A point sitting on a crack surface has roughly
+  //! half its 3D neighborhood on the far side of the crack (bonds that
+  //! should fail) and half on the near side (bonds to same-side neighbors,
+  //! which never need to fail) -- so no scalar fraction-of-all-bonds
+  //! measure can ever reach anywhere near 1.0 for genuine across-the-crack
+  //! severance, regardless of how aggressively any damage/stretch
+  //! criterion is tuned. Instead, every step, this computes the
+  //! volume/influence-weighted resultant (vector sum, then magnitude) of
+  //! each point's SURVIVING (not-yet-fully-broken) bond directions,
+  //! normalized by their total weight -- 0 for bonds still spread roughly
+  //! symmetrically in all directions (healthy), approaching 1 as survivors
+  //! become concentrated in one direction only (lost connectivity to the
+  //! other side specifically, independent of how many same-side bonds
+  //! remain perfectly intact). Exposed as the "Connectivity_Asymmetry"
+  //! output field. If "Connectivity Asymmetry Threshold" is exceeded, the
+  //! point is marked a flying point exactly like the existing trigger
+  //! (OR'd together, not a replacement in the code path -- the old trigger
+  //! is harmless/inert at the thresholds tested so far), and the Bond
+  //! Cleanup On Flying Point mechanism above (if also enabled) finishes
+  //! off its remaining bonds the same way.
+  //!
+  //! IMPORTANT correction found empirically: the raw resultant asymmetry
+  //! described above is NOT zero for a healthy, undamaged point near a
+  //! free surface -- a point within one horizon of the specimen's outer
+  //! boundary has no material beyond it, so its bond family is inherently
+  //! lopsided even with zero damage (confirmed directly: ~82% of all
+  //! points showed raw asymmetry > 0.1 at frame 0, before any loading at
+  //! all, spanning the specimen's entire length, not just the grip ends --
+  //! this dogbone's horizon is evidently large relative to its
+  //! cross-sectional radius). So "Connectivity_Asymmetry" is actually
+  //! defined as the INCREASE above a per-point reference baseline (see
+  //! "Connectivity_Asymmetry_Baseline" below), not the raw resultant
+  //! magnitude -- otherwise the trigger would fire everywhere immediately,
+  //! dominated by surface geometry rather than damage.
+  //!
+  //! Optional "Enable Symmetric Severance Propagation" mechanism (default
+  //! false): the "Stage 1" semi-Lagrangian fix for a structural gap found
+  //! empirically in Connectivity Severance -- every bond-damage quantity
+  //! above (Bond_Damage, Flying_Point_Flag, etc.) is tracked independently
+  //! by EACH of the two points sharing a bond (the same asymmetric
+  //! two-sided bookkeeping used by the whole state-based correspondence
+  //! family, including BondAssociatedCorrespondenceMaterial). When point i
+  //! decides it's severed and Bond Cleanup forces its own remaining bonds
+  //! to full failure, point j on the other end of one of those bonds never
+  //! has ITS OWN copy of that bond touched -- j still sees i as a fully
+  //! intact neighbor. Empirically (see CLAUDE.md) this meant a severed
+  //! point's status never propagated to its neighbors: the flying-point
+  //! count jumped once at fracture onset and then stayed completely flat
+  //! for hundreds of subsequent steps, with no cascading crack front.
+  //! This mechanism closes that gap: each step, after every point's own
+  //! Flying_Point_Flag has been decided from its own local bond state (the
+  //! existing logic, unchanged), the flag is synchronized across all
+  //! processors (DataManager::scatterToGhosts(), the same mechanism
+  //! Peridigm already uses before rebalancing -- Flying_Point_Flag is an
+  //! ELEMENT field and is NOT one of the handful of fields the core solver
+  //! auto-syncs every step, unlike Coordinates/Displacement/Velocity, so
+  //! this explicit sync is required for correctness on more than one
+  //! rank). A second pass then gives every point visibility into whether
+  //! each of ITS OWN neighbors independently decided it was severed: if
+  //! so, that specific bond is forced to full failure from THIS point's
+  //! own perspective too, mirroring the neighbor's decision rather than
+  //! requiring this point to separately reach the same conclusion on its
+  //! own. If enough of a point's bonds die this way that ITS OWN
+  //! aggregate severance criterion newly crosses threshold as a result,
+  //! it becomes flying too (and triggers Bond Cleanup, if enabled) in the
+  //! same step -- one bond-hop of propagation per step, so a genuine
+  //! multi-step cascading crack front can emerge, which the unmodified
+  //! one-sided bookkeeping could never produce.
+  //!
+  //! IMPORTANT finding from the first test of the above (see CLAUDE.md,
+  //! 2026-10-12): with an instant kill ("mirror the neighbor's death in
+  //! one step"), propagation doesn't look gradual in practice, because the
+  //! explicit integrator's real timestep is tiny relative to the output
+  //! interval (here, ~20 actual timesteps per output frame) -- that's
+  //! enough chain-reaction depth for an AVALANCHE (~20% of the whole
+  //! specimen, 2426 of 12025 points) to occur within about 10 output
+  //! frames of fracture onset, then freeze completely, rather than a
+  //! visible multi-frame propagating front. "Symmetric Severance
+  //! Propagation Rate" (default 1.0 = instant, matching that original
+  //! behavior if left unset) throttles this: instead of snapping a mirrored
+  //! bond straight to full failure, each step adds only this much to the
+  //! bond's own accumulated damage parameter (reusing the existing
+  //! ramp/Hard-Cutoff machinery exactly as if it were ordinary Brozzo
+  //! accumulation), so a bond takes roughly 1/rate steps of sustained
+  //! neighbor exposure to fully die instead of one. This directly tests
+  //! whether the avalanche is a rate problem (fixable by slowing the
+  //! per-bond propagation increment) or something more fundamental.
+  //!
+  //! Result (2026-10-12): throttling the mirror-kill alone only delayed
+  //! the avalanche's onset by about 15 output frames -- it still saturated
+  //! at the identical final count (2426/12025 points). "Bond Cleanup
+  //! Rate" (default 1.0 = instant, matching the original behavior)
+  //! throttles the OTHER instant action in this chain: once a point's own
+  //! aggregate criterion crosses threshold (which can still happen
+  //! quickly, since many neck points already sit close to threshold from
+  //! real, non-propagation Brozzo accumulation), Bond Cleanup finishes off
+  //! ALL of that point's remaining bonds in a single step. This ramps that
+  //! action too, at the same per-step rate, instead of snapping to 1.0.
   class BrozzoDamageModel : public DamageModel{
 
   public:
@@ -170,6 +275,11 @@ namespace PeridigmNS {
     bool m_bondCleanupOnFlyingPoint;
     bool m_geometricStretchCutoffEnabled;
     double m_geometricCriticalStretch;
+    bool m_connectivitySeveranceEnabled;
+    double m_connectivityAsymmetryThreshold;
+    bool m_symmetricSeverancePropagationEnabled;
+    double m_symmetricSeverancePropagationRate;
+    double m_bondCleanupRate;
 
     // field ids for all relevant data
     std::vector<int> m_fieldIds;
@@ -182,6 +292,8 @@ namespace PeridigmNS {
     int m_bondLevelMaxPrincipalStressFieldId;
     int m_bondLevelDamageParameterFieldId;
     int m_brokenBondVolumeAveragedFieldId;
+    int m_connectivityAsymmetryFieldId;
+    int m_connectivityAsymmetryBaselineFieldId;
     int m_horizonFieldId;
     int m_volumeFieldId;
     int m_coordinatesFieldId;
